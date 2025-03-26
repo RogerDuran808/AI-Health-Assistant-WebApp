@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Conectar con Fitbit</title>
+</head>
+<body>
+  <h1>Conectar tu cuenta de Fitbit</h1>
+  <p>Haz clic en el botón para iniciar sesión con Fitbit y permitir el acceso a tus datos.</p>
+
+  <a id="fitbit-login" href="#">Iniciar sesión con Fitbit</a>
+
+  <script>
+    const clientId = "TU_CLIENT_ID";
+    const redirectUri = "http://localhost:5000/callback"; // O el que pongas
+    const scope = "activity heartrate sleep profile";
+
+    const authUrl = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&expires_in=604800`;
+
+    document.getElementById("fitbit-login").href = authUrl;
+  </script>
+</body>
+</html>
