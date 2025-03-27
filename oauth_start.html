@@ -11,11 +11,7 @@
   <a id="fitbit-login" href="#">Iniciar sesión con Fitbit</a>
 
   <script>
-    const clientId = "TU_CLIENT_ID";
-    const redirectUri = "http://localhost:5000/callback"; // O el que pongas
-    const scope = "activity heartrate sleep profile";
-
-    const authUrl = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&expires_in=604800`;
+    const authUrl = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QBN2&scope=activity+cardio_fitness+electrocardiogram+heartrate+irregular_rhythm_notifications+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight&redirect_uri=https%3A%2F%2Flocalhost`;
 
     document.getElementById("fitbit-login").href = authUrl;
   </script>
