@@ -1,42 +1,166 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Agente de Salud con IA - Inicio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <title>Agente de Salud con IA - Inicio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Agente inteligente que analiza datos de Fitbit para ayudarte a mejorar tu salud">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <h1>Agente de Salud con IA</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">Inicio</a></li>
-        <li><a href="privacy_policy.html">Política de Privacidad</a></li>
-        <li><a href="terms.html">Términos y Condiciones</a></li>
-        <li><a href="oauth_start.html">Autorització</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main>
-    <section>
-      <h2>Bienvenido/a</h2>
-      <p>Este proyecto de TFG integra datos de dispositivos Fitbit con un agente inteligente que puede interactuar mediante WhatsApp para ayudarte a monitorizar y mejorar tu salud.</p>
+    <header>
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Agente de Salud con IA</span>
+            </div>
+            <nav>
+                <input type="checkbox" id="nav-toggle" class="nav-toggle">
+                <label for="nav-toggle" class="nav-toggle-label">
+                    <i class="fas fa-bars"></i>
+                </label>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="active">Inicio</a></li>
+                    <li><a href="privacy_policy.html">Política de Privacidad</a></li>
+                    <li><a href="terms.html">Términos y Condiciones</a></li>
+                    <li><a href="oauth_start.html" class="btn-nav">Autorización</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Tu compañero de salud inteligente</h1>
+            <p>Conecta tus dispositivos Fitbit y recibe análisis personalizados para mejorar tu bienestar diario</p>
+            <div class="hero-buttons">
+                <a href="oauth_start.html" class="btn btn-primary">Comenzar ahora</a>
+                <a href="#features" class="btn btn-secondary">Conoce más</a>
+            </div>
+        </div>
     </section>
+    
+    <main class="container">
+        <section class="welcome">
+            <h2>Bienvenido a tu asistente de salud personal</h2>
+            <p>Este proyecto de TFG integra datos de dispositivos Fitbit con un agente inteligente que puede interactuar con esta Web App para ayudarte a monitorizar y mejorar tu salud de forma personalizada y efectiva.</p>
+        </section>
+        
+        <section id="features" class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Análisis de métricas</h3>
+                <p>Nuestro agente analiza tus datos de pasos, sueño, frecuencia cardíaca y más para ofrecerte una visión completa de tu salud.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Recomendaciones personalizadas</h3>
+                <p>Recibe consejos adaptados a tus hábitos y necesidades específicas para mejorar tu bienestar día a día.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <h3>Asistencia por WhatsApp</h3>
+                <p>Mantente conectado con tu agente de salud a través de mensajes automáticos que te ayudarán a mantenerte motivado.</p>
+            </div>
+        </section>
 
-    <section>
-      <h3>¿Qué hace este agente?</h3>
-      <ul>
-        <li>Analiza tus métricas de salud (pasos, sueño, frecuencia cardíaca...)</li>
-        <li>Te da recomendaciones personalizadas.</li>
-        <li>Te responde automáticamente a través de WhatsApp.</li>
-      </ul>
+        <section class="how-it-works">
+            <h2>Cómo funciona</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Conecta tu Fitbit</h3>
+                    <p>Autoriza el acceso a tus datos de actividad física y salud de manera segura.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Análisis inteligente</h3>
+                    <p>Nuestro agente procesa tus datos y genera insights personalizados.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Recibe feedback</h3>
+                    <p>Obtén recomendaciones y seguimiento adaptado a tus objetivos de salud.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="testimonials">
+            <h2>Lo que dicen nuestros usuarios</h2>
+            <div class="testimonial-container">
+                <div class="testimonial">
+                    <div class="testimonial-text">
+                        <p>"Este agente ha transformado mi rutina de ejercicios. Las recomendaciones son muy acertadas."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="/api/placeholder/60/60" alt="Foto de perfil" class="testimonial-avatar">
+                        <p>María González</p>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-text">
+                        <p>"Me ha ayudado a mejorar mis patrones de sueño. El análisis es muy completo y fácil de entender."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="/api/placeholder/60/60" alt="Foto de perfil" class="testimonial-avatar">
+                        <p>Carlos Rodríguez</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <section class="cta-section">
+        <div class="container">
+            <h2>¿Listo para mejorar tu salud?</h2>
+            <p>Conecta tu dispositivo Fitbit y comienza a recibir análisis personalizados hoy mismo.</p>
+            <a href="oauth_start.html" class="btn btn-accent">Autorizar conexión</a>
+        </div>
     </section>
-  </main>
+    
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h3>Agente de Salud con IA</h3>
+                    <p>Tu asistente personal para mejorar tu bienestar diario mediante tecnología inteligente y análisis de datos.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces rápidos</h3>
+                    <ul>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="privacy_policy.html">Política de Privacidad</a></li>
+                        <li><a href="terms.html">Términos y Condiciones</a></li>
+                        <li><a href="oauth_start.html">Autorización</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <p><i class="fas fa-envelope"></i> info@agentesalud.com</p>
+                    <p><i class="fas fa-phone"></i> +34 123 456 789</p>
+                </div>
+            </div>
+            <div class="social-icons">
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            </div>
+            <p class="copyright">&copy; 2025 Roger Duran. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 
-  <footer>
-    <p>&copy; 2025 Roger Durán. Todos los derechos reservados.</p>
-  </footer>
+    <script src="js/main.js"></script>
 </body>
 </html>
