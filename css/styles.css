@@ -323,6 +323,24 @@ nav {
 .feature-card p {
     color: var(--text-light);
 }
+.feature-card, .step, .testimonial {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.feature-card.animate, .step.animate, .testimonial.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature-card:nth-child(2), .step:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.feature-card:nth-child(3), .step:nth-child(3) {
+    transition-delay: 0.4s;
+}
 
 /* How It Works Section */
 .how-it-works {

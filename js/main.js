@@ -6,43 +6,63 @@ document.addEventListener('DOMContentLoaded', function() {
         fitbitLogin.href = authUrl;
     }
     
-    // Manejo de navegación SPA (Single Page Application)
+    // Inicializar secciones:
+    // Mostrar 'home' y ocultar todas las demás (incluida 'features')
+    document.querySelectorAll('div[id]').forEach(section => {
+        if (section.id === 'home') {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    });
+    
+    // Función para revelar la sección de 'features'
+    function revealFeatures() {
+        const featuresSection = document.getElementById('features');
+        if (featuresSection && featuresSection.style.display === 'none') {
+            featuresSection.style.display = 'block';
+            // Una vez visible, comprobamos la visibilidad de sus elementos para animarlos
+            checkVisibility();
+        }
+        window.scrollTo({
+            top: featuresSection.offsetTop - 80,
+            behavior: 'smooth'
+        });
+        // Actualizar navegación activa para 'features'
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#features') {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    // Función para mostrar otra sección (distinta de features)
     function showSection(sectionId) {
-        // Ocultar todas las secciones (suponiendo que son divs con id)
+        // Ocultar todas las secciones
         document.querySelectorAll('div[id]').forEach(section => {
             section.style.display = 'none';
         });
-        
-        // Mostrar la sección solicitada
-        const sectionToShow = document.getElementById(sectionId);
-        if (sectionToShow) {
-            sectionToShow.style.display = 'block';
+        const target = document.getElementById(sectionId);
+        if (target) {
+            target.style.display = 'block';
         }
-        
-        // Actualizar la navegación activa (en la barra de navegación)
+        // Actualizar navegación activa
         document.querySelectorAll('.nav-menu a').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === '#' + sectionId) {
                 link.classList.add('active');
             }
         });
-        
-        // Cerrar menú móvil si está abierto
-        const navToggle = document.getElementById('nav-toggle');
-        if (navToggle) {
-            navToggle.checked = false;
-        }
-        
-        // Scroll hacia arriba con efecto suave
+        // Desplazarse hacia arriba con efecto suave
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
     }
-    
-    // Mostrar sección inicial (home)
-    showSection('home');
-    
+    // Mostrar seccion actual
+    showSection('home')
+
     // Configurar event listeners para la navegación
     document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -50,11 +70,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetHash = this.getAttribute('href');
             const targetId = targetHash.substring(1);
             
-            // Si existe una sección con el id indicado, se maneja como navegación SPA
-            if (targetId && document.getElementById(targetId)) {
+            if (targetId === 'features') {
+                // Al hacer clic en "conocer más"
+                revealFeatures();
+            } else if (targetId && document.getElementById(targetId)) {
                 showSection(targetId);
             } else if (targetHash && document.querySelector(targetHash)) {
-                // Navegación interna dentro de la sección (smooth scrolling)
+                // Navegación interna dentro de la misma sección
                 const targetElement = document.querySelector(targetHash);
                 window.scrollTo({
                     top: targetElement.offsetTop - 80,
@@ -68,7 +90,11 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('hashchange', function() {
         const hash = window.location.hash.substring(1);
         if (hash && document.getElementById(hash)) {
-            showSection(hash);
+            if (hash === 'features') {
+                revealFeatures();
+            } else {
+                showSection(hash);
+            }
         }
     });
     
@@ -76,48 +102,45 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.location.hash) {
         const hash = window.location.hash.substring(1);
         if (hash && document.getElementById(hash)) {
-            showSection(hash);
+            if (hash === 'features') {
+                revealFeatures();
+            } else {
+                showSection(hash);
+            }
         }
     }
+    
+    // Si el usuario desliza (scroll) más allá de 'home', se revela 'features'
+    window.addEventListener('scroll', function() {
+        const featuresSection = document.getElementById('features');
+        const homeSection = document.getElementById('home');
+        if (featuresSection && homeSection && featuresSection.style.display === 'none') {
+            if (window.scrollY > homeSection.offsetHeight - 80) {
+                featuresSection.style.display = 'block';
+                checkVisibility();
+            }
+        }
+        checkVisibility();
+    });
     
     // Animación en scroll para elementos con clases .feature-card, .step y .testimonial
     const animateElements = document.querySelectorAll('.feature-card, .step, .testimonial');
     
     function checkVisibility() {
         animateElements.forEach(element => {
-            const elementPosition = element.getBoundingClientRect().top;
-            const screenPosition = window.innerHeight / 1.3;
-            
-            if (elementPosition < screenPosition) {
-                element.classList.add('animate');
+            // Solo se aplica la animación si el elemento (y su contenedor) son visibles
+            if (window.getComputedStyle(element).display !== 'none') {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                if (elementPosition < screenPosition) {
+                    element.classList.add('animate');
+                }
             }
         });
     }
     
-    // Insertar estilos para la animación
+    // Insertar estilos para la animación (solo efecto de aparición)
     document.head.insertAdjacentHTML('beforeend', `
-        <style>
-            .feature-card, .step, .testimonial {
-                opacity: 0;
-                transform: translateY(20px);
-                transition: opacity 0.5s ease, transform 0.5s ease;
-            }
-            
-            .feature-card.animate, .step.animate, .testimonial.animate {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            
-            .feature-card:nth-child(2), .step:nth-child(2) {
-                transition-delay: 0.2s;
-            }
-            
-            .feature-card:nth-child(3), .step:nth-child(3) {
-                transition-delay: 0.4s;
-            }
-        </style>
+        <style> css/styles.css </style>
     `);
-    
-    window.addEventListener('scroll', checkVisibility);
-    window.addEventListener('load', checkVisibility);
 });
