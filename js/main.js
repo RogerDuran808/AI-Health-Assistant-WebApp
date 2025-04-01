@@ -1,52 +1,86 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+    // Configuración de OAuth
+    const authUrl = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QBN2&scope=activity+cardio_fitness+electrocardiogram+heartrate+irregular_rhythm_notifications+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight&redirect_uri=https%3A%2F%2Flocalhost`;
+    const fitbitLogin = document.getElementById("fitbit-login");
+    if (fitbitLogin) {
+        fitbitLogin.href = authUrl;
+    }
+    
+    // Manejo de navegación SPA (Single Page Application)
+    function showSection(sectionId) {
+        // Ocultar todas las secciones (suponiendo que son divs con id)
+        document.querySelectorAll('div[id]').forEach(section => {
+            section.style.display = 'none';
+        });
+        
+        // Mostrar la sección solicitada
+        const sectionToShow = document.getElementById(sectionId);
+        if (sectionToShow) {
+            sectionToShow.style.display = 'block';
+        }
+        
+        // Actualizar la navegación activa (en la barra de navegación)
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + sectionId) {
+                link.classList.add('active');
+            }
+        });
+        
+        // Cerrar menú móvil si está abierto
+        const navToggle = document.getElementById('nav-toggle');
+        if (navToggle) {
+            navToggle.checked = false;
+        }
+        
+        // Scroll hacia arriba con efecto suave
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+    
+    // Mostrar sección inicial (home)
+    showSection('home');
+    
+    // Configurar event listeners para la navegación
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
+            const targetHash = this.getAttribute('href');
+            const targetId = targetHash.substring(1);
             
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
+            // Si existe una sección con el id indicado, se maneja como navegación SPA
+            if (targetId && document.getElementById(targetId)) {
+                showSection(targetId);
+            } else if (targetHash && document.querySelector(targetHash)) {
+                // Navegación interna dentro de la sección (smooth scrolling)
+                const targetElement = document.querySelector(targetHash);
                 window.scrollTo({
                     top: targetElement.offsetTop - 80,
                     behavior: 'smooth'
                 });
-                
-                // Close mobile menu if open
-                document.getElementById('nav-toggle').checked = false;
             }
         });
     });
     
-    // Add active class to navigation based on current section
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('nav ul li a');
+    // Manejar la navegación mediante cambios en el hash de la URL
+    window.addEventListener('hashchange', function() {
+        const hash = window.location.hash.substring(1);
+        if (hash && document.getElementById(hash)) {
+            showSection(hash);
+        }
+    });
     
-    function highlightNav() {
-        const scrollPosition = window.scrollY + 100;
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.offsetHeight;
-            const sectionId = section.getAttribute('id');
-            
-            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === '#' + sectionId) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-        });
+    // Verificar el hash inicial (si se accede con un ancla en la URL)
+    if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        if (hash && document.getElementById(hash)) {
+            showSection(hash);
+        }
     }
     
-    // Add scroll event listener
-    window.addEventListener('scroll', highlightNav);
-    
-    // Add animation on scroll
+    // Animación en scroll para elementos con clases .feature-card, .step y .testimonial
     const animateElements = document.querySelectorAll('.feature-card, .step, .testimonial');
     
     function checkVisibility() {
@@ -60,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Add CSS class for animation
+    // Insertar estilos para la animación
     document.head.insertAdjacentHTML('beforeend', `
         <style>
             .feature-card, .step, .testimonial {

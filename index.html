@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Agente de Salud con IA - Inicio</title>
+    <title>Agente de Salud con IA</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Agente inteligente que analiza datos de Fitbit para ayudarte a mejorar tu salud">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,138 +24,198 @@
                     <i class="fas fa-bars"></i>
                 </label>
                 <ul class="nav-menu">
-                    <li><a href="index.html" class="active">Inicio</a></li>
-                    <li><a href="privacy_policy.html">Política de Privacidad</a></li>
-                    <li><a href="terms.html">Términos y Condiciones</a></li>
-                    <li><a href="oauth_start.html" class="btn-nav">Autorización</a></li>
+                    <li><a href="#home" class="active">Inicio</a></li>
+                    <li><a href="#oauth" class="btn-nav">Autorización</a></li>
                 </ul>
             </nav>
         </div>
     </header>
     
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Tu compañero de salud inteligente</h1>
-            <p>Conecta tus dispositivos Fitbit y recibe análisis personalizados para mejorar tu bienestar diario</p>
-            <div class="hero-buttons">
-                <a href="oauth_start.html" class="btn btn-primary">Comenzar ahora</a>
-                <a href="#features" class="btn btn-secondary">Conoce más</a>
+    <!-- Pàgina principal -->
+    <div id="home">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Tu compañero de salud inteligente</h1>
+                <p>Conecta tus dispositivos Fitbit y recibe análisis personalizados para mejorar tu bienestar diario</p>
+                <div class="hero-buttons">
+                    <a href="#oauth" class="btn btn-primary">Comenzar ahora</a>
+                    <a href="#features" class="btn btn-secondary">Conoce más</a>
+                </div>
             </div>
-        </div>
-    </section>
-    
-    <main class="container">
-        <section class="welcome">
-            <h2>Bienvenido a tu asistente de salud personal</h2>
-            <p>Este proyecto de TFG integra datos de dispositivos Fitbit con un agente inteligente que puede interactuar con esta Web App para ayudarte a monitorizar y mejorar tu salud de forma personalizada y efectiva.</p>
         </section>
         
-        <section id="features" class="features">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3>Análisis de métricas</h3>
-                <p>Nuestro agente analiza tus datos de pasos, sueño, frecuencia cardíaca y más para ofrecerte una visión completa de tu salud.</p>
-            </div>
+        <main class="container">
+            <section class="welcome">
+                <h2>Bienvenido a tu asistente de salud personal</h2>
+                <p>Este proyecto de TFG integra datos de dispositivos Fitbit con un agente inteligente que puede interactuar con esta Web App para ayudarte a monitorizar y mejorar tu salud de forma personalizada y efectiva, segun tus paràmetros de salud, tu historial de lesiones i condiciones físicas.</p>
+            </section>
             
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-lightbulb"></i>
+            <section id="features" class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Análisis de métricas</h3>
+                    <p>Nuestro agente analiza tus datos de pasos, sueño, frecuencia cardíaca y más para ofrecerte una visión completa de tu salud.</p>
                 </div>
-                <h3>Recomendaciones personalizadas</h3>
-                <p>Recibe consejos adaptados a tus hábitos y necesidades específicas para mejorar tu bienestar día a día.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fab fa-whatsapp"></i>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Recomendaciones personalizadas</h3>
+                    <p>Recibe consejos adaptados a tus hábitos y necesidades específicas para mejorar tu bienestar día a día.</p>
                 </div>
-                <h3>Asistencia por WhatsApp</h3>
-                <p>Mantente conectado con tu agente de salud a través de mensajes automáticos que te ayudarán a mantenerte motivado.</p>
-            </div>
-        </section>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3>Asistencia por WhatsApp</h3>
+                    <p>Mantente conectado con tu agente de salud a través de mensajes automáticos que te ayudarán a mantenerte motivado.</p>
+                </div>
+            </section>
 
-        <section class="how-it-works">
-            <h2>Cómo funciona</h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Conecta tu Fitbit</h3>
-                    <p>Autoriza el acceso a tus datos de actividad física y salud de manera segura.</p>
+            <section class="how-it-works">
+                <h2>Cómo funciona</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Conecta tu Fitbit</h3>
+                        <p>Autoriza el acceso a tus datos de actividad física y salud de manera segura.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Análisis inteligente</h3>
+                        <p>Nuestro agente procesa tus datos y genera insights personalizados.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Recibe feedback</h3>
+                        <p>Obtén recomendaciones y seguimiento adaptado a tus objetivos de salud.</p>
+                    </div>
                 </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Análisis inteligente</h3>
-                    <p>Nuestro agente procesa tus datos y genera insights personalizados.</p>
+            </section>
+            
+            <section class="testimonials">
+                <h2>Lo que dicen nuestros usuarios</h2>
+                <div class="testimonial-container">
+                    <div class="testimonial">
+                        <div class="testimonial-text">
+                            <p>"Este agente me ha ayudado a entender mejor mi cuerpo i mis descansos"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="/api/placeholder/60/60" alt="Foto de perfil" class="testimonial-avatar">
+                            <p>Roger Duran</p>
+                        </div>
+                    </div>
+                    <div class="testimonial">
+                        <div class="testimonial-text">
+                            <p>"Me ha ayudado a mejorar mi salud, gràcias a la gestión del estrés i la prevención de lesiones. El análisis es muy completo y fácil de entender."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="/api/placeholder/60/60" alt="Foto de perfil" class="testimonial-avatar">
+                            <p>Marta Caula</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Recibe feedback</h3>
-                    <p>Obtén recomendaciones y seguimiento adaptado a tus objetivos de salud.</p>
-                </div>
-            </div>
-        </section>
+            </section>
+        </main>
         
-        <section class="testimonials">
-            <h2>Lo que dicen nuestros usuarios</h2>
-            <div class="testimonial-container">
-                <div class="testimonial">
-                    <div class="testimonial-text">
-                        <p>"Este agente ha transformado mi rutina de ejercicios. Las recomendaciones son muy acertadas."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <img src="/api/placeholder/60/60" alt="Foto de perfil" class="testimonial-avatar">
-                        <p>María González</p>
-                    </div>
-                </div>
-                <div class="testimonial">
-                    <div class="testimonial-text">
-                        <p>"Me ha ayudado a mejorar mis patrones de sueño. El análisis es muy completo y fácil de entender."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <img src="/api/placeholder/60/60" alt="Foto de perfil" class="testimonial-avatar">
-                        <p>Carlos Rodríguez</p>
-                    </div>
-                </div>
+        <section class="cta-section">
+            <div class="container">
+                <h2>¿Listo para mejorar tu salud?</h2>
+                <p>Conecta tu dispositivo Fitbit y comienza a recibir análisis personalizados hoy mismo.</p>
+                <a href="#oauth" class="btn btn-accent">Autorizar conexión</a>
             </div>
         </section>
-    </main>
+    </div>
     
-    <section class="cta-section">
-        <div class="container">
-            <h2>¿Listo para mejorar tu salud?</h2>
-            <p>Conecta tu dispositivo Fitbit y comienza a recibir análisis personalizados hoy mismo.</p>
-            <a href="oauth_start.html" class="btn btn-accent">Autorizar conexión</a>
-        </div>
-    </section>
+    <!-- Secció de Politica de Privacitat -->
+    <div id="privacy-policy" class="container" style="display: none; padding: 5rem 0;">
+        <section>
+            <h1>Política de Privacidad</h1>
+            <p>Esta aplicación recopila datos de salud a través de la API de Fitbit con el único fin de ofrecer recomendaciones personalizadas mediante inteligencia artificial.</p>
+
+            <h2>Datos recogidos</h2>
+            <ul>
+                <li>Frecuencia cardíaca</li>
+                <li>Actividad física</li>
+                <li>Calidad del sueño</li>
+            </ul>
+
+            <h2>Uso de los datos</h2>
+            <p>Los datos no se comparten con terceros. Toda la información se procesa localmente o en servidores seguros según el cumplimiento de la normativa GDPR.</p>
+            
+            <div class="text-center" style="margin-top: 2rem;">
+                <a href="#home" class="btn btn-primary">Volver al inicio</a>
+            </div>
+        </section>
+    </div>
     
+    <!-- Secció de Términos y Condiciones -->
+    <div id="terms" class="container" style="display: none; padding: 5rem 0;">
+        <section>
+            <h1>Términos y Condiciones</h1>
+            
+            <h2>Condiciones de uso</h2>
+            <p>El uso de esta aplicación implica la aceptación de los siguientes términos:</p>
+            <ul>
+                <li>No se garantiza un diagnóstico médico profesional.</li>
+                <li>El usuario es responsable de interpretar y aplicar las recomendaciones.</li>
+                <li>El sistema se ofrece con fines académicos y de investigación.</li>
+            </ul>
+
+            <h2>Limitación de responsabilidad</h2>
+            <p>El desarrollador no se hace responsable por el mal uso de los datos o recomendaciones generadas por el agente.</p>
+            
+            <div class="text-center" style="margin-top: 2rem;">
+                <a href="#home" class="btn btn-primary">Volver al inicio</a>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Secció de Autorización OAuth -->
+    <div id="oauth" class="container" style="display: none; padding: 5rem 0; text-align: center;">
+        <section>
+            <h1>Conectar tu cuenta de Fitbit</h1>
+            <p>Haz clic en el botón para iniciar sesión con Fitbit y permitir el acceso a tus datos.</p>
+
+            <a id="fitbit-login" href="#" class="btn btn-accent" style="margin-top: 2rem; display: inline-block;">Iniciar sesión con Fitbit</a>
+            
+            <div style="margin-top: 3rem;">
+                <a href="#home" class="btn btn-primary">Volver al inicio</a>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Footer -->
     <footer>
         <div class="container footer-content">
             <div class="footer-sections">
                 <div class="footer-section">
                     <h3>Agente de Salud con IA</h3>
-                    <p>Tu asistente personal para mejorar tu bienestar diario mediante tecnología inteligente y análisis de datos.</p>
+                    <p>Tu asistente personal para mejorar tu bienestar diario mediante inteligencia artificial y análisis de datos.</p>
                 </div>
                 <div class="footer-section">
                     <h3>Enlaces rápidos</h3>
                     <ul>
-                        <li><a href="index.html">Inicio</a></li>
-                        <li><a href="privacy_policy.html">Política de Privacidad</a></li>
-                        <li><a href="terms.html">Términos y Condiciones</a></li>
-                        <li><a href="oauth_start.html">Autorización</a></li>
+                        <li><a href="#home">Inicio</a></li>
+                        <li><a href="#privacy-policy">Política de Privacidad</a></li>
+                        <li><a href="#terms">Términos y Condiciones</a></li>
+                        <li><a href="#oauth">Autorización</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h3>Contacto</h3>
-                    <p><i class="fas fa-envelope"></i> info@agentesalud.com</p>
-                    <p><i class="fas fa-phone"></i> +34 123 456 789</p>
+                    <p><i class="fas fa-envelope"></i> roger8duran@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +34 619 088 937</p>
                 </div>
             </div>
             <div class="social-icons">
-                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://www.instagram.com/rooger_8/" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/in/roger-duran-l%C3%B3pez-4940102b9/" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/RogerDuran808" aria-label="GitHub"><i class="fab fa-github"></i></a>
             </div>
             <p class="copyright">&copy; 2025 Roger Duran. Todos los derechos reservados.</p>
         </div>
