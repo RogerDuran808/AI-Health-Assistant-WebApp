@@ -170,7 +170,7 @@ nav {
 .hero {
     padding: 6rem 0;
     text-align: center;
-    background: url('/api/placeholder/1200/500') no-repeat center center;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) no-repeat center center; /*url('/api/placeholder/1200/500')*/
     background-size: cover;
     position: relative;
     color: white;
@@ -344,7 +344,7 @@ nav {
 
 /* How It Works Section */
 .how-it-works {
-    background-color: var(--light-gray);
+    background-color: var(--light-color);
     padding: 5rem 0;
 }
 
@@ -387,12 +387,15 @@ nav {
 /* Testimonials Section */
 .testimonials {
     background-color: white;
+    margin: 0 auto 3rem;
+    border-radius: var(--border-radius);
 }
 
 .testimonial-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+    padding: 2rem;
 }
 
 .testimonial {
