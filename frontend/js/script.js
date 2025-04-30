@@ -141,6 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Insertar estilos para la animación (solo efecto de aparición)
     document.head.insertAdjacentHTML('beforeend', `
-        <style> css/styles.css </style>
+        <style> static/css/styles.css </style>
     `);
 });
