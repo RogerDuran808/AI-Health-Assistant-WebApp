@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
+// src/hooks/useFitbitData.js
+import { useState, useEffect } from "react";
 
 export default function useFitbitData() {
-  const [data, setData] = useState([]);
+  const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError]     = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8000/fitbit-data")
-      .then(async (r) => {
-        if (!r.ok) throw new Error(await r.text());
-        return r.json();
+      .then(r => r.json())
+      .then(json => {
+        setData(json[0] ?? null);   // agafem el primer (i únic) element
+        setLoading(false);
       })
-      .then(setData)
-      .catch(setError)
-      .finally(() => setLoading(false));
+      .catch(e => { setError(e); setLoading(false); });
   }, []);
 
-  return { data: data[0] ?? {}, loading, error };
+  return { data, loading, error };
 }
