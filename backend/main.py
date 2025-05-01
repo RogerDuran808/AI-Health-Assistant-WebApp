@@ -1,4 +1,4 @@
-rom fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fitbit_fetch import fetch_fitbit_data
 
