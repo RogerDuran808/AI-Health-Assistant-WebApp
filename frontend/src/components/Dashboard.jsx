@@ -1,56 +1,69 @@
-import MetricCard from "./MetricCard.jsx";
-import useFitbitData from "../hooks/useFitbitData.js";
-import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
+import useFitbitData from "../hooks/useFitbitData";
+import MetricCard    from "./MetricCard";
+import {
+  ResponsiveContainer,
+  RadialBarChart,
+  RadialBar,
+  PolarAngleAxis,
+  Legend,
+} from "recharts";
 
-const fields = [
-  "age","gender","bmi","minutesToFallAsleep","minutesAsleep","minutesAwake","minutesAfterWakeup",
-  "sleep_efficiency","sleep_deep_ratio","sleep_light_ratio","sleep_rem_ratio","sleep_wake_ratio",
-  "stress_score","nightly_temperature","daily_temperature_variation","rmssd","spo2",
-  "full_sleep_breathing_rate","nremhr","bpm","mindfulness_session","sleep_points_percentage"
+const METRIC_KEYS = [
+  "age","gender","bmi","minutesToFallAsleep","minutesAsleep",
+  "sleep_efficiency","bpm","rmssd","spo2","stress_score"
+  // (tria les que vols; la resta podrien anar en una secció “Advanced”)
 ];
 
 export default function Dashboard() {
   const { data, loading, error } = useFitbitData();
 
-  if (loading)  return <p>Carregant…</p>;
-  if (error)    return <p>Error: {error.message}</p>;
-  if (!data)    return <p>No hi ha dades.</p>;
+  if (loading) return <p className="p-8">Carregant…</p>;
+  if (error)   return <p className="p-8 text-red-500">Error: {error.message}</p>;
+  if (!data)   return <p className="p-8">No hi ha dades.</p>;
+
+  /* donut data */
+  const stages = [
+    { name: "Deep",  value: (data.sleep_deep_ratio  ?? 0) * 100,  fill:"#4f46e5"},
+    { name: "Light", value: (data.sleep_light_ratio ?? 0) * 100,  fill:"#6366f1"},
+    { name: "REM",   value: (data.sleep_rem_ratio   ?? 0) * 100,  fill:"#818cf8"},
+    { name: "Wake",  value: (data.sleep_wake_ratio  ?? 0) * 100,  fill:"#c7d2fe"},
+  ];
 
   return (
-    <div className="flex flex-col gap-8 p-6 max-w-7xl mx-auto">
-      {/* Grid of metric cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {fields.map((key) => (
-          <MetricCard
-            key={key}
-            label={key.replace(/_/g, " ")}
-            value={data[key]}
-            loading={loading}
-            formatter={(v) => typeof v === "number" ? v.toFixed(2) : v}
-          />
-        ))}
-      </div>
+    <div className="min-h-screen bg-gray-100 py-10">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-      {/* Fancy sleep ratios donut */}
-      <div className="w-full h-96 bg-white rounded-2xl shadow-md p-4">
-        <h2 className="text-xl font-semibold mb-4">Sleep Stage Distribution</h2>
-        <ResponsiveContainer width="100%" height="100%">
-          <RadialBarChart
-            innerRadius="30%"
-            outerRadius="100%"
-            data={[
-              { name: "Deep", value: data.sleep_deep_ratio * 100 || 0 },
-              { name: "Light", value: data.sleep_light_ratio * 100 || 0 },
-              { name: "REM", value: data.sleep_rem_ratio * 100 || 0 },
-              { name: "Wake", value: data.sleep_wake_ratio * 100 || 0 }
-            ]}
-            startAngle={90}
-            endAngle={-270}
-          >
-            <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-            <RadialBar background dataKey="value" />
-          </RadialBarChart>
-        </ResponsiveContainer>
+        {/* grid de targetes */}
+        <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+          {METRIC_KEYS.map((k) => (
+            <MetricCard key={k} name={k} value={data[k]} loading={loading} />
+          ))}
+        </div>
+
+        {/* donut de son */}
+        <div className="mt-12 bg-white/70 rounded-2xl shadow-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            Sleep Stage Distribution
+          </h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <RadialBarChart
+              innerRadius="40%"
+              outerRadius="100%"
+              data={stages}
+              startAngle={90}
+              endAngle={-270}
+            >
+              <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
+              <RadialBar dataKey="value" cornerRadius={5} label={{ position:"inside", fill:"#fff", formatter:(v)=>`${v}%` }} />
+
+              <Legend
+                iconType="circle"
+                formatter={(v) => `${v}`}
+                wrapperStyle={{ bottom: 0 }}
+              />
+            </RadialBarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
