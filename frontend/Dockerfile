@@ -1,14 +1,13 @@
 FROM node:20-alpine
 WORKDIR /app
 
-# Copiamos solo lo necesario para instalar dependencias
+# només els manifestos → capa petita i caché
 COPY package.json package-lock.json* ./
 
-# 👉 Instala TODAS las dependencias, incluidas las de desarrollo
+# instal·lació en mode prod, sense auditories
 RUN npm install --prefer-offline --no-audit
 
-# Copiamos el resto del código
+# codi font (ja sense node_modules)
 COPY . .
 
-# Vite en modo desarrollo
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
