@@ -7,7 +7,10 @@ export default function useFitbitData() {
 
   useEffect(() => {
     fetch("http://localhost:8000/fitbit-data")
-      .then((r) => r.json())
+      .then(async (r) => {
+        if (!r.ok) throw new Error(await r.text());
+        return r.json();
+      })
       .then(setData)
       .catch(setError)
       .finally(() => setLoading(false));

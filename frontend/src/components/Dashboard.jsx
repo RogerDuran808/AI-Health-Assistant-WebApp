@@ -9,6 +9,13 @@ const fields = [
   "full_sleep_breathing_rate","nremhr","bpm","mindfulness_session","sleep_points_percentage"
 ];
 
+const stageData = [
+  { name: "Deep", value: (data.sleep_deep_ratio ?? 0) * 100 },
+  { name: "Light", value: (data.sleep_light_ratio ?? 0) * 100 },
+  { name: "REM",  value: (data.sleep_rem_ratio  ?? 0) * 100 },
+  { name: "Wake", value: (data.sleep_wake_ratio ?? 0) * 100 }
+];
+
 export default function Dashboard() {
   const { data, loading } = useFitbitData();
 
