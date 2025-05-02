@@ -5,3 +5,4 @@ numpy
 fitbit
 requests
 python-dotenv
+openai>=1.14
