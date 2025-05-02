@@ -29,21 +29,6 @@ export default function Dashboard() {
     { name: "Wake",  value: Math.round((data.sleep_wake_ratio  ?? 0) * 100), fill:"#c7d2fe" },
   ];
 
-  /* etiqueta personalizada — text gris dins de cada arc */
-  const renderLabel = ({ x, y, value }) => (
-    <text
-      x={x}
-      y={y}
-      textAnchor="middle"
-      dominantBaseline="central"
-      fontSize="12"
-      fontWeight="600"
-      fill="#374151"
-    >
-      {value}%
-    </text>
-  );
-
   return (
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -59,25 +44,16 @@ export default function Dashboard() {
         <div className="mt-12 bg-white/70 rounded-2xl shadow-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Sleep Stage Distribution</h2>
 
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={320}>
             <RadialBarChart
-              innerRadius="40%"
-              outerRadius="100%"
+              innerRadius="35%"
+              outerRadius="105%"
               startAngle={90}
               endAngle={-270}
               data={stages}
             >
               <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-
-              <RadialBar
-                dataKey="value"
-                cornerRadius={5}
-                label={renderLabel}
-              >
-                {stages.map((s, i) => (
-                  <Cell key={i} fill={s.fill} />
-                ))}
-              </RadialBar>
+              <RadialBar dataKey="value" cornerRadius={5} label={{ position:"inside", fill:"374151", formatter:(v)=>`${v}%` }} />
 
               <Legend
                 iconType="circle"
