@@ -8,12 +8,13 @@ export default function useFitbitData() {
 
   useEffect(() => {
     fetch("http://localhost:8000/fitbit-data")
-      .then(r => r.json())
-      .then(json => {
-        setData(json[0] ?? null);   // agafem el primer (i únic) element
-        setLoading(false);
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
       })
-      .catch(e => { setError(e); setLoading(false); });
+      .then(j => setData(j))        // ← JA és un dict llest
+      .catch(e => setError(e))
+      .finally(() => setLoading(false));
   }, []);
 
   return { data, loading, error };

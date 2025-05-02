@@ -1,12 +1,12 @@
 import useFitbitData from "../hooks/useFitbitData";
 import MetricCard    from "./MetricCard";
+import useRecommendation from "../hooks/useRecomendation";
 import {
   ResponsiveContainer,
   RadialBarChart,
   RadialBar,
   PolarAngleAxis,
-  Legend,
-  Cell               // 👈 per donar color a cada arc
+  Legend
 } from "recharts";
 
 const METRIC_KEYS = [
@@ -16,6 +16,7 @@ const METRIC_KEYS = [
 
 export default function Dashboard() {
   const { data, loading, error } = useFitbitData();
+  const {rec, loading:genLoading, error:genErr, generate} = useRecommendation()
 
   if (loading) return <p className="p-8">Carregant…</p>;
   if (error)   return <p className="p-8 text-red-500">Error: {error.message}</p>;
@@ -62,6 +63,24 @@ export default function Dashboard() {
               />
             </RadialBarChart>
           </ResponsiveContainer>
+        </div>
+
+        <div className="mt-8">
+          <button
+            onClick={() => generate(data)}
+            disabled={genLoading || !data}
+            className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {genLoading ? "Generant…" : "Generar recomanació personalitzada"}
+          </button>
+
+          {genErr && <p className="mt-2 text-red-500">{genErr}</p>}
+          {rec && (
+            <div className="mt-4 bg-white rounded-xl shadow p-4">
+              <h3 className="font-semibold mb-2">Recomanació</h3>
+              <p>{rec}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
