@@ -48,7 +48,7 @@ export default function Dashboard() {
           <ResponsiveContainer width="100%" height={320}>
             <RadialBarChart
               innerRadius="20%"
-              outerRadius="105%"
+              outerRadius="120%"
               startAngle={90}
               endAngle={-270}
               data={stages}
