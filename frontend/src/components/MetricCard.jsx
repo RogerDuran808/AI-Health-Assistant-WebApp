@@ -1,6 +1,6 @@
 // src/components/MetricCard.jsx
 import PropTypes from "prop-types";
-import { Loader2 } from "lucide-react";
+import { Activity, HeartPulse, Loader2 } from "lucide-react";
 import {
   UserIcon,
   HeartIcon,
@@ -13,12 +13,14 @@ const META = {
   age:                { label: "Age",            icon: UserIcon          },
   gender:             { label: "Gender",         icon: UserIcon          },
   bmi:                { label: "BMI",            icon: UserIcon,   unit: "" },
-  minutesToFallAsleep:{ label: "Sleep Latency",  icon: MoonIcon,   unit: " min" },
+  minutesAwake:{ label: "Minutes Awake",         icon: MoonIcon,   unit: " min" },
   minutesAsleep:      { label: "Minutes Asleep", icon: MoonIcon,   unit: " min" },
   sleep_efficiency:   { label: "Sleep Eff.",     icon: MoonIcon,   unit: "%" , bar:true },
   bpm:                { label: "Resting HR",     icon: HeartIcon,  unit: " bpm"},
+  rmssd:              {label: "RMSSD",           icon: HeartIcon,  unit: " ms"},
   calories:           { label: "Calories",       icon: FireIcon,   unit: " kcal"},
-  /* …afegeix la resta segons convingui… */
+  spo2:               { label: "SpO2",           icon: Activity,   unit: " %"},
+  /* agegir els valors rellevants per analisi */
 };
 
 export default function MetricCard({ name, value, loading }) {

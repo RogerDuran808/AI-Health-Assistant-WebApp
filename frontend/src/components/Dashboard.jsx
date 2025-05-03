@@ -10,8 +10,8 @@ import {
 } from "recharts";
 
 const METRIC_KEYS = [
-  "age","gender","bmi","minutesToFallAsleep","minutesAsleep",
-  "sleep_efficiency","bpm","rmssd","spo2","stress_score"
+  "age","gender","bmi","minutesAwake","minutesAsleep",
+  "sleep_efficiency","bpm","rmssd","calories","spo2","stress_score"
 ];
 
 export default function Dashboard() {
