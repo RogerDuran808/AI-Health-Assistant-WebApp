@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# 0) Imports y configuración general
+# IMPORTS
 # -----------------------------------------------------------------------------
 import fitbit
 import pandas as pd
@@ -8,18 +8,15 @@ import numpy as np
 import json, requests, os, time
 from dotenv import load_dotenv
 pd.set_option('display.max_columns', None)  
-load_dotenv()       
+load_dotenv()
+
 # -----------------------------------------------------------------------------
-# 1) Credenciales y cliente OAuth2
+# CREDENCIALS Y CLIENT OAuth2
 # -----------------------------------------------------------------------------
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-print(ACCESS_TOKEN)
-def guardar_tokens(tok_dict):
-    """Persistencia local del Access/Refresh Token."""
-    with open('fitbit_tokens.json', 'w') as f:
-        json.dump(tok_dict, f)
+
 
 HEADERS = {
     'accept': 'application/json',
@@ -27,21 +24,19 @@ HEADERS = {
 }
 
 # -----------------------------------------------------------------------------
-# 2) Datos fijos del usuario (profile)
+# DADES DEL PERFIL D'USUARI
 # -----------------------------------------------------------------------------
 profile = requests.get(
     'https://api.fitbit.com/1/user/-/profile.json',
     headers=HEADERS
 ).json()['user']
 
-age, gender, height, weight = (
-    profile['age'], profile['gender'],
-    profile['height'], profile['weight']
-)
+age, gender, height, weight = (profile['age'], profile['gender'], profile['height'], profile['weight'])
+
 bmi = None if not (height and weight) else weight / ((height/100)**2)
 
 # -----------------------------------------------------------------------------
-# 2.b) Funciones helper para endpoints
+# Funciones helper pels endpoints
 # -----------------------------------------------------------------------------
 
 def get_activity_summary(date_str: str) -> dict:
@@ -51,7 +46,7 @@ def get_activity_summary(date_str: str) -> dict:
 
 
 def get_heart_zones(date_str: str) -> list:
-    """Cuatro zonas de FC por defecto."""
+    """Quatre zones de FC per defecte."""
     url = f'https://api.fitbit.com/1/user/-/activities/heart/date/{date_str}/1d.json'
     js = requests.get(url, headers=HEADERS).json()
     try:
@@ -60,7 +55,7 @@ def get_heart_zones(date_str: str) -> list:
         return []
 
 # -----------------------------------------------------------------------------
-# 3) Recolección día anterior (ajustable a rango)
+# RECOLECCIÓ DE DADES DEL DIA ANTERIOR
 # -----------------------------------------------------------------------------
 
 yesterday = dt.date.today() - dt.timedelta(days=1)
@@ -68,13 +63,21 @@ all_days_data = []
 
 for cur_date in pd.date_range(yesterday, yesterday):
     d = {}
+
     date_str = cur_date.strftime('%Y-%m-%d')
-    d.update({'date': date_str, 'age': age, 'gender': gender, 'bmi': bmi})
+
+    d.update({
+        'date': date_str, 
+        'age': age, 
+        'gender': gender, 
+        'bmi': bmi
+        })
 
     # -----------------------------------------------------------------
-    # 3.1  Actividad diaria
+    # ACTIVITAT DIARIA
     # -----------------------------------------------------------------
     act = get_activity_summary(date_str)
+
     d.update({
         'calories'                : act.get('caloriesOut'),
         'steps'                   : act.get('steps'),
@@ -95,7 +98,7 @@ for cur_date in pd.date_range(yesterday, yesterday):
         d[key] = zones[i]['minutes'] if len(zones) == 4 else None
 
     # -----------------------------------------------------------------
-    # 3.2  Sueño y etapas
+    # SON I ETAPES
     # -----------------------------------------------------------------
     try:
         sleep_json = requests.get(
@@ -108,6 +111,7 @@ for cur_date in pd.date_range(yesterday, yesterday):
             asleep = main['minutesAsleep']
             awake  = main['minutesAwake'] + main['minutesAfterWakeup']
             total  = asleep + awake
+
             d.update({
                 'minutesToFallAsleep'   : main.get('minutesToFallAsleep'),
                 'minutesAsleep'         : asleep,
@@ -119,11 +123,13 @@ for cur_date in pd.date_range(yesterday, yesterday):
                 'sleep_rem_ratio'       : stages['rem']   / total if total else None,
                 'sleep_wake_ratio'      : stages['wake']  / total if total else None,
             })
+
         else:
             d.update(dict.fromkeys([
                 'minutesToFallAsleep','minutesAsleep','minutesAwake',
                 'minutesAfterWakeup','sleep_efficiency','sleep_deep_ratio',
                 'sleep_light_ratio','sleep_rem_ratio','sleep_wake_ratio'], None))
+            
     except Exception as e:
         print(f'[WARN] Sleep {date_str}:', e)
         d.update(dict.fromkeys([
@@ -131,77 +137,51 @@ for cur_date in pd.date_range(yesterday, yesterday):
             'minutesAfterWakeup','sleep_efficiency','sleep_deep_ratio',
             'sleep_light_ratio','sleep_rem_ratio','sleep_wake_ratio'], None))
 
-    # -----------------------------------------------------------------
-    # 3.3  Stress Management Score
-    # -----------------------------------------------------------------
-    try:
-        stress_json = requests.get(
-            f'https://api.fitbit.com/1/user/-/stressMgmt/date/{date_str}.json',
-            headers=HEADERS).json()
-        d['stress_score'] = stress_json['stressManagement']['value']['score']
-    except Exception:
-        d['stress_score'] = None
 
     # -----------------------------------------------------------------
-    # 3.4  Métricas Premium (SPO2, HRV‑RMSSD, respiración, temperatura)
+    # Metriques de salud (SPO2, HRV‑RMSSD, respiració, temperatura)
     # -----------------------------------------------------------------
-    # a) Temperatura cutánea
+    # Temperatura cutánea
     try:
         tjson = requests.get(
             f'https://api.fitbit.com/1/user/-/temp/skin/date/{date_str}.json',
             headers=HEADERS).json()
         night_rel = tjson['tempSkin'][0]['value']['nightlyRelative']
         d['nightly_temperature']         = night_rel
-        d['daily_temperature_variation'] = night_rel
-    except Exception:
-        d['nightly_temperature'] = d['daily_temperature_variation'] = None
 
-    # b) HRV (RMSSD)
+    except Exception:
+        d['nightly_temperature'] = None
+
+    # HRV (RMSSD)
     try:
         hrv = requests.get(
             f'https://api.fitbit.com/1/user/-/hrv/date/{date_str}.json',
             headers=HEADERS).json()
         d['rmssd'] = hrv['hrv'][0]['value']['dailyRmssd']
+
     except Exception:
         d['rmssd'] = None
 
-    # c) SpO2 diario
+    # SpO2
     try:
         spo2 = requests.get(
             f'https://api.fitbit.com/1/user/-/spo2/date/{date_str}.json',
             headers=HEADERS).json()
-        d['spo2'] = spo2['spo2'][0]['value']['avg']
+        d['spo2'] = spo2['value']['avg']
+
     except Exception:
         d['spo2'] = None
 
-    # d) Frecuencia respiratoria promedio (sueño completo)
+    # Frecuencia respiratoria promig
     try:
         br = requests.get(
             f'https://api.fitbit.com/1/user/-/br/date/{date_str}.json',
             headers=HEADERS).json()
-        d['full_sleep_breathing_rate'] = br['br'][0]['value']['fullSleepSummary']['breathingRate']
+        d['full_sleep_breathing_rate'] = br['br'][0]['value']['breathingRate']
     except Exception:
         d['full_sleep_breathing_rate'] = None
 
-    # e) HR medio NREM (no disponible)
-    d['nremhr'] = None
 
-    # f) BPM agregado
-    d['bpm'] = d.get('resting_hr')
-
-    # g) Sesiones de mindfulness
-    try:
-        mind = requests.get(
-            f'https://api.fitbit.com/1/user/-/mindfulness/logs/date/{date_str}.json',
-            headers=HEADERS).json()
-        d['mindfulness_session'] = mind['mindfulness'][0]['value']['sessionLength']
-    except Exception:
-        d['mindfulness_session'] = None
-
-    # h) Porcentaje de puntos de sueño
-    d['sleep_points_percentage'] = (
-        d['sleep_efficiency']/100.0 if d['sleep_efficiency'] else None
-    )
 
     all_days_data.append(d)
     time.sleep(1)   # evita throttling

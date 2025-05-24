@@ -10,8 +10,11 @@ import {
 } from "recharts";
 
 const METRIC_KEYS = [
-  "age","gender","bmi","calories","steps","lightly_active_minutes","moderate_active_minutes","very_active_minutes","sedentary_minutes","resting_hr","minutes_below_default_zone_1","minutes_in_default_zone_1","minutes_in_default_zone_2","minutes_in_default_zone_3","minutesAwake","minutesAsleep",
-  "sleep_efficiency","bpm","rmssd","calories","spo2","stress_score"
+  "age","gender","bmi","calories","steps",
+  "lightly_active_minutes","moderately_active_minutes","very_active_minutes","sedentary_minutes",
+  "resting_hr","minutes_below_default_zone_1","minutes_in_default_zone_1","minutes_in_default_zone_2","minutes_in_default_zone_3",
+  "minutesAwake","minutesAsleep","sleep_efficiency","rmssd","spo2",
+  
 ];
 
 export default function Dashboard() {

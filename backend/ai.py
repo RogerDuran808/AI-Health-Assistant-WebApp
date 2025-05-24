@@ -7,13 +7,13 @@ def get_recommendation(fitbit_dict: dict) -> str:
 Has rebut aquestes dades registrades ahir per un usuari de Fitbit:
 {fitbit_dict}
 
-1) Fes un anàlisi breu (1–2 frases) de cadascun dels tres blocs:
-   • Activitat (passos, calories actives, minuts d’intensitat)  
+1) Fes un anàlisi breu (1-2 frases) de cadascun dels tres blocs:
+   • Activitat (passos, calories actives, minuts d'intensitat)  
    • Son (durada, eficiència, temps en fases)  
-   • Recuperació (freqüència cardíaca en repòs, variabilitat (rmssd), nivells d’estrès)  
+   • Recuperació (freqüència cardíaca en repòs, variabilitat (rmssd), nivells d'estrès)  
 
 2) Proporciona COM A MÍNIM DUES recomanacions accionables (pel dia) i personalitzades per:
-   a) Millorar l’activitat física  
+   a) Millorar l'activitat física  
    b) Optimitzar la qualitat del son o la recuperació  
 
 3) Descriu en 1 frase el **fonament científic** de cada recomanació (p. ex., “El descans profund augmenta la síntesi de GH…”).
