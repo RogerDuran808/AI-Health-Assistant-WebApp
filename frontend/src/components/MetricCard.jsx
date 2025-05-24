@@ -1,12 +1,20 @@
 // src/components/MetricCard.jsx
 import PropTypes from "prop-types";
-import { Activity, Loader2} from "lucide-react";
 import {
   UserIcon,
   HeartIcon,
   MoonIcon,
   FireIcon,
 } from "@heroicons/react/24/solid";
+
+import {
+  Activity,
+  Footprints,
+  Zap,           // para moderada/vigorosa
+  Sofa,          // para sedentaria
+  AlertCircle,
+  HeartPulse,
+} from "lucide-react";
 
 /* Diccionari de meta-dades (etiqueta + icona + unitats) */
 const META = {
@@ -20,6 +28,16 @@ const META = {
   rmssd:              {label: "RMSSD",           icon: HeartIcon,  unit: " ms"},
   calories:           { label: "Calories",       icon: FireIcon,   unit: " kcal"},
   spo2:               { label: "SpO2",           icon: Activity,   unit: " %"},
+  steps:                   { label: "Steps",                       icon: Footprints,           unit: ""       },
+  lightly_active_minutes:  { label: "Lightly Active",             icon: Activity,         unit: " min"  },
+  moderately_active_minutes:{ label: "Moderately Active",         icon: Zap,             unit: " min"  },
+  very_active_minutes:     { label: "Very Active",                icon: Zap,         unit: " min"  },
+  sedentary_minutes:       { label: "Sedentary",                  icon: Sofa,           unit: " min"  },
+
+  minutes_below_default_zone_1: { label: "Below Zone 1",          icon: AlertCircle,     unit: " min"  },
+  minutes_in_default_zone_1:    { label: "Zone 1",                icon: HeartIcon,           unit: " min"  },
+  minutes_in_default_zone_2:    { label: "Zone 2",                icon: HeartPulse,      unit: " min"  },
+  minutes_in_default_zone_3:    { label: "Zone 3",                icon: Zap,             unit: " min"  },
 };
 
 export default function MetricCard({ name, value, loading }) {
