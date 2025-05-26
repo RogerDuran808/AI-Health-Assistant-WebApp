@@ -12,7 +12,7 @@ export default function useFitbitData() {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
-      .then(j => setData(j))        // ← JA és un dict llest
+      .then(j => setData(j))  
       .catch(e => setError(e))
       .finally(() => setLoading(false));
   }, []);

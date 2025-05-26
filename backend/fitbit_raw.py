@@ -10,6 +10,10 @@ from dotenv import load_dotenv
 pd.set_option('display.max_columns', None)  
 load_dotenv()
 
+import os
+from pathlib import Path
+import joblib
+
 # -----------------------------------------------------------------------------
 # CREDENCIALS Y CLIENT OAuth2
 # -----------------------------------------------------------------------------
@@ -36,7 +40,7 @@ age, gender, height, weight = (profile['age'], profile['gender'], profile['heigh
 bmi = None if not (height and weight) else weight / ((height/100)**2)
 
 # -----------------------------------------------------------------------------
-# Funciones helper pels endpoints
+# Funciones helper
 # -----------------------------------------------------------------------------
 
 def get_activity_summary(date_str: str) -> dict:
@@ -146,11 +150,14 @@ for cur_date in pd.date_range(yesterday, yesterday):
         tjson = requests.get(
             f'https://api.fitbit.com/1/user/-/temp/skin/date/{date_str}.json',
             headers=HEADERS).json()
+        # En el dataset li diu daily temperature variation, pero realment es la variació de tempertura nocturna el que es mesura
+        # En el dataset tmb hi ha un nightly_temperture, pero mesura teoricament la tempertarues del cos i no la seva variació.
+        # Aixi que definirem daily_temperature_variation acord amb la columna del dataset
         night_rel = tjson['tempSkin'][0]['value']['nightlyRelative']
-        d['nightly_temperature']         = night_rel
+        d['daily_temperature_variation'] = night_rel 
 
     except Exception:
-        d['nightly_temperature'] = None
+        d['daily_temperature_variation'] = None
 
     # HRV (RMSSD)
     try:
@@ -187,9 +194,87 @@ for cur_date in pd.date_range(yesterday, yesterday):
     time.sleep(1)   # evita throttling
 
 # -----------------------------------------------------------------------------
-# 4) DataFrame final
+# DataFrame final
 # -----------------------------------------------------------------------------
 
 df = pd.DataFrame(all_days_data)
-print('Columnas recogidas →', ', '.join(df.columns))
+
+# -----------------------------------------------------------------------------  
+# CARREGUEM EL MODEL  
+# -----------------------------------------------------------------------------  
+# __file__ apunta a fitbit_raw.py
+BASE_DIR = Path(__file__).parent   # carpeta backend/
+MODEL_PATH = BASE_DIR / 'models' / 'BalancedRandomForest_TIRED.joblib'
+
+print("Cargando modelo desde:", MODEL_PATH)
+print("¿Existe?", MODEL_PATH.exists())
+
+model = joblib.load(MODEL_PATH)
+# -----------------------------------------------------------------------------  
+# FEATURE ENGINEERING  
+# -----------------------------------------------------------------------------  
+# afegim wake_after_sleep_pct, pel feature engineering
+df['wake_after_sleep_pct'] = (
+    (df['minutesAwake'] + df['minutesAfterWakeup']) /
+    (df['minutesAsleep'] + df['minutesAwake'] + df['minutesAfterWakeup'])
+)
+
+# categories d’edat  
+df['cat__age_<30']  = (df['age'] < 30).astype(int)  
+df['cat__age_>=30'] = (df['age'] >= 30).astype(int)
+
+# one-hot de gènere  
+df['cat__gender_FEMALE'] = (df['gender'] == 'FEMALE').astype(int)  
+df['cat__gender_MALE']   = (df['gender'] == 'MALE').astype(int)
+
+# -----------------------------------------------------------------------------  
+# 2) ORDENEM LES COLUMNES COM EN L'ENTRENAMENT  
+# -----------------------------------------------------------------------------
+# 
+
+numeric_raw = [
+    'bmi','calories','steps','lightly_active_minutes','moderately_active_minutes',
+    'very_active_minutes','sedentary_minutes','resting_hr',
+    'minutes_below_default_zone_1','minutes_in_default_zone_1',
+    'minutes_in_default_zone_2','minutes_in_default_zone_3',
+    'minutesToFallAsleep','minutesAsleep','minutesAwake','minutesAfterWakeup',
+    'sleep_efficiency','sleep_deep_ratio','sleep_light_ratio',
+    'sleep_rem_ratio','sleep_wake_ratio',
+    'daily_temperature_variation','rmssd','spo2','full_sleep_breathing_rate',
+    'wake_after_sleep_pct'
+]
+
+X_num = (
+    df[numeric_raw]
+    .fillna(0)
+    .rename(columns={col: f'num__{col}' for col in numeric_raw})
+)
+
+model_features = [
+    # columnes numèriques ordendades com en l'entrenament
+    'num__bmi','num__calories','num__steps','num__lightly_active_minutes',
+    'num__moderately_active_minutes','num__very_active_minutes',
+    'num__sedentary_minutes','num__resting_hr','num__minutes_below_default_zone_1',
+    'num__minutes_in_default_zone_1','num__minutes_in_default_zone_2',
+    'num__minutes_in_default_zone_3','num__minutesToFallAsleep',
+    'num__minutesAsleep','num__minutesAwake','num__minutesAfterWakeup',
+    'num__sleep_efficiency','num__sleep_deep_ratio','num__sleep_light_ratio',
+    'num__sleep_rem_ratio','num__sleep_wake_ratio','num__daily_temperature_variation',
+    'num__rmssd','num__spo2','num__full_sleep_breathing_rate',
+    'num__wake_after_sleep_pct',
+    # finalment les categoreiques tmb ordenades
+    'cat__age_<30','cat__age_>=30','cat__gender_FEMALE','cat__gender_MALE'
+]
+
+X = pd.concat([X_num, df[['cat__age_<30','cat__age_>=30','cat__gender_FEMALE','cat__gender_MALE']]], axis=1)
+X = X[model_features]  # reordenem
+
+
+# -----------------------------------------------------------------------------  
+# 3) PREDICCIÓ i afegir al DataFrame  
+# -----------------------------------------------------------------------------  
+df['tired_pred'] = model.predict(X)  
+df['tired_prob'] = model.predict_proba(X)[:, 1]
+
+print('Columnes finals →', ', '.join(df.columns))  
 print(df.head())
