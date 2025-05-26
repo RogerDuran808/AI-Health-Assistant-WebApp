@@ -8,34 +8,27 @@ import {
   PolarAngleAxis,
   Legend
 } from "recharts";
+import ProfileCard from "./ProfileCard";
 
-const METRIC_KEYS = [
-  "age",
-  "gender",
-  "bmi",
-  "calories",
-  "steps",
-  "lightly_active_minutes",
-  "moderately_active_minutes",
-  "very_active_minutes",
-  "sedentary_minutes",
-  "resting_hr",
-  "minutes_below_default_zone_1",
-  "minutes_in_default_zone_1",
-  "minutes_in_default_zone_2",
-  "minutes_in_default_zone_3",
-  "minutesToFallAsleep",
-  "minutesAsleep",
-  "minutesAwake",
-  "minutesAfterWakeup",
-  "sleep_efficiency",
-  "daily_temperature_variation",
-  "rmssd",
-  "spo2",
-  "full_sleep_breathing_rate",
-  "tired_pred",
-  "tired_prob"
-];
+const METRICS = {
+  Actividad: [
+    "calories", "steps",
+    "lightly_active_minutes", "moderately_active_minutes",
+    "very_active_minutes", "sedentary_minutes",
+  ],
+  "Frecuencia cardiaca": [
+    "resting_hr", "minutes_below_default_zone_1",
+    "minutes_in_default_zone_1", "minutes_in_default_zone_2",
+    "minutes_in_default_zone_3",
+  ],
+  Sueño: [
+    "minutesAsleep", "minutesAwake", "sleep_efficiency",
+  ],
+  Biomarcadores: [
+    "daily_temperature_variation", "rmssd", "spo2",
+    "full_sleep_breathing_rate",
+  ],
+};
 
 export default function Dashboard() {
   const { data, loading, error } = useFitbitData();
@@ -57,12 +50,28 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-        {/* Targetes resum */}
-        <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-          {METRIC_KEYS.map((k) => (
-            <MetricCard key={k} name={k} value={data[k]} loading={loading} />
-          ))}
-        </div>
+        {/* Perfil */}
+         <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+           <ProfileCard
+             name={data.name}
+             age={data.age}
+             gender={data.gender}
+             bmi={data.bmi}
+           />
+         </div>
+
+        {/* Tarjetas agrupadas */}
+        {Object.entries(METRICS).map(([title, keys]) => (
+          <section key={title} className="mb-10">
+            <h3 className="mb-4 text-lg font-semibold text-gray-700">{title}</h3>
+
+            <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+              {keys.map((k) => (
+                <MetricCard key={k} name={k} value={data[k]} loading={loading} />
+              ))}
+            </div>
+          </section>
+        ))}
 
         {/* Donut fases de son */}
         <div className="mt-12 bg-white/70 rounded-2xl shadow-lg p-6">
