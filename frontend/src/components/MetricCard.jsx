@@ -14,30 +14,40 @@ import {
   Sofa,          // para sedentaria
   AlertCircle,
   HeartPulse,
+  Thermometer,   // nuevo para variación de temperatura
 } from "lucide-react";
 
-/* Diccionari de meta-dades (etiqueta + icona + unitats) */
+/* Diccionari de meta-dades (etiqueta + icona + unitats) */ 
 const META = {
-  age:                { label: "Age",            icon: UserIcon          },
-  gender:             { label: "Gender",         icon: UserIcon          },
-  bmi:                { label: "BMI",            icon: UserIcon,   unit: "" },
-  minutesAwake:{ label: "Minutes Awake",         icon: MoonIcon,   unit: " min" },
-  minutesAsleep:      { label: "Minutes Asleep", icon: MoonIcon,   unit: " min" },
-  sleep_efficiency:   { label: "Sleep Eff.",     icon: MoonIcon,   unit: "%" , bar:true },
-  resting_hr:         { label: "Resting HR",     icon: HeartIcon,  unit: " bpm"},
-  rmssd:              {label: "RMSSD",           icon: HeartIcon,  unit: " ms"},
-  calories:           { label: "Calories",       icon: FireIcon,   unit: " kcal"},
-  spo2:               { label: "SpO2",           icon: Activity,   unit: " %"},
-  steps:                   { label: "Steps",                       icon: Footprints,           unit: ""       },
-  lightly_active_minutes:  { label: "Lightly Active",             icon: Activity,         unit: " min"  },
-  moderately_active_minutes:{ label: "Moderately Active",         icon: Zap,             unit: " min"  },
-  very_active_minutes:     { label: "Very Active",                icon: Zap,         unit: " min"  },
-  sedentary_minutes:       { label: "Sedentary",                  icon: Sofa,           unit: " min"  },
+  age:                       { label: "Age",                   icon: UserIcon          },
+  gender:                    { label: "Gender",                icon: UserIcon          },
+  bmi:                       { label: "BMI",                   icon: UserIcon,   unit: "" },
+  calories:                  { label: "Calories",              icon: FireIcon,   unit: " kcal"},
+  steps:                     { label: "Steps",                 icon: Footprints, unit: ""       },
+  lightly_active_minutes:    { label: "Lightly Active",        icon: Activity,   unit: " min"  },
+  moderately_active_minutes: { label: "Moderately Active",      icon: Zap,        unit: " min"  },
+  very_active_minutes:       { label: "Very Active",            icon: Zap,        unit: " min"  },
+  sedentary_minutes:         { label: "Sedentary",              icon: Sofa,       unit: " min"  },
+
+  resting_hr:                { label: "Resting HR",            icon: HeartIcon,  unit: " bpm"},
+  rmssd:                     { label: "RMSSD",                 icon: HeartIcon,  unit: " ms"},
+  spo2:                      { label: "SpO2",                  icon: Activity,   unit: " %"},
+
+  minutesToFallAsleep:       { label: "Min. to Fall Asleep",   icon: MoonIcon,   unit: " min"  },
+  minutesAsleep:             { label: "Minutes Asleep",        icon: MoonIcon,   unit: " min"  },
+  minutesAwake:              { label: "Minutes Awake",         icon: MoonIcon,   unit: " min"  },
+  minutesAfterWakeup:        { label: "Min. After Wakeup",     icon: MoonIcon,   unit: " min"  },
 
   minutes_below_default_zone_1: { label: "Below Zone 1",          icon: AlertCircle,     unit: " min"  },
   minutes_in_default_zone_1:    { label: "Zone 1",                icon: HeartIcon,           unit: " min"  },
   minutes_in_default_zone_2:    { label: "Zone 2",                icon: HeartPulse,      unit: " min"  },
   minutes_in_default_zone_3:    { label: "Zone 3",                icon: Zap,             unit: " min"  },
+  
+  sleep_efficiency:          { label: "Sleep Eff.",            icon: MoonIcon,   unit: "%", bar: true },
+
+  daily_temperature_variation: { label: "Temp. Variation",     icon: Thermometer, unit: ""       },
+  full_sleep_breathing_rate:   { label: "Breathing Rate",      icon: Activity,   unit: " br/min" },
+  wake_after_sleep_pct:        { label: "Wake After Sleep %",  icon: AlertCircle,unit: "%"      },
 };
 
 export default function MetricCard({ name, value, loading }) {

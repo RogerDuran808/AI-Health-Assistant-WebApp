@@ -206,9 +206,6 @@ df = pd.DataFrame(all_days_data)
 BASE_DIR = Path(__file__).parent   # carpeta backend/
 MODEL_PATH = BASE_DIR / 'models' / 'BalancedRandomForest_TIRED.joblib'
 
-print("Cargando modelo desde:", MODEL_PATH)
-print("¿Existe?", MODEL_PATH.exists())
-
 model = joblib.load(MODEL_PATH)
 # -----------------------------------------------------------------------------  
 # FEATURE ENGINEERING  
