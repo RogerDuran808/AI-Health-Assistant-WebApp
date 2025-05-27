@@ -1,5 +1,5 @@
 import useFitbitData from "../hooks/useFitbitData";
-import MetricCard    from "./MetricCard";
+import MetricCard from "./MetricCard";
 import useRecommendation from "../hooks/useRecomendation";
 import {
   ResponsiveContainer,
@@ -31,40 +31,40 @@ const METRICS = {
 
 export default function Dashboard() {
   const { data, loading, error } = useFitbitData();
-  const {rec, loading:genLoading, error:genErr, generate} = useRecommendation()
+  const { rec, loading: genLoading, error: genErr, generate } = useRecommendation();
 
   if (loading) return <p className="p-8">Carregant…</p>;
-  if (error)   return <p className="p-8 text-red-500">Error: {error.message}</p>;
-  if (!data)   return <p className="p-8">No hi ha dades.</p>;
+  if (error) return <p className="p-8 text-red-500">Error: {error.message}</p>;
+  if (!data) return <p className="p-8">No hi ha dades.</p>;
 
-  /* donut data (rodonim a 0 decimals) */
+  // Dades per al gràfic de son
   const stages = [
-    { name: "Profund",  value: Math.round((data.sleep_deep_ratio  ?? 0) * 100), fill:"#4f46e5" },
-    { name: "Lleuger", value: Math.round((data.sleep_light_ratio ?? 0) * 100), fill:"#6366f1" },
-    { name: "REM",   value: Math.round((data.sleep_rem_ratio   ?? 0) * 100), fill:"#818cf8" },
-    { name: "Despert",  value: Math.round((data.sleep_wake_ratio  ?? 0) * 100), fill:"#c7d2fe" },
+    { name: "Profund",  value: Math.round((data.sleep_deep_ratio  ?? 0) * 100), fill: "#4f46e5" },
+    { name: "Lleuger", value: Math.round((data.sleep_light_ratio ?? 0) * 100), fill: "#6366f1" },
+    { name: "REM",    value: Math.round((data.sleep_rem_ratio   ?? 0) * 100), fill: "#818cf8" },
+    { name: "Despert", value: Math.round((data.sleep_wake_ratio  ?? 0) * 100), fill: "#c7d2fe" },
   ];
 
   return (
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-        {/* Perfil */}
-         <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-           <ProfileCard
-             name={data.name}
-             age={data.age}
-             gender={data.gender}
-             bmi={data.bmi}
-           />
-         </div>
+        {/* Perfil + Fàtiga */}
+        <div className="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ProfileCard
+            name={data.name}
+            age={data.age}
+            gender={data.gender}
+            bmi={data.bmi}
+          />
+          <FatigueBadge pred={data.tired_pred} prob={data.tired_prob} />
+        </div>
 
-        {/* Tarjetas agrupadas */}
+        {/* Tarjetas agrupades */}
         {Object.entries(METRICS).map(([title, keys]) => (
           <section key={title} className="mb-10">
             <h3 className="mb-4 text-lg font-semibold text-gray-700">{title}</h3>
-
-            <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+            <div className="grid gap-6 grid-cols-[repeat(auto-fit,_minmax(160px,_1fr))]">
               {keys.map((k) => (
                 <MetricCard key={k} name={k} value={data[k]} loading={loading} />
               ))}
@@ -74,13 +74,6 @@ export default function Dashboard() {
 
         {/* Gràfic de son */}
         <SleepOverviewCard stages={stages} stats={data} />
-
-
-        {/* Fatigue */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <FatigueBadge pred={data.tired_pred} prob={data.tired_prob} />
-        </div>
-
 
         {/* Recomanació personalitzada */}
         <div className="mt-8">
