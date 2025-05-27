@@ -1,8 +1,6 @@
 # Ignorar dependencias
 node_modules/
 
-# Ignorar node_modules de subcarpetas (opcional, ya lo cubre la regla de arriba)
-frontend/node_modules/
 
 # Entornos y datos privados
 .venv/
