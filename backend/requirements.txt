@@ -1,0 +1,10 @@
+fastapi==0.111.0
+uvicorn==0.30.1
+pandas
+numpy
+fitbit
+requests
+python-dotenv
+openai>=1.14
+joblib>=1.2.0
+imbalanced-learn>=0.10.1

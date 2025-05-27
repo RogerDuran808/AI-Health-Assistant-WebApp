@@ -1,0 +1,13 @@
+ {
+ "files.exclude": {
+    "**/node_modules": true,
+    "**/.venv": true
+  },
+
+"docker.enableDockerCompose": true,
+"docker.dockerComposeBuild": true,
+
+"git.showIgnoredFiles": false,
+"git.untrackedChanges": "mixed"
+
+}
