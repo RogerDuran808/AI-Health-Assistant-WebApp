@@ -9,22 +9,21 @@ import {
   Legend
 } from "recharts";
 import ProfileCard from "./ProfileCard";
+import FatigueBadge from "./FatigueBadge";
+import SleepOverviewCard from "./SleepOverviewCard";
 
 const METRICS = {
-  Actividad: [
+  Activitat: [
     "calories", "steps",
     "lightly_active_minutes", "moderately_active_minutes",
     "very_active_minutes", "sedentary_minutes",
   ],
-  "Frecuencia cardiaca": [
+  "Freqüència cardíaca": [
     "resting_hr", "minutes_below_default_zone_1",
     "minutes_in_default_zone_1", "minutes_in_default_zone_2",
     "minutes_in_default_zone_3",
   ],
-  Sueño: [
-    "minutesAsleep", "minutesAwake", "sleep_efficiency",
-  ],
-  Biomarcadores: [
+  Biomarcadors: [
     "daily_temperature_variation", "rmssd", "spo2",
     "full_sleep_breathing_rate",
   ],
@@ -40,10 +39,10 @@ export default function Dashboard() {
 
   /* donut data (rodonim a 0 decimals) */
   const stages = [
-    { name: "Deep",  value: Math.round((data.sleep_deep_ratio  ?? 0) * 100), fill:"#4f46e5" },
-    { name: "Light", value: Math.round((data.sleep_light_ratio ?? 0) * 100), fill:"#6366f1" },
+    { name: "Profund",  value: Math.round((data.sleep_deep_ratio  ?? 0) * 100), fill:"#4f46e5" },
+    { name: "Lleuger", value: Math.round((data.sleep_light_ratio ?? 0) * 100), fill:"#6366f1" },
     { name: "REM",   value: Math.round((data.sleep_rem_ratio   ?? 0) * 100), fill:"#818cf8" },
-    { name: "Wake",  value: Math.round((data.sleep_wake_ratio  ?? 0) * 100), fill:"#c7d2fe" },
+    { name: "Despert",  value: Math.round((data.sleep_wake_ratio  ?? 0) * 100), fill:"#c7d2fe" },
   ];
 
   return (
@@ -73,30 +72,17 @@ export default function Dashboard() {
           </section>
         ))}
 
-        {/* Donut fases de son */}
-        <div className="mt-12 bg-white/70 rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Sleep Stage Distribution</h2>
+        {/* Gràfic de son */}
+        <SleepOverviewCard stages={stages} stats={data} />
 
-          <ResponsiveContainer width="100%" height={320}>
-            <RadialBarChart
-              innerRadius="20%"
-              outerRadius="120%"
-              startAngle={90}
-              endAngle={-270}
-              data={stages}
-            >
-              <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-              <RadialBar dataKey="value" cornerRadius={5} label={{ position:"inside", fill:"374151", formatter:(v)=>`${v}%` }} />
 
-              <Legend
-                iconType="circle"
-                formatter={(v) => v}
-                wrapperStyle={{ bottom: 0 }}
-              />
-            </RadialBarChart>
-          </ResponsiveContainer>
+        {/* Fatigue */}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <FatigueBadge pred={data.tired_pred} prob={data.tired_prob} />
         </div>
 
+
+        {/* Recomanació personalitzada */}
         <div className="mt-8">
           <button
             onClick={() => generate(data)}

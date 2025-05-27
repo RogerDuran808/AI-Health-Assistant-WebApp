@@ -19,35 +19,29 @@ import {
 
 /* Diccionari de meta-dades (etiqueta + icona + unitats) */ 
 const META = {
-  age:                       { label: "Age",                   icon: UserIcon          },
-  gender:                    { label: "Gender",                icon: UserIcon          },
-  bmi:                       { label: "BMI",                   icon: UserIcon,   unit: "" },
   calories:                  { label: "Calories",              icon: FireIcon,   unit: " kcal"},
-  steps:                     { label: "Steps",                 icon: Footprints, unit: ""       },
-  lightly_active_minutes:    { label: "Lightly Active",        icon: Activity,   unit: " min"  },
-  moderately_active_minutes: { label: "Moderately Active",      icon: Zap,        unit: " min"  },
-  very_active_minutes:       { label: "Very Active",            icon: Zap,        unit: " min"  },
-  sedentary_minutes:         { label: "Sedentary",              icon: Sofa,       unit: " min"  },
+  steps:                     { label: "Pasos",                 icon: Footprints, unit: ""       },
+  lightly_active_minutes:    { label: "Activitat Lleu",        icon: Activity,   unit: " min"  },
+  moderately_active_minutes: { label: "Activitat Moderada",      icon: Zap,        unit: " min"  },
+  very_active_minutes:       { label: "Activitat Alta",            icon: Zap,        unit: " min"  },
+  sedentary_minutes:         { label: "Sedentarisme",              icon: Sofa,       unit: " min"  },
 
-  resting_hr:                { label: "Resting HR",            icon: HeartIcon,  unit: " bpm"},
+  resting_hr:                { label: "FC en repòs",            icon: HeartIcon,  unit: " bpm"},
   rmssd:                     { label: "RMSSD",                 icon: HeartIcon,  unit: " ms"},
   spo2:                      { label: "SpO2",                  icon: Activity,   unit: " %"},
 
-  minutesToFallAsleep:       { label: "Min. to Fall Asleep",   icon: MoonIcon,   unit: " min"  },
   minutesAsleep:             { label: "Minutes Asleep",        icon: MoonIcon,   unit: " min"  },
   minutesAwake:              { label: "Minutes Awake",         icon: MoonIcon,   unit: " min"  },
-  minutesAfterWakeup:        { label: "Min. After Wakeup",     icon: MoonIcon,   unit: " min"  },
 
-  minutes_below_default_zone_1: { label: "Below Zone 1",          icon: AlertCircle,     unit: " min"  },
-  minutes_in_default_zone_1:    { label: "Zone 1",                icon: HeartIcon,           unit: " min"  },
-  minutes_in_default_zone_2:    { label: "Zone 2",                icon: HeartPulse,      unit: " min"  },
-  minutes_in_default_zone_3:    { label: "Zone 3",                icon: Zap,             unit: " min"  },
+  minutes_below_default_zone_1: { label: "Sota Zona 1",          icon: AlertCircle,     unit: " min"  },
+  minutes_in_default_zone_1:    { label: "Zona 1",                icon: HeartIcon,           unit: " min"  },
+  minutes_in_default_zone_2:    { label: "Zona 2",                icon: HeartPulse,      unit: " min"  },
+  minutes_in_default_zone_3:    { label: "Zona 3",                icon: Zap,             unit: " min"  },
   
   sleep_efficiency:          { label: "Sleep Eff.",            icon: MoonIcon,   unit: "%", bar: true },
 
   daily_temperature_variation: { label: "Temp. Variation",     icon: Thermometer, unit: ""       },
   full_sleep_breathing_rate:   { label: "Breathing Rate",      icon: Activity,   unit: " br/min" },
-  wake_after_sleep_pct:        { label: "Wake After Sleep %",  icon: AlertCircle,unit: "%"      },
 };
 
 export default function MetricCard({ name, value, loading }) {
@@ -69,7 +63,17 @@ export default function MetricCard({ name, value, loading }) {
       {loading ? (
         <Loader2 className="animate-spin h-5 w-5 text-gray-400" />
       ) : (
-        <span className="text-xl font-semibold">{formatted}</span>
+           <>
+            <span className="text-xl font-semibold">{formatted}</span>
+            {meta.bar && typeof value === "number" && (
+              <div className="w-full h-2 mt-1 bg-gray-200 rounded">
+                <div
+                  className="h-full rounded bg-indigo-500"
+                  style={{ width: `${value}%` }}
+                />
+              </div>
+            )}
+          </>
       )}
     </div>
   );
