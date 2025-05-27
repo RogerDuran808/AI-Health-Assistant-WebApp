@@ -1,54 +1,84 @@
-from fastapi import FastAPI, Response, status, HTTPException
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
+
 from fitbit_fetch import fetch_fitbit_data
 from ai import get_recommendation
 
-app = FastAPI(title="Fitbit Dashboard API")
+import numpy as np
+import logging
 
-# Allow local dev and deployed UI to talk to API
+app = FastAPI(title="Fitbit Dashboard API")
+log = logging.getLogger(__name__)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["GET", "POST"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
+# ---------- Helper -----------------------------------------------------------
 def get_fitbit_data() -> dict:
     """
-    Converteix el resultat de fetch_fitbit_data a dict.
+    Converteix el resultat de fetch_fitbit_data a dict serialitzable.
     Accepta dict, list[dict] o pandas.DataFrame.
     """
-    try:
-        raw = fetch_fitbit_data()
+    raw = fetch_fitbit_data()
 
-        # 1) ja és dict  -----------------------------------------
-        if isinstance(raw, dict):
-            return raw
+    # 1) dict ----------------------------------------------------------
+    if isinstance(raw, dict):
+        record = raw
 
-        # 2) list[dict]  -----------------------------------------
-        if isinstance(raw, list) and len(raw) > 0 and isinstance(raw[0], dict):
-            return raw[0]
+    # 2) list[dict] ----------------------------------------------------
+    elif isinstance(raw, list) and raw and isinstance(raw[0], dict):
+        record = raw[0]
 
-        # 3) pandas.DataFrame  -----------------------------------
+    # 3) pandas.DataFrame ---------------------------------------------
+    else:
         try:
             import pandas as pd
             if isinstance(raw, pd.DataFrame) and len(raw) > 0:
-                return raw.iloc[0].to_dict()
-        except ImportError:
-            pass
+                record = raw.iloc[0].to_dict()
+            else:
+                raise ValueError
+        except (ImportError, ValueError):
+            raise HTTPException(
+                status_code=500,
+                detail="fetch_fitbit_data must return dict, list[dict] or DataFrame",
+            )
 
-        # 4) res coincideix  → error
-        raise ValueError("fetch_fitbit_data should return dict, list[dict] or DataFrame")
+    # ---------- Neteja JSON-unsafe (NaN, numpy, datetime, …) ----------
+    if isinstance(record, dict):
+        # converteix NaN→None i elimina claus sense valor útil
+        record = {
+            k: (None if isinstance(v, float) and np.isnan(v) else v)
+            for k, v in record.items()
+            if v is not None and not (isinstance(v, float) and np.isnan(v))
+        }
 
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    # jsonable_encoder converteix numpy.*, datetime, enums, etc.
+    return jsonable_encoder(record, exclude_none=True)
 
+
+# ---------- Endpoints --------------------------------------------------------
 @app.get("/fitbit-data")
 def fitbit_data():
-    return get_fitbit_data()
+    try:
+        payload = get_fitbit_data()
+        return JSONResponse(content=payload)
+    except Exception as exc:
+        log.exception("/fitbit-data failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
 
 @app.post("/recommend")
 def recommend(payload: dict):
-    text = get_recommendation(payload)
-    return {"text": text}
+    try:
+        text = get_recommendation(payload)
+        return {"text": text}
+    except Exception as exc:
+        log.exception("/recommend failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc

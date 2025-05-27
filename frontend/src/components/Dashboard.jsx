@@ -1,10 +1,11 @@
 // frontend / src / components / Dashboard.jsx
 import useFitbitData from "../hooks/useFitbitData";
 import MetricCard from "./MetricCard";
-import useRecommendation from "../hooks/useRecomendation";
+import useRecomendation from "../hooks/useRecomendation"; // ✅ correcció del path (dues em)
 import ProfileCard from "./ProfileCard";
 import FatigueBadge from "./FatigueBadge";
 import SleepOverviewCard from "./SleepOverviewCard";
+import RecommendationCard from "./RecommendationCard";
 
 const METRICS = {
   Activitat: [
@@ -33,11 +34,11 @@ const METRICS = {
 export default function Dashboard() {
   const { data, loading, error } = useFitbitData();
   const {
-    rec,
+    rec: recommendation,
     loading: genLoading,
     error: genErr,
     generate,
-  } = useRecommendation();
+  } = useRecomendation();
 
   if (loading) return <p className="p-8">Carregant…</p>;
   if (error) return <p className="p-8 text-red-500">Error: {error.message}</p>;
@@ -84,17 +85,10 @@ export default function Dashboard() {
         {/* Mètriques */}
         {Object.entries(METRICS).map(([title, keys]) => (
           <section key={title} className="mb-10">
-            <h3 className="mb-4 text-lg font-semibold text-gray-700">
-              {title}
-            </h3>
+            <h3 className="mb-4 text-lg font-semibold text-gray-700">{title}</h3>
             <div className="grid gap-6 grid-cols-[repeat(auto-fit,_minmax(160px,_1fr))]">
               {keys.map((k) => (
-                <MetricCard
-                  key={k}
-                  name={k}
-                  value={data[k]}
-                  loading={loading}
-                />
+                <MetricCard key={k} name={k} value={data[k]} loading={loading} />
               ))}
             </div>
           </section>
@@ -113,13 +107,9 @@ export default function Dashboard() {
             {genLoading ? "Generant…" : "Generar recomanació personalitzada"}
           </button>
 
-          {genErr && <p className="mt-2 text-red-500">{genErr}</p>}
-          {rec && (
-            <div className="mt-4 bg-white rounded-xl shadow p-4">
-              <h3 className="font-semibold mb-2">Recomanació</h3>
-              <p>{rec}</p>
-            </div>
-          )}
+          {genErr && <p className="mt-4 text-red-500">Error: {genErr}</p>}
+
+          <RecommendationCard text={recommendation} />
         </div>
       </div>
     </div>
