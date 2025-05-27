@@ -8,6 +8,7 @@
 "docker.dockerComposeBuild": true,
 
 "git.showIgnoredFiles": false,
-"git.untrackedChanges": "mixed"
+"git.untrackedChanges": "mixed",
+"git.showUntrackedFiles": false
 
 }
