@@ -1,4 +1,4 @@
-// src/components/MetricCard.jsx
+// frontend/src/components/MetricCard.jsx
 import PropTypes from "prop-types";
 import * as Icons from "lucide-react";
 import { Loader2 } from "lucide-react";

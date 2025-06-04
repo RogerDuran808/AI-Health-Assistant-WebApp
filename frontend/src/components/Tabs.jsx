@@ -1,10 +1,10 @@
-// src/components/Tabs.jsx
+// frontend/src/components/Tabs.jsx
 import { useState } from "react";
 import PropTypes from "prop-types";
 
 /**
  * Tabs component
- * Props: tabs = [{ label: string, content: ReactNode }]
+ * Finestres per mostrar diferents continguts, amb un botó per activar cada finestra.
  */
 export default function Tabs({ tabs }) {
   const [active, setActive] = useState(tabs[0]?.label);

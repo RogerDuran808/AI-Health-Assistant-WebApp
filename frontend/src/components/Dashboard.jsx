@@ -1,7 +1,7 @@
-// frontend / src / components / Dashboard.jsx
+// frontend/src/components/Dashboard.jsx
 import useFitbitData from "../hooks/useFitbitData";
 import MetricCard from "./MetricCard";
-import useRecomendation from "../hooks/useRecomendation"; // ✅ correcció del path (dues em)
+import useRecomendation from "../hooks/useRecomendation";
 import ProfileCard from "./ProfileCard";
 import FatigueBadge from "./FatigueBadge";
 import SleepOverviewCard from "./SleepOverviewCard";

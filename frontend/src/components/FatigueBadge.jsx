@@ -1,4 +1,4 @@
-// src/components/FatigueBadge.jsx
+// frontend/src/components/FatigueBadge.jsx
 import PropTypes from "prop-types";
 import { Card, CardContent } from "./ui/card";
 import { ICONS, COLORS } from "../constants/ui";
