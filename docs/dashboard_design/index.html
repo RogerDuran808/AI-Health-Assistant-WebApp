@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitPredict - Tauler de Control Intel·ligent</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <nav class="sidebar" id="sidebar">
+            <div class="logo"> <i class="fas fa-brain"></i> FitPredict AI </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#dashboard" class="nav-link active"><i class="fas fa-chart-line"></i>Tauler de Control</a></li>
+                <li class="nav-item"><a href="#vital-metrics" class="nav-link"><i class="fas fa-heartbeat"></i>Mètriques Vitals</a></li>
+                <li class="nav-item"><a href="#sleep" class="nav-link"><i class="fas fa-bed"></i>Anàlisi del Son</a></li>
+                <li class="nav-item"><a href="#ai-assistant" class="nav-link"><i class="fas fa-robot"></i>Assistent IA</a></li>
+                <li class="nav-item" style="margin-top: auto; padding-top: 2rem;">
+                    <a href="#" id="settingsLink" class="nav-link"> <i class="fas fa-cog"></i>Configuració </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content" id="mainContent">
+            <header class="header" id="dashboard">
+                 <div class="header-content">
+                    <div>
+                        <h1 class="header-title">Tauler de Control Intel·ligent</h1>
+                        <p class="header-subtitle" id="currentDateSubtitle">Carregant data...</p>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">--</div>
+                        <div class="user-info">
+                            <h3 id="userName">Carregant usuari...</h3>
+                            <p style="color: var(--text-secondary);" id="userRoleAge">Carregant...</p>
+                            <div class="user-stats">
+                                <div class="user-stat"><div class="user-stat-value" id="userBmi">--</div><div class="user-stat-label">BMI</div></div>
+                                <div class="user-stat"><div class="user-stat-value" id="userWeight">--kg</div><div class="user-stat-label">Pes</div></div>
+                                <div class="user-stat"><div class="user-stat-value" id="userHeight">--cm</div><div class="user-stat-label">Alçada</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="medical-fatigue-row">
+                <div class="medical-context" id="medicalContextSection">
+                    <div class="context-header">
+                        <div class="context-header-title">
+                            <i class="fas fa-notes-medical"></i>
+                            <h3>Context Mèdic Personal</h3>
+                        </div>
+                        <button class="edit-context-btn" id="editMedicalContextBtn">
+                            <i class="fas fa-edit"></i>Editar
+                        </button>
+                    </div>
+                    <div class="medical-conditions" id="medicalConditionsDisplay">
+                        <p>Carregant condicions mèdiques...</p>
+                    </div>
+                </div>
+                <section class="fatigue-prediction-card">
+                    <div class="section-header">
+                        <h2>Nivell de Fatiga Estimada</h2>
+                        <p>Probabilitat de fatiga basada en les teves dades biomètriques i patrons d'activitat.</p>
+                    </div>
+                    <div class="fatigue-display">
+                        <div class="fatigue-indicator-container">
+                            <div class="fatigue-indicator-bg"></div>
+                            <canvas id="fatigueIndicatorChart"></canvas>
+                            <div class="fatigue-value-display">
+                                <div id="fatigueProbabilityText" class="fatigue-probability">--%</div>
+                                <div id="fatigueStatusText" class="fatigue-status-label">Carregant...</div>
+                            </div>
+                        </div>
+                        <div class="fatigue-support-metrics">
+                            <div class="support-metric">
+                                <i class="fas fa-cogs"></i>
+                                <div class="support-metric-info">
+                                    <div class="support-metric-value" id="fatigueModelSensitivity">--%</div>
+                                    <div class="support-metric-label">Sensibilitat del model</div>
+                                </div>
+                            </div>
+                            <div class="support-metric">
+                                 <i class="fas fa-check-circle"></i>
+                                <div class="support-metric-info">
+                                    <div class="support-metric-value" id="fatigueDataQuality">-- / 10</div>
+                                    <div class="support-metric-label">Qualitat de dades</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.75rem; font-weight: 700;">Activitat</h2>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-bottom: 2rem;" class="responsive-grid-activity">
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div class="card"> <div class="card-header"> <h3 class="card-title">PASSOS</h3> <div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-1), var(--primary-dark));"><i class="fas fa-shoe-prints"></i></div> </div> <div class="metric-value" id="activitySteps">----</div> <div class="metric-label">PASSOS AVUI</div> </div>
+                    <div class="card"> <div class="card-header"> <h3 class="card-title">CALORIES</h3> <div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-5), #f97316);"><i class="fas fa-fire"></i></div> </div> <div class="metric-value" id="activityCalories">---- <span style="font-size: 1.5rem; opacity: 0.8;">kcal</span></div> <div class="metric-label">CALORIES CREMADES</div> </div>
+                </div>
+                <div class="card" style="padding: 1.5rem;"> <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"> <h3 style="margin: 0; font-size: 1.25rem; font-weight: 600;">DISTRIBUCIÓ D'ACTIVITAT</h3> <div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-2), var(--chart-color-1)); margin: 0;"><i class="fas fa-chart-bar"></i></div> </div> <div style="flex-grow: 1; position: relative; min-height: 200px;"> <canvas id="activityChart"></canvas> </div> <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;"> <div style="display: flex; align-items: center; gap: 0.5rem;"><div style="width: 12px; height: 12px; background-color: var(--chart-color-1); border-radius: 3px;"></div><span>Lleu</span></div> <div style="display: flex; align-items: center; gap: 0.5rem;"><div style="width: 12px; height: 12px; background-color: var(--chart-color-2); border-radius: 3px;"></div><span>Moderada</span></div> <div style="display: flex; align-items: center; gap: 0.5rem;"><div style="width: 12px; height: 12px; background-color: var(--chart-color-3); border-radius: 3px;"></div><span>Alta</span></div> <div style="display: flex; align-items: center; gap: 0.5rem;"><div style="width: 12px; height: 12px; background-color: var(--chart-color-inactive); border-radius: 3px;"></div><span>Inactiu</span></div> </div> </div>
+            </div>
+
+            <h2 style="margin: 2rem 0 1.5rem; font-size: 1.75rem; font-weight: 700;" id="vital-metrics">Mètriques Cardíaques i Biomarcadors</h2>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-bottom: 2rem;" class="responsive-grid-vitals">
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div class="card"> <div class="card-header"><h3 class="card-title">FC Màxima</h3><div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-5), #f97316);"><i class="fas fa-heart"></i></div></div> <div class="metric-value" id="hrMax">--</div><div class="metric-label">BPM</div> </div>
+                    <div class="card"> <div class="card-header"><h3 class="card-title">FC Mínima</h3><div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-6), #059669);"><i class="fas fa-heart"></i></div></div> <div class="metric-value" id="hrMin">--</div><div class="metric-label">BPM</div> </div>
+                    <div class="card"> <div class="card-header"><h3 class="card-title">FC en Repòs</h3><div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-1), var(--primary-dark));"><i class="fas fa-heart"></i></div></div> <div class="metric-value" id="hrResting">--</div><div class="metric-label">BPM</div> </div>
+                </div>
+                <div class="card" style="padding: 1.5rem;"> <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"> <h3 style="margin: 0; font-size: 1.25rem; font-weight: 600;">ZONES DE FREQÜÈNCIA</h3> <div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-1), var(--primary-dark)); margin: 0;"><i class="fas fa-chart-line"></i></div> </div> <div style="flex-grow: 1; position: relative; min-height: 300px;"> <canvas id="heartRateChart"></canvas> </div> <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;"> <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 20px;"><div style="width: 12px; height: 12px; background-color: var(--chart-color-1); border-radius: 3px;"></div><span style="font-size: 0.875rem; color: #e5e7eb;">Sota Zona 1</span></div> <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 20px;"><div style="width: 12px; height: 12px; background-color: var(--chart-color-3); border-radius: 3px;"></div><span style="font-size: 0.875rem; color: #e5e7eb;">Zona 1</span></div> <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 20px;"><div style="width: 12px; height: 12px; background-color: var(--chart-color-2); border-radius: 3px;"></div><span style="font-size: 0.875rem; color: #e5e7eb;">Zona 2</span></div> <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 20px;"><div style="width: 12px; height: 12px; background-color: var(--chart-color-4); border-radius: 3px;"></div><span style="font-size: 0.875rem; color: #e5e7eb;">Zona 3</span></div> </div> </div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="card"> <div class="card-header"><h3 class="card-title">TEMP. VARIATION</h3><div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-1), var(--primary-dark));"><i class="fas fa-temperature-high"></i></div></div> <div class="metric-value" id="biomarkerTempVar">--</div><div class="metric-label">°C vs Basal</div> </div>
+                <div class="card"> <div class="card-header"><h3 class="card-title">RMSSD</h3><div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-2), var(--secondary));"><i class="fas fa-heart-pulse"></i></div></div> <div class="metric-value" id="biomarkerRmssd">--</div><div class="metric-label">ms</div> </div>
+                <div class="card"> <div class="card-header"><h3 class="card-title">SPO2</h3><div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-6), #059669);"><i class="fas fa-lungs"></i></div></div> <div class="metric-value" id="biomarkerSpo2">--</div><div class="metric-label">%</div> </div>
+                <div class="card"> <div class="card-header"><h3 class="card-title">BREATHING RATE</h3><div class="card-icon" style="background: linear-gradient(135deg, var(--chart-color-3), #047481);"><i class="fas fa-wind"></i></div></div> <div class="metric-value" id="biomarkerBreathRate">--</div><div class="metric-label">rpm</div> </div>
+            </div>
+
+            <div class="sleep-analysis" id="sleep">
+                <div class="sleep-header"> <h3>Anàlisi del Son</h3> <div class="tab-container"> <button class="tab-button active" data-tab="fases-tab">Fases</button> <button class="tab-button" data-tab="metrics-tab">Mètriques</button> <button class="tab-button" data-tab="trend-tab">Tendència</button> </div> </div>
+                <div id="fases-tab" class="tab-content active"> <div class="sleep-overview"> <div class="sleep-total"> <div class="sleep-total-label">Temps total de son</div> <div class="sleep-total-time" id="sleepTotalTime">--h --m</div> <div class="sleep-quality" id="sleepQualityText"><span class="quality-good">Carregant...</span></div> </div> <div class="chart-container"> <div class="chart-wrapper"> <canvas id="sleepChart"></canvas> <div class="chart-center"> <div class="total-sleep" id="sleepChartTotalTime">--h --m</div> <div class="sleep-efficiency" id="sleepChartEfficiency">--% eficiència</div> </div> </div> </div> <div class="sleep-stages" id="sleepStagesList"> <!-- Populated by JS --> </div> </div> </div>
+                <div id="metrics-tab" class="tab-content"> <div class="metrics-grid" id="sleepMetricsGrid"> <!-- Populated by JS --> </div> </div>
+                <div id="trend-tab" class="tab-content"> <div class="trend-chart-container"><canvas id="sleepTrendChart"></canvas></div> <div class="trend-legend"> <div class="trend-legend-item"><div class="trend-legend-color" style="background-color: rgba(99, 102, 241, 0.9);"></div><span>Són profund</span></div> <div class="trend-legend-item"><div class="trend-legend-color" style="background-color: rgba(6, 182, 212, 0.8);"></div><span>Són lleuger</span></div> <div class="trend-legend-item"><div class="trend-legend-color" style="background-color: rgba(139, 92, 246, 0.85);"></div><span>REM</span></div> <div class="trend-legend-item"><div class="trend-legend-color" style="background-color: rgba(245, 158, 11, 0.65);"></div><span>Despert</span></div> </div> </div>
+            </div>
+
+            <section class="ai-assistant-section" id="ai-assistant"> <h2>Assistent Personalitzat amb IA</h2> <p class="section-subtitle">Descobreix com la nostra Intel·ligència Artificial analitza les teves dades per crear plans d'entrenament i recomanacions de rendiment úniques per a tu, respectant sempre el teu context mèdic.</p> <div class="ai-explanation"> <div class="explanation-card"> <i class="fas fa-database"></i><h4>Recopilació Integral de Dades</h4> <p>L'assistent processa contínuament les teves mètriques vitals, dades d'activitat, qualitat del son i el teu historial mèdic per entendre el teu estat actual de forma holística.</p> </div> <div class="explanation-card"> <i class="fas fa-brain"></i><h4>Anàlisi Intel·ligent</h4> <p>Mitjançant algoritmes avançats, l'IA identifica patrons, correlacions i possibles àrees de millora o risc, considerant les teves condicions mèdiques preexistents i objectius.</p> </div> <div class="explanation-card"> <i class="fas fa-bullseye"></i><h4>Recomanacions Personalitzades</h4> <p>Rep un pla d'entrenament adaptat, consells nutricionals i estratègies de recuperació dissenyades específicament per optimitzar el teu rendiment físic de manera segura i efectiva.</p> </div> </div> <button class="ai-assistant-button" id="generateAIPlanBtn"> <i class="fas fa-cogs"></i> Generar Pla Personalitzat amb IA </button> </section>
+        </main>
+    </div>
+
+    <!-- Modal per Editar Context Mèdic -->
+    <div id="medicalContextModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Context Mèdic</h2>
+                <button class="close-button" id="closeMedicalModalBtn">×</button>
+            </div>
+            <form id="medicalContextForm">
+                <div id="existing-conditions-container"></div>
+                <div id="new-conditions-container"></div>
+                <button type="button" id="addConditionBtn" class="modal-button secondary" style="margin-top: 1rem; margin-bottom: 1.5rem; width: 100%;">
+                    <i class="fas fa-plus-circle"></i> Afegir Nova Condició
+                </button>
+                <div class="modal-actions">
+                    <button type="button" id="cancelMedicalModalBtn" class="modal-button secondary">Cancel·lar</button>
+                    <button type="submit" class="modal-button primary">Guardar Canvis</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
