@@ -1,10 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  margin: 0; /* Asegurar que no haya márgenes por defecto */
+  padding: 0; /* Asegurar que no haya paddings por defecto */
+}
+
 /* petits retocs globals */
 body{
-    @apply bg-gray-100 text-gray-900 font-sans antialiased;
-  }
+  min-height: 100%; /* Asegura que el body ocupe al menos toda la altura */
+  @apply bg-gray-100 text-gray-900 font-sans antialiased;
+}
 
 /* Targetes amb efecte “glass” */
 .shadow-glass{
