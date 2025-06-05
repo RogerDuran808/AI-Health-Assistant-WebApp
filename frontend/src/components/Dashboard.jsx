@@ -64,7 +64,7 @@ const calculateDataQuality = (data) => {
   return parseFloat(qualityScore.toFixed(1)); // Return score rounded to one decimal place
 };
 
-export default function Dashboard() {
+export default function Dashboard({ isLoading }) {
   const getFormattedDate = () => {
     const today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };

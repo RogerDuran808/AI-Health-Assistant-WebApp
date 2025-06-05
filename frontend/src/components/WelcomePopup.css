@@ -1,0 +1,160 @@
+:root {
+    --popup-bg: #1a1a3a; /* Similar to sidebar bg-secondary */
+    --popup-card-bg: rgba(255, 255, 255, 0.05); /* Similar to bg-card */
+    --popup-border: rgba(255, 255, 255, 0.1);
+    --popup-text-primary: #ffffff;
+    --popup-text-secondary: #a1a1aa;
+    --popup-accent: #6366f1; /* Primary color from dashboard */
+    --popup-radius: 12px;
+}
+
+.welcome-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top */
+    backdrop-filter: blur(5px);
+}
+
+.welcome-popup-content {
+    background-color: var(--popup-bg);
+    padding: 2.5rem 3rem;
+    border-radius: var(--popup-radius);
+    border: 1px solid var(--popup-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 900px; /* Max width for the popup */
+    color: var(--popup-text-primary);
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.welcome-popup-content h2 {
+    font-size: 2.25rem; /* Larger title */
+    font-weight: 700;
+    color: var(--popup-accent);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.welcome-popup-content .intro-text {
+    font-size: 1rem;
+    color: var(--popup-text-secondary);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.feature-card {
+    background-color: var(--popup-card-bg);
+    padding: 1.75rem;
+    border-radius: var(--popup-radius);
+    border: 1px solid var(--popup-border);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: var(--popup-accent);
+    margin-bottom: 1rem;
+    text-align: center; /* Center icon within its div */
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--popup-text-primary);
+    margin-bottom: 0.75rem;
+    text-align: center;
+}
+
+.feature-card p {
+    font-size: 0.9rem;
+    color: var(--popup-text-secondary);
+    line-height: 1.6;
+}
+
+.close-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--popup-text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+}
+
+.close-button:hover {
+    color: var(--popup-text-primary);
+}
+
+.understand-button {
+    display: block;
+    margin: 2rem auto 0 auto;
+    padding: 0.75rem 2rem;
+    background-color: var(--popup-accent);
+    color: var(--popup-text-primary);
+    border: none;
+    border-radius: var(--popup-radius);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.understand-button:hover {
+    background-color: var(--primary-dark); /* Using a variable from root dashboard css */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .welcome-popup-content {
+        padding: 2rem 1.5rem;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    .welcome-popup-content h2 {
+        font-size: 1.75rem;
+    }
+    .features-grid {
+        grid-template-columns: 1fr; /* Stack cards on smaller screens */
+    }
+}
