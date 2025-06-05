@@ -180,6 +180,30 @@
     font-size: 1.25rem;
 }
 
+/* Main header */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.5rem; /* Only padding bottom, main-content has overall padding */
+  margin-bottom: 1.5rem; /* Space below header before other content */
+  /* border-bottom: 1px solid var(--border); Optional: if you want a separator */
+}
+
+.header-title-date h1 {
+  font-size: 1.75rem; /* approx 28px */
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.header-title-date p {
+  font-size: 0.875rem; /* approx 14px */
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
 .main-content {
     flex: 1;
     margin-left: 300px;
@@ -212,6 +236,43 @@
     font-size: 1.5rem;
 }
 
+/* Skeleton Loading Styles */
+:root {
+    --skeleton-base-color: rgba(255, 255, 255, 0.08); /* Un poco más claro que --bg-card */
+    --skeleton-shimmer-color: rgba(255, 255, 255, 0.12);
+}
+
+.skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%; /* Start off-screen to the left */
+    width: 150%;  /* Make it wide enough to cover the element */
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--skeleton-shimmer-color) 50%,
+        transparent 100%
+    );
+    animation: shimmer 1.5s infinite linear;
+    transform: skewX(-20deg); /* Optional: adds a slight angle to the shimmer */
+}
+
+@keyframes shimmer {
+    0% {
+        left: -150%;
+    }
+    100% {
+        left: 150%; /* Move across to the right */
+    }
+}
+
 /* Responsive Styles */
 @media (max-width: 1024px) { 
     .sidebar {
@@ -225,9 +286,6 @@
         margin-left: 0;
         width: 100%;
         padding: 1.5rem; /* Adjusted padding for smaller screens */
-    }
-    .main-content.sidebar-open {
-        /* Optional: could add a margin if sidebar overlays content */
     }
     .mobile-menu-btn {
         display: block;

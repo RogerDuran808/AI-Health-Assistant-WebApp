@@ -7,6 +7,8 @@ import ProfileCard from "./ProfileCard";
 import FatigueBadge from "./FatigueBadge";
 import SleepOverviewCard from "./SleepOverviewCard";
 import RecommendationCard from "./RecommendationCard";
+import ProfileCardSkeleton from "./ProfileCardSkeleton"; // Importar esqueleto
+import MetricCardSkeleton from "./MetricCardSkeleton";   // Importar esqueleto
 import './Dashboard.css'; // Importar el nuevo archivo CSS
 
 const METRICS = {
@@ -33,7 +35,60 @@ const METRICS = {
   ],
 };
 
+const KEY_METRICS_FOR_QUALITY = [
+  'calories',
+  'steps',
+  'lightly_active_minutes',
+  'moderately_active_minutes',
+  'very_active_minutes',
+  'sedentary_minutes',
+  'resting_hr',
+  'minutes_in_default_zone_2', // Assuming this one, not all zones were listed by user for quality
+  'daily_temperature_variation',
+  'rmssd',
+  'spo2',
+  'full_sleep_breathing_rate',
+  'sleep_deep_ratio',
+  'sleep_light_ratio',
+  'sleep_rem_ratio',
+  'sleep_wake_ratio',
+  'age',
+  'bmi',
+  'weight',
+  'height'
+];
+
+const calculateDataQuality = (data) => {
+  if (!data) return 0;
+  let validFields = 0;
+  KEY_METRICS_FOR_QUALITY.forEach(key => {
+    if (data[key] !== null && data[key] !== undefined) {
+      validFields++;
+    }
+  });
+  const qualityScore = (validFields / KEY_METRICS_FOR_QUALITY.length) * 10;
+  return parseFloat(qualityScore.toFixed(1)); // Return score rounded to one decimal place
+};
+
 export default function Dashboard() {
+  const getFormattedDate = () => {
+    const today = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    // Format date to 'Dijous, 5 de juny del 2025'
+    // Need to handle 'del' manually as toLocaleDateString might not include it directly for all locales/systems
+    let formattedDate = today.toLocaleDateString('ca-ES', options);
+    // Capitalize first letter
+    formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    // Replace 'de' with 'del' before year if month ends with vowel, very simplified for now
+    // A more robust solution might be needed for perfect grammar across all dates
+    const month = today.toLocaleDateString('ca-ES', { month: 'long' });
+    if (['a', 'e', 'i', 'o', 'u'].includes(month.slice(-1))) {
+        formattedDate = formattedDate.replace(` de ${today.getFullYear()}`, ` del ${today.getFullYear()}`);
+    } else {
+        formattedDate = formattedDate.replace(` de ${today.getFullYear()}`, ` de ${today.getFullYear()}`); // Default 'de'
+    }
+    return `${formattedDate} • Anàlisi en temps real`;
+  };
   const { data, loading, error } = useFitbitData();
   const {
     rec: recommendation,
@@ -59,16 +114,29 @@ export default function Dashboard() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  if (loading) return <div className="dashboard-body-styles"><p className="p-8" style={{color: 'white'}}>Carregant…</p></div>;
+  // Manejo de error y estado sin datos (después de que loading es false)
   if (error) return <div className="dashboard-body-styles"><p className="p-8 text-red-500" style={{color: 'red'}}>Error: {error.message}</p></div>;
-  if (!data) return <div className="dashboard-body-styles"><p className="p-8" style={{color: 'white'}}>No hi ha dades.</p></div>;
+  // Si no está cargando y no hay datos (después del fetch inicial)
+  if (!loading && !data) return <div className="dashboard-body-styles"><p className="p-8" style={{color: 'white'}}>No hi ha dades disponibles.</p></div>;
 
-  const stages = [
-    { name: "Profund", value: Math.round((data.sleep_deep_ratio ?? 0) * 100), fill: "#4f46e5" },
-    { name: "Lleuger", value: Math.round((data.sleep_light_ratio ?? 0) * 100), fill: "#6366f1" },
-    { name: "REM", value: Math.round((data.sleep_rem_ratio ?? 0) * 100), fill: "#818cf8" },
-    { name: "Despert", value: Math.round((data.sleep_wake_ratio ?? 0) * 100), fill: "#c7d2fe" },
+  // Initialize with empty/default values, will be populated when data is available
+  let sleepData = [
+    { name: "Profund", value: 0, fill: "#3b82f6" },
+    { name: "Lleuger", value: 0, fill: "#60a5fa" },
+    { name: "REM", value: 0, fill: "#93c5fd" },
+    { name: "Despert", value: 0, fill: "#c7d2fe" },
   ];
+  let dataQualityScore = 0;
+
+  if (data) {
+    sleepData = [
+      { name: "Profund", value: Math.round((data.sleep_deep_ratio ?? 0) * 100), fill: "#3b82f6" },
+      { name: "Lleuger", value: Math.round((data.sleep_light_ratio ?? 0) * 100), fill: "#60a5fa" },
+      { name: "REM", value: Math.round((data.sleep_rem_ratio ?? 0) * 100), fill: "#93c5fd" },
+      { name: "Despert", value: Math.round((data.sleep_wake_ratio ?? 0) * 100), fill: "#c7d2fe" },
+    ];
+    dataQualityScore = calculateDataQuality(data);
+  }
 
   return (
     // La clase 'dashboard-body-styles' se aplica al <body> globalmente mediante useEffect
@@ -114,35 +182,54 @@ export default function Dashboard() {
       </nav>
 
       <main className={`main-content`} id="mainContent">
-        {/* El contenido original del Dashboard.jsx se mantiene aquí dentro */}
-        {/* Puedes ajustar la clase 'max-w-full' o 'max-w-7xl' según necesites */}
-        <div className="max-w-full mx-auto"> 
-          {/* Perfil + Fatiga */}
-          <div className="mb-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-[2fr_1fr]">
+        <div className="main-header">
+          <div className="header-title-date">
+            <h1>Tauler de Control Intel·ligent</h1>
+            <p>{getFormattedDate()}</p>
+          </div>
+          {loading || !data ? (
+            <ProfileCardSkeleton />
+          ) : (
             <ProfileCard
               name={data.name}
               age={data.age}
-              gender={data.gender}
               bmi={data.bmi}
+              role="Atleta Amateur"
+              weight={data.weight || 75}
+              height={data.height || 180}
             />
-            <FatigueBadge pred={data.tired_pred} prob={data.tired_prob} />
+          )}
+        </div>
+
+        <div className="max-w-full mx-auto pt-4"> 
+          <div className="mb-10">
+            <FatigueBadge pred={data ? data.tired_pred : 0} prob={data ? data.tired_prob : 0} dataQuality={dataQualityScore} />
           </div>
 
           {/* Mètriques */}
           {Object.entries(METRICS).map(([title, keys]) => (
             <section key={title} className="mb-10">
-              {/* El estilo del título se heredará o puedes personalizarlo con nuevo CSS si es necesario */}
               <h3 className="mb-4 text-lg font-semibold" style={{color: 'var(--text-primary)'}}>{title}</h3>
               <div className="grid gap-6 grid-cols-[repeat(auto-fit,_minmax(160px,_1fr))]">
-                {keys.map((k) => (
-                  <MetricCard key={k} name={k} value={data[k]} loading={loading} />
-                ))}
+                {loading || !data ? (
+                  Array.from({ length: 3 }).map((_, idx) => (
+                    <MetricCardSkeleton key={`${title}-skeleton-${idx}`} />
+                  ))
+                ) : (
+                  keys.map((k) => (
+                    <MetricCard key={k} name={k} value={data?.[k]} loading={!data} />
+                  ))
+                )}
               </div>
             </section>
           ))}
 
           {/* Gràfic de son */}
-          <SleepOverviewCard stages={stages} stats={data} />
+          {loading || !data ? (
+            <div className="skeleton-shimmer" style={{ height: '300px', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', marginBottom: '2.5rem' }}></div>
+          ) : (
+            <SleepOverviewCard sleepData={sleepData} totalSleepHours={data ? data.total_sleep_duration_hours : 0} />
+          )}
 
           {/* Recomanació personalitzada */}
           <div className="mt-8">
@@ -159,7 +246,11 @@ export default function Dashboard() {
 
             {genErr && <p className="mt-4 text-red-500">Error: {genErr}</p>}
 
-            <RecommendationCard text={recommendation} />
+            {loading || !data ? (
+              <div className="skeleton-shimmer" style={{ height: '100px', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', marginTop: '1rem' }}></div>
+            ) : (
+              <RecommendationCard text={recommendation} />
+            )}
           </div>
         </div>
       </main>
