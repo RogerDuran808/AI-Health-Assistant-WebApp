@@ -1,8 +1,8 @@
 // frontend/src/components/FatigueBadge.jsx
 import PropTypes from "prop-types";
 
-const CIRCLE_RADIUS = 70; // Slightly reduced to fit better in the left sidebar
-const CIRCLE_STROKE_WIDTH = 14; // Slightly reduced to fit better in the left sidebar
+const CIRCLE_RADIUS = 90; // Aumentado de 70 para hacer el círculo más grande
+const CIRCLE_STROKE_WIDTH = 16; // Aumentado de 14 para un trazo más grueso
 const SVG_SIZE = (CIRCLE_RADIUS + CIRCLE_STROKE_WIDTH) * 2;
 const CIRC = 2 * Math.PI * CIRCLE_RADIUS;
 
@@ -75,16 +75,16 @@ export default function FatigueBadge({ pred, prob = 0 }) {
         }
         
         .ring-percentage {
-          font-size: 2.75rem; /* Adjusted for better fit */
+          font-size: 3.5rem; /* Aumentado de 2.75rem */
           font-weight: 700;
           line-height: 1;
         }
         
         .ring-label {
-          font-size: 1.25rem; /* Adjusted for better fit */
+          font-size: 1.5rem; /* Aumentado de 1.25rem */
           font-weight: 600;
           text-transform: uppercase;
-          margin-top: 0.25rem;
+          margin-top: 0.5rem; /* Aumentado de 0.25rem */
           letter-spacing: 0.03em;
         }
       `}</style>

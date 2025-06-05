@@ -178,28 +178,23 @@ export default function Dashboard({ isLoading }) {
 
       <main className={`main-content`} id="mainContent">
         <div className="main-header">
-          <div className="header-title-date">
-            <h1>Tauler de Control Intel·ligent</h1>
-            <p>{getFormattedDate()}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <div className="header-title-date">
+              <h1>Tauler de Control Intel·ligent</h1>
+              <p>{getFormattedDate()}</p>
+            </div>
+            
             <div style={{
-              marginTop: '1rem',
-              padding: '1rem 0',
               width: '100%',
-              maxWidth: '300px'
+              maxWidth: '350px',
+              marginTop: '1rem',
+              paddingLeft: '15px'
             }}>
-              <h2 style={{
-                marginBottom: '0.5rem',
-                color: 'var(--text-primary)',
-                fontSize: '1.1rem',
-                fontWeight: '600',
-                textAlign: 'left'
-              }}>Nivell de Fatiga</h2>
+              {/* Gráfico de fatiga */}
               <div style={{
                 display: 'flex',
                 justifyContent: 'flex-start',
-                alignItems: 'center',
-                minHeight: '180px',
-                marginLeft: '-20px' // Compensate for the chart's padding
+                marginBottom: '1rem'
               }}>
                 <FatigueBadge 
                   pred={data ? data.tired_pred : 0} 
@@ -207,6 +202,96 @@ export default function Dashboard({ isLoading }) {
                   dataQuality={0} 
                 />
               </div>
+              
+              {/* Métricas de pasos y calorías */}
+              {data && (
+                <div style={{
+                  width: '100%',
+                  marginTop: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem'
+                }}>
+                  {/* Sección de Pasos */}
+                  <div style={{
+                    width: '100%',
+                    marginBottom: '0.5rem',
+                    padding: '0.5rem 0',
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.05)'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      marginBottom: '0.25rem'
+                    }}>
+                      <i className="fas fa-shoe-prints" style={{
+                        color: '#3b82f6',
+                        fontSize: '1.1rem',
+                        minWidth: '24px',
+                        textAlign: 'center'
+                      }}></i>
+                      <span style={{
+                        fontSize: '0.9rem',
+                        color: '#64748b',
+                        fontWeight: '500',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        marginRight: 'auto'
+                      }}>Pasos</span>
+                      <span style={{
+                        fontSize: '1.1rem',
+                        fontWeight: '500',
+                        color: '#64748b',
+                        marginLeft: '0.5rem'
+                      }}>
+                        x{data.steps?.toLocaleString() || '0'}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Sección de Calorías */}
+                  <div style={{
+                    width: '100%',
+                    padding: '0.5rem 0'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      marginBottom: '0.25rem'
+                    }}>
+                      <i className="fas fa-fire" style={{
+                        color: '#ef4444',
+                        fontSize: '1.1rem',
+                        minWidth: '24px',
+                        textAlign: 'center'
+                      }}></i>
+                      <span style={{
+                        fontSize: '0.9rem',
+                        color: '#64748b',
+                        fontWeight: '500',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        marginRight: 'auto'
+                      }}>Calorías</span>
+                      <span style={{
+                        fontSize: '1.1rem',
+                        fontWeight: '500',
+                        color: '#ef4444',
+                        marginLeft: '0.5rem',
+                        background: 'linear-gradient(135deg, #ef4444, #f87171)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        textFillColor: 'transparent'
+                      }}>
+                        {data.calories?.toLocaleString() || '0'} kcal
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           {loading || !data ? (
