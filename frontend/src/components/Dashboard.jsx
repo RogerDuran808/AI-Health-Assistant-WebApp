@@ -10,6 +10,7 @@ import RecommendationCard from "./RecommendationCard";
 import ProfileCardSkeleton from "./ProfileCardSkeleton"; // Importar esqueleto
 import MetricCardSkeleton from "./MetricCardSkeleton";   // Importar esqueleto
 import ActivityBarChart from "./ActivityBarChart"; // Importar el nuevo gráfico de actividad
+import HeartRateZoneChart from "./HeartRateZoneChart"; // Importar gráfico de zonas de FC
 import './Dashboard.css'; // Importar el nuevo archivo CSS
 
 const METRICS = {
@@ -18,11 +19,7 @@ const METRICS = {
     "steps",
   ],
   "Freqüència cardíaca": [
-    "resting_hr",
-    "minutes_below_default_zone_1",
-    "minutes_in_default_zone_1",
-    "minutes_in_default_zone_2",
-    "minutes_in_default_zone_3",
+    "resting_hr", // Las zonas se mostrarán en HeartRateZoneChart
   ],
   Biomarcadors: [
     "daily_temperature_variation",
@@ -217,66 +214,78 @@ export default function Dashboard() {
               <div style={{
                 display: 'grid',
                 gap: '1.5rem',
-                gridTemplateColumns: title === 'Activitat' 
+                gridTemplateColumns: (title === 'Activitat' || title === 'Freqüència cardíaca') 
                   ? 'minmax(280px, auto) minmax(300px, 2fr)' 
                   : 'repeat(auto-fill, minmax(280px, 1fr))',
                 width: '100%',
                 margin: '0 auto',
                 padding: '0 0.5rem',
-                alignItems: title === 'Activitat' ? 'start' : 'stretch',
+                alignItems: (title === 'Activitat' || title === 'Freqüència cardíaca') ? 'start' : 'stretch',
               }}>
-                {/* Conditional rendering based on section title */}
-                {title === 'Activitat' ? (
-                  loading || !data ? (
-                    <>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        <MetricCardSkeleton />
-                        <MetricCardSkeleton />
-                      </div>
-                      <div className="skeleton-shimmer" 
-                        style={{
-                          height: '324px', 
-                          background: 'var(--bg-card)', 
-                          borderRadius: 'var(--radius-lg)', 
-                          padding: '1.5rem', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center', 
-                          boxShadow: 'var(--shadow)' 
-                        }}
-                      >
-                        {/* Skeleton for ActivityBarChart */}
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        {keys.map((k) => (
-                          <MetricCard key={k} name={k} value={data?.[k]} loading={!data} />
-                        ))}
-                      </div>
-                      <ActivityBarChart 
-                        data={{
-                          sedentary_minutes: data.sedentary_minutes,
-                          lightly_active_minutes: data.lightly_active_minutes,
-                          moderately_active_minutes: data.moderately_active_minutes,
-                          very_active_minutes: data.very_active_minutes,
-                        }}
-                        loading={!data} 
-                      />
-                    </>
-                  )
+                {loading || !data ? (
+                  // Skeletons para todas las secciones durante la carga
+                  <>
+                    {(title === 'Activitat' || title === 'Freqüència cardíaca') ? (
+                      <>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                          <MetricCardSkeleton />
+                          {title === 'Activitat' && <MetricCardSkeleton />}
+                        </div>
+                        <div className="skeleton-shimmer" 
+                          style={{
+                            height: '324px', 
+                            background: 'var(--bg-card)', 
+                            borderRadius: 'var(--radius-lg)', 
+                            padding: '1.5rem', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            boxShadow: 'var(--shadow)' 
+                          }}
+                        >
+                        </div>
+                      </>
+                    ) : (
+                      Array.from({ length: keys.length || 3 }).map((_, idx) => (
+                        <MetricCardSkeleton key={`${title}-skeleton-${idx}`} />
+                      ))
+                    )}
+                  </>
+                ) : title === 'Activitat' ? (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                      {keys.map((k) => (
+                        <MetricCard key={k} name={k} value={data?.[k]} loading={!data} />
+                      ))}
+                    </div>
+                    <ActivityBarChart 
+                      data={{
+                        sedentary_minutes: data.sedentary_minutes,
+                        lightly_active_minutes: data.lightly_active_minutes,
+                        moderately_active_minutes: data.moderately_active_minutes,
+                        very_active_minutes: data.very_active_minutes,
+                      }}
+                      loading={!data} 
+                    />
+                  </>
+                ) : title === 'Freqüència cardíaca' ? (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                      {/* 'keys' para "Freqüència cardíaca" es ["resting_hr"] según METRICS */}
+                      {keys.map((k) => ( 
+                        <MetricCard key={k} name={k} value={data?.[k]} loading={!data} />
+                      ))}
+                    </div>
+                    <HeartRateZoneChart 
+                      data={data} /* El componente interno seleccionará las props necesarias */
+                      loading={!data} 
+                    />
+                  </>
                 ) : (
-                  /* Default rendering for other sections */
-                  loading || !data ? (
-                    Array.from({ length: keys.length || 3 }).map((_, idx) => (
-                      <MetricCardSkeleton key={`${title}-skeleton-${idx}`} />
-                    ))
-                  ) : (
-                    keys.map((k) => (
-                      <MetricCard key={k} name={k} value={data?.[k]} loading={!data} />
-                    ))
-                  )
+                  /* Renderizado por defecto para otras secciones (ej. Biomarcadors) */
+                  keys.map((k) => (
+                    <MetricCard key={k} name={k} value={data?.[k]} loading={!data} />
+                  ))
                 )}
               </div>
             </section>

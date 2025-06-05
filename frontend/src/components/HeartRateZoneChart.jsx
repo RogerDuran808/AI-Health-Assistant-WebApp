@@ -2,25 +2,29 @@ import PropTypes from 'prop-types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { META } from '../constants/meta';
 
-const ActivityBarChart = ({ data, loading }) => {
+const HeartRateZoneChart = ({ data, loading }) => {
   // Función para formatear minutos a horas y minutos
   const formatMinutes = (min) => { // Usado para Tooltip
+    if (min === undefined || min === null) return '0 min';
     if (min < 60) return `${min} min`;
     const hours = Math.floor(min / 60);
     const minutes = min % 60;
     return `${hours}h${minutes > 0 ? ` ${minutes}m` : ''}`.trim();
   };
 
-  const formatHoursOnly = (min) => { // Usado para YAxis ticks
-    if (min === undefined || min === null || isNaN(min)) return '0h';
+  const formatHoursOnly = (min) => { // Usado para XAxis ticks
+    if (min === undefined || min === null) return '0h';
     const hours = Math.floor(min / 60);
     return `${hours}h`;
   };
+
+
+
   if (loading || !data) {
     return (
       <div className="skeleton-shimmer"
         style={{
-          height: '300px', // Altura similar a dos MetricCards apiladas
+          height: '300px',
           width: '100%',
           background: 'var(--bg-card)',
           borderRadius: 'var(--radius-lg)',
@@ -31,46 +35,46 @@ const ActivityBarChart = ({ data, loading }) => {
           boxShadow: 'var(--shadow)',
         }}
       >
-        <p style={{ color: 'var(--text-secondary)' }}>Carregant dades d'activitat...</p>
+        <p style={{ color: 'var(--text-secondary)' }}>Carregant dades de zones de FC...</p>
       </div>
     );
   }
 
   const chartData = [
     {
-      name: 'Sedentari',
-      minuts: data.sedentary_minutes || 0,
-      formattedValue: formatMinutes(data.sedentary_minutes || 0),
-      color: META.sedentary_minutes.color,
+      name: 'Suau',
+      minuts: data.minutes_below_default_zone_1 || 0,
+      formattedValue: formatMinutes(data.minutes_below_default_zone_1 || 0),
+      color: META.minutes_below_default_zone_1.color,
     },
     {
-      name: 'Lleu',
-      minuts: data.lightly_active_minutes || 0,
-      formattedValue: formatMinutes(data.lightly_active_minutes || 0),
-      color: META.lightly_active_minutes.color,
+      name: 'Moderada',
+      minuts: data.minutes_in_default_zone_1 || 0,
+      formattedValue: formatMinutes(data.minutes_in_default_zone_1 || 0),
+      color: META.minutes_in_default_zone_1.color,
     },
     {
-      name: 'Moderat',
-      minuts: data.moderately_active_minutes || 0,
-      formattedValue: formatMinutes(data.moderately_active_minutes || 0),
-      color: META.moderately_active_minutes.color,
+      name: 'Intensa',
+      minuts: data.minutes_in_default_zone_2 || 0,
+      formattedValue: formatMinutes(data.minutes_in_default_zone_2 || 0),
+      color: META.minutes_in_default_zone_2.color,
     },
     {
-      name: 'Intens',
-      minuts: data.very_active_minutes || 0,
-      formattedValue: formatMinutes(data.very_active_minutes || 0),
-      color: META.very_active_minutes.color,
+      name: 'Pic',
+      minuts: data.minutes_in_default_zone_3 || 0,
+      formattedValue: formatMinutes(data.minutes_in_default_zone_3 || 0),
+      color: META.minutes_in_default_zone_3.color,
     },
   ];
 
   const cardStyle = {
-    background: 'var(--bg-glass)',
+    background: 'var(--bg-card)',
     backdropFilter: 'blur(20px)',
     border: '1px solid var(--border)',
     borderRadius: 'var(--radius-lg)',
     padding: '1.5rem',
     boxShadow: 'var(--shadow)',
-    height: '100%', // Para que ocupe la altura del contenedor grid
+    height: '100%',
     minHeight: '300px',
   };
 
@@ -113,7 +117,6 @@ const ActivityBarChart = ({ data, loading }) => {
             }}
             cursor={{ fill: 'rgba(255, 255, 255, 0.04)', radius: 4 }}
             formatter={(value, name, props) => {
-              // Mostrar el valor formateado (ej: '2h 30m') en lugar de solo los minutos
               return [props.payload.formattedValue, name];
             }}
             labelFormatter={(label) => `${label}`}
@@ -135,7 +138,7 @@ const ActivityBarChart = ({ data, loading }) => {
           />
           <Bar 
             dataKey="minuts" 
-            name="Temps" 
+            name="Temps en Zona" 
             barSize={24} 
             radius={[5, 5, 0, 0]}
             isAnimationActive={false}
@@ -163,14 +166,14 @@ const ActivityBarChart = ({ data, loading }) => {
   );
 };
 
-ActivityBarChart.propTypes = {
+HeartRateZoneChart.propTypes = {
   data: PropTypes.shape({
-    sedentary_minutes: PropTypes.number,
-    lightly_active_minutes: PropTypes.number,
-    moderately_active_minutes: PropTypes.number,
-    very_active_minutes: PropTypes.number,
+    minutes_below_default_zone_1: PropTypes.number,
+    minutes_in_default_zone_1: PropTypes.number,
+    minutes_in_default_zone_2: PropTypes.number,
+    minutes_in_default_zone_3: PropTypes.number,
   }),
   loading: PropTypes.bool,
 };
 
-export default ActivityBarChart;
+export default HeartRateZoneChart;
