@@ -144,32 +144,30 @@ export default function Dashboard() {
         <i className={`fas ${isSidebarOpen ? 'fa-times' : 'fa-bars'}`}></i>
       </button>
 
-      <nav className={`sidebar ${isSidebarOpen ? 'open' : ''}`} id="sidebar">
-        <div className="logo"> <i className="fas fa-brain"></i> FitPredict AI </div>
+      <nav className={`sidebar ${isSidebarOpen ? 'open' : ''} collapsible-sidebar`} id="sidebar">
+        <div className="logo">
+          <i className="fas fa-brain"></i>
+          <span className="logo-text">FitPredict AI</span>
+        </div>
         <ul className="nav-menu">
           <li className="nav-item">
             <a href="#dashboard" className={`nav-link ${activeLink === '#dashboard' ? 'active' : ''}`} onClick={() => { setActiveLink('#dashboard'); if (window.innerWidth <= 1024) setIsSidebarOpen(false); }}>
-              <i className="fas fa-chart-line"></i>Tauler de Control
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#vital-metrics" className={`nav-link ${activeLink === '#vital-metrics' ? 'active' : ''}`} onClick={() => { setActiveLink('#vital-metrics'); if (window.innerWidth <= 1024) setIsSidebarOpen(false); }}>
-              <i className="fas fa-heartbeat"></i>Mètriques Vitals
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#sleep" className={`nav-link ${activeLink === '#sleep' ? 'active' : ''}`} onClick={() => { setActiveLink('#sleep'); if (window.innerWidth <= 1024) setIsSidebarOpen(false); }}>
-              <i className="fas fa-bed"></i>Anàlisi del Son
+              <i className="fas fa-tachometer-alt"></i><span className="nav-link-text">Tauler de Control</span>
             </a>
           </li>
           <li className="nav-item">
             <a href="#ai-assistant" className={`nav-link ${activeLink === '#ai-assistant' ? 'active' : ''}`} onClick={() => { setActiveLink('#ai-assistant'); if (window.innerWidth <= 1024) setIsSidebarOpen(false); }}>
-              <i className="fas fa-robot"></i>Assistent IA
+              <i className="fas fa-robot"></i><span className="nav-link-text">Assistent IA</span>
+            </a>
+          </li>
+          <li className="nav-item">
+            <a href="#profile" className={`nav-link ${activeLink === '#profile' ? 'active' : ''}`} onClick={() => { setActiveLink('#profile'); if (window.innerWidth <= 1024) setIsSidebarOpen(false); }}>
+              <i className="fas fa-user"></i><span className="nav-link-text">Perfil</span>
             </a>
           </li>
           <li className="nav-item push-bottom">
             <a href="#settings" id="settingsLink" className={`nav-link ${activeLink === '#settings' ? 'active' : ''}`} onClick={() => { setActiveLink('#settings'); if (window.innerWidth <= 1024) setIsSidebarOpen(false); }}>
-              <i className="fas fa-cog"></i>Configuració
+              <i className="fas fa-cog"></i><span className="nav-link-text">Configuració</span>
             </a>
           </li>
         </ul>

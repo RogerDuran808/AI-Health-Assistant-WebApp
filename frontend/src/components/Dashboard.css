@@ -213,9 +213,216 @@
     width: calc(100% - 300px);
 }
 
-.main-content.full-width {
+.main-content.sidebar-closed {
     margin-left: 0;
     width: 100%;
+}
+
+/* Styles for Collapsible Sidebar */
+.collapsible-sidebar,
+.collapsible-sidebar .logo-text,
+.collapsible-sidebar .nav-link-text,
+.collapsible-sidebar + .main-content {
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+}
+
+.collapsible-sidebar {
+    width: 80px; /* Collapsed width */
+    padding-left: 0.5rem; /* Adjusted for collapsed state */
+    padding-right: 0.5rem; /* Adjusted for collapsed state */
+    transition-property: width, padding-left, padding-right;
+    overflow-x: hidden; /* Prevent horizontal scrollbar when collapsed */
+}
+
+/* Collapsed State: Text hidden, icons visible and centered */
+.collapsible-sidebar .logo .logo-text,
+.collapsible-sidebar .nav-link .nav-link-text {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap; /* Prevent text wrapping during transition */
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s, width 0.2s ease; /* Delay visibility to hide, not during show */
+}
+
+.collapsible-sidebar .logo,
+.collapsible-sidebar .nav-link {
+    justify-content: center; /* Center icon and (hidden) text container */
+    padding-left: 0.5rem; /* Adjust padding for icon-only view */
+    padding-right: 0.5rem;
+    overflow: hidden; /* Clip content that might overflow during transition */
+}
+.collapsible-sidebar .nav-link {
+     padding-top: 1rem;
+     padding-bottom: 1rem;
+}
+
+/* COLLAPSED STATE ICON STYLES */
+.collapsible-sidebar:not(:hover) .logo i {
+    opacity: 1;
+    visibility: visible;
+    margin-right: 0;
+    font-size: 2.25rem; /* Original logo icon size */
+    color: var(--text-primary); /* Ensure visibility */
+    -webkit-text-fill-color: var(--text-primary); /* Override gradient transparency */
+    background: none; /* Remove gradient background */
+}
+
+.collapsible-sidebar:not(:hover) .nav-link i {
+    opacity: 1;
+    visibility: visible;
+    margin-right: 0;
+    font-size: 1.3rem; /* Adjusted size for collapsed state */
+    color: var(--text-primary); /* Ensure visibility */
+    width: auto; /* Ensure proper sizing if constrained by other rules */
+    text-align: center;
+}
+
+/* Prevent selection highlight from shifting content or overflowing in collapsed state */
+.collapsible-sidebar:not(:hover) .nav-link:hover,
+.collapsible-sidebar:not(:hover) .nav-link.active {
+    transform: translateX(0);
+    /* Optionally, use a more contained box-shadow for collapsed state if needed */
+    /* box-shadow: inset 0 0 0 1px var(--border); */
+}
+
+/* Base transitions for icon properties changing between collapsed and expanded states */
+.collapsible-sidebar .logo i,
+.collapsible-sidebar .nav-link i {
+    transition: 
+        opacity 0.3s ease, 
+        visibility 0.3s ease, 
+        margin-right 0.3s ease, 
+        font-size 0.3s ease,
+        color 0.3s ease,
+        -webkit-text-fill-color 0.3s ease, /* For logo icon */
+        background 0.3s ease; /* For logo icon */
+}
+
+/* The comment below was part of the original targeted block and was misplaced. */
+/* Actual :hover styles for icons are defined further down in the stylesheet. */
+/* Expanded State (on hover) */
+
+/* === Expanded State Styling :hover (Restoring original/desired values) === */
+
+/* Containers for icons (.logo and .nav-link) when sidebar is expanded */
+.collapsible-sidebar:hover .logo,
+.collapsible-sidebar:hover .nav-link {
+    justify-content: flex-start; /* Align items to the start (icon + text) */
+    /* width: auto; /* Allow content to define width, or keep 100% if parent handles it */
+}
+
+/* Restore padding for .nav-link when expanded (base style is padding: 1rem 1.25rem) */
+.collapsible-sidebar:hover .nav-link {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+}
+
+/* Restore padding and margin for .logo when expanded */
+.collapsible-sidebar:hover .logo {
+    /* Base .logo has margin-bottom: 3rem. padding is from .sidebar (2rem 1.5rem for content area) */
+    /* No specific padding on .logo element itself usually, it's on .sidebar */
+    /* If .logo had its own padding like padding: 2rem 1.5rem, restore here if needed */
+    margin-bottom: 3rem; /* Restore original margin */
+}
+
+/* Restore icon styles for .logo i when expanded */
+.collapsible-sidebar:hover .logo i {
+    font-size: 2.25rem; /* Original font size */
+    margin-right: 1rem; /* Original margin */
+    color: transparent; /* Restore for gradient effect */
+    -webkit-text-fill-color: transparent; /* Restore for gradient effect */
+    background: linear-gradient(135deg, var(--primary), var(--secondary)); /* Restore gradient */
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* Restore icon styles for .nav-link i when expanded */
+.collapsible-sidebar:hover .nav-link i {
+    font-size: 1.25rem; /* Original font size */
+    margin-right: 1rem; /* Original margin */
+    width: 24px;        /* Restore original fixed width if it was important */
+}
+
+/* Expanded state on hover */
+.collapsible-sidebar:hover {
+    width: 300px; /* Expanded width, matches original */
+    padding-left: 1.5rem; /* Original padding */
+    padding-right: 1.5rem; /* Original padding */
+    overflow-x: visible; /* Allow overflow if necessary when expanded */
+}
+
+.collapsible-sidebar:hover .logo-text,
+.collapsible-sidebar:hover .nav-link-text {
+    opacity: 1;
+    visibility: visible;
+    width: auto; /* Allow text to take its natural width */
+    white-space: nowrap; /* Prevent text from wrapping */
+    /* The icon's margin-right will create space, so no margin-left needed here generally */
+    transition: opacity 0.3s ease 0.15s, visibility 0s linear 0.15s, width 0.3s ease 0.15s; /* Staggered for smoother appearance */
+    /* For fade-in: visibility changes (can be immediate or slightly delayed), then opacity transitions. */
+    /* Delay opacity so width animation has started. */
+    transition: opacity 0.2s ease 0.1s, visibility 0s linear 0.1s; 
+}
+
+.collapsible-sidebar:hover .logo,
+.collapsible-sidebar:hover .nav-link {
+    justify-content: flex-start; /* Align items to start when expanded */
+}
+
+.collapsible-sidebar:hover .logo i {
+    margin-right: 1rem; /* Restore original margin for logo icon */
+}
+.collapsible-sidebar:hover .nav-link i {
+    margin-right: 1rem; /* Restore original margin for nav link icon */
+}
+
+/* Adjust main content margin based on collapsible sidebar state */
+.collapsible-sidebar + .main-content {
+    margin-left: 80px; /* Margin for collapsed sidebar */
+    width: calc(100% - 80px);
+    transition-property: margin-left, width;
+}
+
+.collapsible-sidebar:hover + .main-content {
+    margin-left: 300px; /* Margin for expanded sidebar */
+    width: calc(100% - 300px);
+}
+
+/* Media query to refine behavior on smaller screens (mobile) */
+/* On mobile, the sidebar is typically fully open or fully hidden via JS toggle, not hover */
+@media (max-width: 1024px) {
+    /* When sidebar is controlled by mobile toggle (e.g., has .open class or is hidden) */
+    /* Override hover-based collapsed width if sidebar is meant to be open */
+    .sidebar.open.collapsible-sidebar,
+    .sidebar.open.collapsible-sidebar:hover { /* Ensure it stays expanded if .open */
+        width: 300px;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    .sidebar.open.collapsible-sidebar .logo-text,
+    .sidebar.open.collapsible-sidebar .nav-link-text {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .sidebar.open.collapsible-sidebar .logo,
+    .sidebar.open.collapsible-sidebar .nav-link {
+        justify-content: flex-start;
+    }
+
+    .sidebar.open.collapsible-sidebar .logo i,
+    .sidebar.open.collapsible-sidebar .nav-link i {
+        margin-right: 1rem;
+    }
+
+    /* Main content on mobile: assuming sidebar overlays or is fully hidden */
+    .collapsible-sidebar + .main-content { 
+        margin-left: 0;
+        width: 100%;
+    }
 }
 
 .mobile-menu-btn {
