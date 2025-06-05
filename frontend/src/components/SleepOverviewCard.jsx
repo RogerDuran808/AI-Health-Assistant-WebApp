@@ -1,111 +1,149 @@
 // src/components/SleepOverviewCard.jsx
 import PropTypes from "prop-types";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Card, CardContent } from "./ui/card";
 import Tabs from "./Tabs";
-import { ICONS, COLORS } from "../constants/ui";
+import { ICONS, COLORS } from "../constants/ui"; // Assuming COLORS.sleepPhases is still valid
 
-export default function SleepOverviewCard({ stages = [], stats = {} }) {
-  // Prepare donut data
-  const donutData = stages.map((s) => ({
-    ...s,
-    fill: COLORS.sleepPhases[s.name] || "#ddd",
+// Helper to format total sleep hours (e.g., 7.5 hours to "7h 30m")
+const formatTotalSleepHours = (hours) => {
+  if (hours === null || hours === undefined || isNaN(hours)) return "—";
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  return `${h}h ${m > 0 ? `${m}m` : "00m"}`;
+};
+
+export default function SleepOverviewCard({ sleepData = [], totalSleepHours = 0 }) {
+  // Prepare donut data using sleepData
+  const donutChartData = sleepData.map((s) => ({
+    name: s.name,
+    value: s.value, // Assuming s.value is already a percentage for the pie chart
+    fill: COLORS.sleepPhases[s.name] || "#ddd", // Use colors from constants
   }));
-  const totalSleep = stats.minutesAsleep ?? "—";
 
-  // Fases tab content
+  const formattedTotalSleep = formatTotalSleepHours(totalSleepHours);
+
+  // --- Tab Content Definitions ---
+
+  // Fases Tab
   const fasesContent = (
-    <div className="relative flex justify-center">
-      <ResponsiveContainer width="100%" height={260}>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', height: '280px' }}>
+      <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             dataKey="value"
             nameKey="name"
-            data={donutData}
+            data={donutChartData}
             cx="50%"
             cy="50%"
-            innerRadius={70}
-            outerRadius={110}
+            innerRadius="60%" // Adjusted for a thicker donut
+            outerRadius="85%" // Adjusted for a thicker donut
             startAngle={90}
             endAngle={450}
+            paddingAngle={1}
           >
-            {donutData.map((entry) => (
-              <Cell key={entry.name} fill={entry.fill} />
+            {donutChartData.map((entry) => (
+              <Cell key={`cell-${entry.name}`} fill={entry.fill} stroke={entry.fill} />
             ))}
           </Pie>
-          <Tooltip formatter={(v) => `${v}%`} />
+          <Tooltip 
+            formatter={(value, name) => [`${value}%`, name]}
+            contentStyle={{ 
+              background: 'var(--bg-tooltip)', 
+              borderColor: 'var(--border)',
+              color: 'var(--text-primary)',
+              borderRadius: 'var(--radius-sm)'
+            }}
+            cursor={{ fill: 'transparent' }}
+          />
           <Legend
             iconType="circle"
             verticalAlign="bottom"
             align="center"
-            wrapperStyle={{ marginTop: 12 }}
+            wrapperStyle={{ marginTop: '20px', color: 'var(--text-secondary)' }}
+            formatter={(value) => <span style={{ color: 'var(--text-secondary)' }}>{value}</span>}
           />
         </PieChart>
       </ResponsiveContainer>
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <p className="text-xs uppercase tracking-wide text-gray-500">Total son</p>
-        <p className="text-2xl font-bold">
-          {totalSleep}
-          {totalSleep !== "—" && <span className="text-sm font-medium"> min</span>}
+      <div style={{
+        position: 'absolute', top: '50%', left: '50%', 
+        transform: 'translate(-50%, -50%)',
+        textAlign: 'center', pointerEvents: 'none'
+      }}>
+        <p style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: '0.1rem' }}>Total son</p>
+        <p style={{ fontSize: '1.75rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+          {formattedTotalSleep}
         </p>
       </div>
     </div>
   );
 
-  // Metrics tab content
-  const metrics = [
-    { key: "minutesAsleep",    label: "Min adormit",  icon: "MoonIcon",     unit: " min" },
-    { key: "minutesAwake",     label: "Min despert",  icon: "EyeIcon",      unit: " min" },
-    { key: "sleep_efficiency", label: "Eficiència",  icon: "SparklesIcon", unit: " %"   },
-  ];
+  // Mètriques Tab (Simplified)
   const metricsContent = (
-    <div className="grid grid-cols-3 gap-4">
-      {metrics.map(({ key, label, icon, unit }) => {
-        const val = stats[key];
-        const Icon = ICONS[icon];
-        return (
-          <div
-            key={key}
-            className={`flex flex-col items-center justify-center rounded-xl ${COLORS.primaryBgLight} py-3 shadow-inner`}
-          >
-            <Icon className="w-6 h-6 text-indigo-500 mb-1" />
-            <span className="text-lg font-semibold">
-              {val ?? "—"}
-              {val != null ? unit : ""}
-            </span>
-            <span className="text-xs text-gray-600">{label}</span>
-          </div>
-        );
-      })}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 0' }}>
+       <div style={{
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '1rem',
+          background: 'var(--bg-glass)', 
+          borderRadius: 'var(--radius)', 
+          minWidth: '150px',
+          border: '1px solid var(--border)'
+        }}>
+        {ICONS.MoonIcon && <ICONS.MoonIcon style={{ width: '24px', height: '24px', color: 'var(--primary)', marginBottom: '0.5rem' }} />}
+        <span style={{ fontSize: '1.25rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+          {formattedTotalSleep}
+        </span>
+        <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Temps total de son</span>
+      </div>
     </div>
   );
 
-  // Placeholder trend tab content
+  // Tendència Tab
   const trendContent = (
-    <div className="text-center text-gray-500 py-16">
-      <p>Gràfic de tendència estarà disponible en verions futures.</p>
+    <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '4rem 0' }}>
+      <p>Gràfic de tendència estarà disponible en versions futures.</p>
     </div>
   );
 
-  // Tabs definition
   const tabs = [
-    { label: "Fases",     content: fasesContent },
+    { label: "Fases", content: fasesContent },
     { label: "Mètriques", content: metricsContent },
     { label: "Tendència", content: trendContent },
   ];
 
+  // Main component style
+  const componentStyle = {
+    background: 'var(--bg-card)',
+    padding: '1.5rem',
+    borderRadius: 'var(--radius-lg)',
+    border: '1px solid var(--border)',
+    boxShadow: 'var(--shadow)',
+  };
+
   return (
-    <Card className="bg-white/70 rounded-2xl shadow-lg p-6">
-      <CardContent>
-        <Tabs tabs={tabs} />
-      </CardContent>
-    </Card>
+    <div style={componentStyle}>
+      <h3 style={{ 
+        fontSize: '1.25rem', 
+        fontWeight: '600', 
+        color: 'var(--text-primary)', 
+        marginBottom: '1rem' 
+      }}>
+        Resum del Son
+      </h3>
+      <Tabs tabs={tabs} />
+    </div>
   );
 }
 
 SleepOverviewCard.propTypes = {
-  stages: PropTypes.arrayOf(
-    PropTypes.shape({ name: PropTypes.string, value: PropTypes.number })
+  sleepData: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired, // Percentage value
+      fill: PropTypes.string, // Optional, as it's also in COLORS.sleepPhases
+    })
   ),
-  stats: PropTypes.object,
+  totalSleepHours: PropTypes.number,
 };
