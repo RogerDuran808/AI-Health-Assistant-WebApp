@@ -183,11 +183,81 @@
 /* Main header */
 .main-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  gap: 2rem;
+  width: 100%;
+}
+
+.header-title-date {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+}
+
+/* Tiredness metric styles */
+.tiredness-metric {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 200px;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  padding-bottom: 1.5rem; /* Only padding bottom, main-content has overall padding */
-  margin-bottom: 1.5rem; /* Space below header before other content */
-  /* border-bottom: 1px solid var(--border); Optional: if you want a separator */
+  aspect-ratio: 1/1;
+  position: relative;
+  overflow: hidden;
+}
+
+.tiredness-metric .fatigue-badge {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+.tiredness-metric .fatigue-badge .fatigue-header {
+  display: none;
+}
+
+.tiredness-metric .fatigue-badge .fatigue-content {
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+  justify-content: flex-start;
+}
+
+.tiredness-metric .fatigue-badge .ring-container {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.tiredness-metric .fatigue-badge svg {
+  width: 120px;
+  height: 120px;
+}
+
+.tiredness-metric .fatigue-badge .ring-percentage {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.tiredness-metric .fatigue-badge .ring-label {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.tiredness-metric .fatigue-badge .mini-cards-container {
+  display: none;
 }
 
 .header-title-date h1 {
@@ -199,9 +269,28 @@
 }
 
 .header-title-date p {
+  margin-bottom: 1.5rem;
   font-size: 0.875rem; /* approx 14px */
   color: var(--text-secondary);
   font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .main-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .header-title-date {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  
+  .tiredness-metric {
+    max-width: 100%;
+    aspect-ratio: 2/1;
+  }
 }
 
 .main-content {

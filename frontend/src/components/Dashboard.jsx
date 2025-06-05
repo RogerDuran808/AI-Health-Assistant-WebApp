@@ -181,6 +181,33 @@ export default function Dashboard({ isLoading }) {
           <div className="header-title-date">
             <h1>Tauler de Control Intel·ligent</h1>
             <p>{getFormattedDate()}</p>
+            <div style={{
+              marginTop: '1rem',
+              padding: '1rem 0',
+              width: '100%',
+              maxWidth: '300px'
+            }}>
+              <h2 style={{
+                marginBottom: '0.5rem',
+                color: 'var(--text-primary)',
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                textAlign: 'left'
+              }}>Nivell de Fatiga</h2>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                minHeight: '180px',
+                marginLeft: '-20px' // Compensate for the chart's padding
+              }}>
+                <FatigueBadge 
+                  pred={data ? data.tired_pred : 0} 
+                  prob={data ? data.tired_prob : 0} 
+                  dataQuality={0} 
+                />
+              </div>
+            </div>
           </div>
           {loading || !data ? (
             <ProfileCardSkeleton />
@@ -204,9 +231,7 @@ export default function Dashboard({ isLoading }) {
             boxSizing: 'border-box',
             paddingTop: '1rem'
           }}> 
-          <div className="mb-10">
-            <FatigueBadge pred={data ? data.tired_pred : 0} prob={data ? data.tired_prob : 0} dataQuality={dataQualityScore} />
-          </div>
+
 
           {/* Mètriques */}
           {Object.entries(METRICS).map(([title, keys]) => (
