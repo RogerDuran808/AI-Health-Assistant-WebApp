@@ -146,8 +146,11 @@ export default function Dashboard() {
 
       <nav className={`sidebar ${isSidebarOpen ? 'open' : ''} collapsible-sidebar`} id="sidebar">
         <div className="logo">
-          <i className="fas fa-brain"></i>
-          <span className="logo-text">FitPredict AI</span>
+          <i className="fas fa-user-circle user-avatar-icon"></i>
+          <div className="user-profile-text-container">
+            <span className="greeting-main">Hola Roger!</span>
+            <span className="greeting-sub">Preparat pel dia d'avui?</span>
+          </div>
         </div>
         <ul className="nav-menu">
           <li className="nav-item">

@@ -235,8 +235,8 @@
     overflow-x: hidden; /* Prevent horizontal scrollbar when collapsed */
 }
 
-/* Collapsed State: Text hidden, icons visible and centered */
-.collapsible-sidebar .logo .logo-text,
+/* Collapsed State: Text hidden (general nav links), user profile text hidden */
+.collapsible-sidebar .user-profile-text-container,
 .collapsible-sidebar .nav-link .nav-link-text {
     opacity: 0;
     visibility: hidden;
@@ -259,6 +259,34 @@
 }
 
 /* COLLAPSED STATE ICON STYLES */
+/* Style for the user avatar icon in collapsed state */
+.collapsible-sidebar:not(:hover) .logo .user-avatar-icon {
+    opacity: 1;
+    visibility: visible;
+    margin-right: 0; /* Centered */
+    font-size: 2.5rem; /* Larger avatar icon */
+    color: var(--text-primary);
+    transition: opacity 0.3s ease, visibility 0.3s ease, font-size 0.3s ease;
+}
+
+/* Hide user profile text when collapsed */
+.collapsible-sidebar:not(:hover) .user-profile-text-container {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+/* Hide the original logo icon (fa-brain) if it's still targeted by a general rule */
+.collapsible-sidebar:not(:hover) .logo i:not(.user-avatar-icon) {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    font-size: 0;
+}
+
 .collapsible-sidebar:not(:hover) .logo i {
     opacity: 1;
     visibility: visible;
@@ -327,8 +355,53 @@
     margin-bottom: 3rem; /* Restore original margin */
 }
 
-/* Restore icon styles for .logo i when expanded */
-.collapsible-sidebar:hover .logo i {
+/* EXPANDED STATE: User Profile Text and Avatar Handling */
+/* Hide user avatar icon and show profile text when expanded */
+.collapsible-sidebar:hover .logo .user-avatar-icon {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    font-size: 0; /* Effectively hide it */
+    margin-right: 0;
+}
+
+.collapsible-sidebar:hover .user-profile-text-container {
+    opacity: 1;
+    visibility: visible;
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align text to the left */
+    transition: opacity 0.3s ease 0.1s, visibility 0s linear 0.1s; 
+}
+
+.user-profile-text-container .greeting-main {
+    font-size: 1.1rem; /* Approx 18px */
+    font-weight: 600; /* Semi-bold for main greeting */
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+}
+
+.user-profile-text-container .greeting-sub {
+    font-size: 0.875rem; /* Approx 14px */
+    font-weight: 400; /* Regular weight for sub-greeting */
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Adjust .logo container for expanded state with profile text */
+.collapsible-sidebar:hover .logo {
+    align-items: flex-start; /* Align content to top */
+    /* padding-top: 0.5rem; /* Optional: add some padding if needed */ 
+}
+
+
+/* Restore icon styles for .logo i when expanded (IF THERE WAS A DIFFERENT ICON) */
+/* This rule might be redundant now or needs adjustment if fa-brain is completely replaced */
+.collapsible-sidebar:hover .logo i:not(.user-avatar-icon) {
     font-size: 2.25rem; /* Original font size */
     margin-right: 1rem; /* Original margin */
     color: transparent; /* Restore for gradient effect */
