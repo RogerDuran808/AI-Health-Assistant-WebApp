@@ -15,11 +15,13 @@ export default function MetricCard({ name, value, loading }) {
     backdropFilter: 'blur(20px)',
     border: '1px solid var(--border)',
     borderRadius: 'var(--radius-lg)',
-    padding: '2rem',
+    padding: '1.75rem 2rem',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     minHeight: '150px',
+    minWidth: '280px', // Asegura un ancho mínimo para que el contenido no se apriete
+    flex: '1 1 280px', // Permite que las tarjetas crezcan pero con un tamaño base
     boxShadow: 'var(--shadow)',
     position: 'relative',
     overflow: 'hidden',
@@ -32,6 +34,7 @@ export default function MetricCard({ name, value, loading }) {
     alignItems: 'flex-start',
     width: '100%',
     marginBottom: '1.2rem',
+    gap: '1rem', // Asegura espacio entre título e icono
   };
 
   // Fondo circular para el icono
@@ -54,20 +57,25 @@ export default function MetricCard({ name, value, loading }) {
 
   // Label
   const labelStyle = {
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     textTransform: 'uppercase',
     color: 'var(--text-secondary)',
-    fontWeight: 700,
+    fontWeight: 600,
     letterSpacing: '0.04em',
     marginTop: '2px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    flex: '1', // Permite que el título ocupe el espacio disponible
+    minWidth: 0, // Necesario para que text-overflow funcione con flex
   };
 
-  // Número grande con gradiente
+  // Número grande con gradiente más suave
   const valueStyle = {
     fontSize: '2.6rem',
     fontWeight: 800,
     lineHeight: 1.1,
-    background: `linear-gradient(90deg, ${color} 30%, #fff 100%)`,
+    background: `linear-gradient(90deg, ${color} 0%, rgba(255,255,255,0.9) 100%)`,
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
     backgroundClip: 'text',

@@ -4,8 +4,8 @@
  * Centralització de meta-informació per MetricCard
  */
 export const META = {
-  calories:                  { label: "Calories",           unit: " kcal",    icon: "Fire",        color: "#fb5607" },
   steps:                     { label: "Passos",             unit: "",         icon: "Footprints",  color: "#6366f1" },
+  calories:                  { label: "Calories",           unit: " kcal",    icon: "FireIcon",    color: "#fb5607" },
   lightly_active_minutes:    { label: "Activitat Lleu",     unit: " min",    icon: "Activity",    color: "#4895ef" },
   moderately_active_minutes: { label: "Activitat Moderada", unit: " min",    icon: "Zap",         color: "#ffd60a" },
   very_active_minutes:       { label: "Activitat Alta",     unit: " min",    icon: "Zap",         color: "#ff595e" },

@@ -133,13 +133,13 @@ export default function ProfileCard({ name, age, bmi, role, weight, height }) {
 
           {weight !== undefined && (
             <div style={statItemStyle}>
-              <span style={{...statValueBaseStyle, color: 'var(--text-primary)'}}>{weight}<span style={{fontSize: '0.75em', color: 'var(--text-secondary)'}}>kg</span></span>
+              <span style={{...statValueBaseStyle, color: 'var(--text-primary)'}}>{weight}<span style={{fontSize: '0.75em', color: 'var(--text-secondary)'}}> kg</span></span>
               <span style={statLabelStyle}>Pes</span>
             </div>
           )}
           {height !== undefined && (
             <div style={statItemStyle}>
-              <span style={{...statValueBaseStyle, color: 'var(--text-primary)'}}>{height}<span style={{fontSize: '0.75em', color: 'var(--text-secondary)'}}>cm</span></span>
+              <span style={{...statValueBaseStyle, color: 'var(--text-primary)'}}>{height}<span style={{fontSize: '0.75em', color: 'var(--text-secondary)'}}> cm</span></span>
               <span style={statLabelStyle}>Alçada</span>
             </div>
           )}

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import {
+  FireIcon,
   MoonIcon,
   EyeIcon,
   SparklesIcon,
@@ -21,6 +22,7 @@ import {
  * Icons used across MetricCard, SleepOverviewCard, FatigueBadge
  */
 export const ICONS = {
+  FireIcon,
   Activity,
   Footprints,
   Zap,
