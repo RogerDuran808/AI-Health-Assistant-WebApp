@@ -56,7 +56,9 @@ for cur_date in pd.date_range(yesterday, yesterday):
         'name': name, 
         'age': age, 
         'gender': gender, 
-        'bmi': bmi
+        'bmi': bmi,
+        'weight': weight,
+        'height': height
         })
 
     # -----------------------------------------------------------------

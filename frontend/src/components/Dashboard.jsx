@@ -190,8 +190,8 @@ export default function Dashboard({ isLoading }) {
               age={data.age}
               bmi={data.bmi}
               role="Atleta Amateur"
-              weight={data.weight || 75}
-              height={data.height || 180}
+              weight={data.weight}
+              height={data.height}
             />
           )}
         </div>
