@@ -11,7 +11,8 @@ import ProfileCardSkeleton from "./ProfileCardSkeleton"; // Importar esqueleto
 import MetricCardSkeleton from "./MetricCardSkeleton";   // Importar esqueleto
 import ActivityBarChart from "./ActivityBarChart"; // Importar el nuevo gráfico de actividad
 import HeartRateZoneChart from "./HeartRateZoneChart"; // Importar gráfico de zonas de FC
-import './Dashboard.css'; // Importar el nuevo archivo CSS
+import ProfileModal from "./ProfileModal"; // Importar el componente del modal de perfil
+import './Dashboard.css'; // Importar el archivo CSS
 
 const METRICS = {
   Activitat: [
@@ -65,6 +66,7 @@ const calculateDataQuality = (data) => {
 };
 
 export default function Dashboard({ isLoading }) {
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const getFormattedDate = () => {
     const today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -163,11 +165,7 @@ export default function Dashboard({ isLoading }) {
               <i className="fas fa-robot"></i><span className="nav-link-text">Assistent IA</span>
             </a>
           </li>
-          <li className="nav-item">
-            <a href="#profile" className={`nav-link ${activeLink === '#profile' ? 'active' : ''}`} onClick={() => { setActiveLink('#profile'); if (window.innerWidth <= 1024) setIsSidebarOpen(false); }}>
-              <i className="fas fa-user"></i><span className="nav-link-text">Perfil</span>
-            </a>
-          </li>
+
           <li className="nav-item push-bottom">
             <a href="#settings" id="settingsLink" className={`nav-link ${activeLink === '#settings' ? 'active' : ''}`} onClick={() => { setActiveLink('#settings'); if (window.innerWidth <= 1024) setIsSidebarOpen(false); }}>
               <i className="fas fa-cog"></i><span className="nav-link-text">Configuració</span>
@@ -432,6 +430,20 @@ export default function Dashboard({ isLoading }) {
           </div>
         </div>
       </main>
+
+      {/* Profile Modal */}
+      <ProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)}
+        userData={{
+          name: 'Roger',
+          age: data?.age || '--',
+          height: data?.height || '--',
+          weight: data?.weight || '--',
+          bmi: data?.bmi ? data.bmi.toFixed(1) : '--',
+          role: 'Atleta Amateur'
+        }}
+      />
     </div>
   );
 }
