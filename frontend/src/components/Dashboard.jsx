@@ -21,6 +21,8 @@ const METRICS = {
   ],
   "Freqüència cardíaca": [
     "resting_hr", // Las zonas se mostrarán en HeartRateZoneChart
+    "max_hr",
+    "min_hr"
   ],
   Biomarcadors: [
     "daily_temperature_variation",

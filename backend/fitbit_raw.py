@@ -89,6 +89,21 @@ for cur_date in pd.date_range(yesterday, yesterday):
         ]):
         d[key] = zones[i]['minutes'] if len(zones) == 4 else None
 
+    hr_min_max_url = f"https://api.fitbit.com/1/user/-/activities/heart/date/{date_str}/1d/1min.json"
+
+    resp = requests.get(hr_min_max_url, headers=HEADERS).json()
+
+    # La matriz completa de lecturas está en activities-heart-intraday › dataset
+    dataset = resp.get("activities-heart-intraday", {}).get("dataset", [])
+
+    # Sacamos solo los valores numéricos
+    values = [point["value"] for point in dataset if "value" in point]
+
+    hr_max = max(values)
+    hr_min = min(values)
+    d['max_hr'] = hr_max
+    d['min_hr'] = hr_min
+
     # -----------------------------------------------------------------
     # SON I ETAPES
     # -----------------------------------------------------------------
