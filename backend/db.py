@@ -94,3 +94,26 @@ def update_rol(record_id, rol):
         (rol, record_id)
     )
     conn.commit()
+
+
+def count_records():
+    """Retorna el nombre total de registres"""
+    init_db()
+    cur = conn.execute('SELECT COUNT(*) AS total FROM fitbit_data')
+    return cur.fetchone()['total']
+
+
+def get_latest_record():
+    """Obté el darrer registre guardat"""
+    init_db()
+    cur = conn.execute('SELECT * FROM fitbit_data ORDER BY date DESC, id DESC LIMIT 1')
+    row = cur.fetchone()
+    return dict(row) if row else None
+
+
+def get_record_for_date(date_str):
+    """Retorna el darrer registre d'una data concreta"""
+    init_db()
+    cur = conn.execute('SELECT * FROM fitbit_data WHERE date = ? ORDER BY id DESC LIMIT 1', (date_str,))
+    row = cur.fetchone()
+    return dict(row) if row else None
