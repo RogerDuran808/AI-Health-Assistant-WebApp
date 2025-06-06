@@ -6,6 +6,8 @@ Run fitbit_raw.py i retorna el dataframe com una llista JSON.
 import importlib.util, json, pandas as pd
 from pathlib import Path
 
+import db
+
 RAW_PATH = Path(__file__).with_name("fitbit_raw.py")
 
 def fetch_fitbit_data() -> list[dict]:
@@ -17,6 +19,8 @@ def fetch_fitbit_data() -> list[dict]:
         raise RuntimeError("fitbit_raw.py no hi ha definit un datafreame anomenat 'df'.")
     
     # Convertim els NaNs en None pel json
-    return (
-        fitbit_raw.df.where(~fitbit_raw.df.isna(), None).to_dict(orient="records")
-    )
+    records = fitbit_raw.df.where(~fitbit_raw.df.isna(), None).to_dict(orient="records")
+    # Guardem les dades a la base de dades
+    db.insert_records(records)
+    return records
+
