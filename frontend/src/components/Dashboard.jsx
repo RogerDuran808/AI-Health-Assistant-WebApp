@@ -238,12 +238,17 @@ export default function Dashboard({ isLoading }) {
                         marginRight: 'auto'
                       }}>Pasos</span>
                       <span style={{
-                        fontSize: '1.1rem',
-                        fontWeight: '500',
-                        color: '#64748b',
-                        marginLeft: '0.5rem'
+                        fontSize: '1.4rem',
+                        fontWeight: '600',
+                        color: '#3b82f6',
+                        marginLeft: '0.5rem',
+                        background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        textFillColor: 'transparent'
                       }}>
-                        x{data.steps?.toLocaleString() || '0'}
+                        {data.steps?.toLocaleString() || '0'}
                       </span>
                     </div>
                   </div>
