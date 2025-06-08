@@ -23,6 +23,39 @@
     color: var(--text-primary);
 }
 
+/* --- COLUMNA CENTRAL --- */
+.rmssd-widget {
+    flex: 0 0 170px; /* Ajustat per alçada del contingut */
+    /* min-height: 160px; No cal si flex-basis controla l'alçada */
+}
+
+.rmssd-widget .widget-content {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 10px; /* Espai addicional si el títol és extern */
+}
+
+.rmssd-value-display {
+    font-size: 2rem; /* 32px */
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-primary);
+}
+
+.rmssd-status-display {
+    font-size: 1rem; /* 16px */
+    margin-top: 8px;
+    font-weight: 500;
+    /* El color es defineix inline en el JSX */
+}
+
+.rmssd-subtitle {
+    font-size: 0.8rem; /* 12.8px */
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
 /* --- Sidebar --- */
 #sidebar {
     background-color: var(--primary-bg);
@@ -241,12 +274,21 @@
 .dashboard-section {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    min-width: 0; /* For flex/grid item proper sizing */
-    /* Sections can scroll if their content overflows */
-    /* overflow-y: auto; 
-    max-height: calc(100vh - var(--header-height) - 50px); /* Adjust based on padding */
+    gap: 20px; /* Space between widgets within a column */
 }
+
+.dashboard-main-content > .dashboard-section:nth-child(1) {
+    flex-basis: 40%;
+}
+
+.dashboard-main-content > .dashboard-section:nth-child(2) {
+    flex-basis: 20%;
+}
+
+.dashboard-main-content > .dashboard-section:nth-child(3) {
+    flex-basis: 40%;
+}
+/* Misplaced comments and orphaned closing brace removed to fix syntax error */
 
 /* --- WIDGETS --- */
 
@@ -257,8 +299,8 @@
     padding: 10px !important; /* Override general widget padding */
     align-items: center;
     justify-content: center;
-    /* flex: 0 1 300px; */ /* Controlat per la graella del dashboard */
-    /* min-height: 400px; */ /* Alçada controlada pel contenidor del grid */
+    flex: 0 1 300px; /* Controlat per la graella del dashboard */
+    min-height: 400px; /* Alçada controlada pel contenidor del grid */
     border: none !important; /* Override general widget border */
     height: 100%; /* Ocupar l'alçada disponible del seu contenidor de graella */
 }

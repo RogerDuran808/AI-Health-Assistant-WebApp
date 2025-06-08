@@ -3,8 +3,9 @@ import useFitbitData from '../../hooks/useFitbitData';
 import './Dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTachometerAlt, faRobot, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical
+  faTachometerAlt, faRobot, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare
 } from '@fortawesome/free-solid-svg-icons';
+import FatigueWidget from './FatigueWidget';
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -23,10 +24,7 @@ export default function Dashboard() {
 
   // Data from backend, with fallbacks to placeholders if needed
   const userName = fitbitData?.name || "Usuari";
-  const fatigueData = {
-    probability: fitbitData?.tired_prob !== undefined ? (fitbitData.tired_prob * 100).toFixed(0) : "N/A",
-    status: fitbitData?.tired_pred !== undefined ? (fitbitData.tired_pred === 1 ? "CANSAT" : "DESCANSAT") : "N/A"
-  };
+  const fatigueProbability = fitbitData?.tired_prob !== undefined ? (fitbitData.tired_prob * 100) : NaN;
   const activityData = {
     steps: fitbitData?.steps || 0,
     calories: fitbitData?.calories || 0
@@ -37,6 +35,26 @@ export default function Dashboard() {
     status: fitbitData?.rmssd ? "Disponible" : "N/A" 
   };
   const spo2Data = { value: fitbitData?.spo2 ? `${fitbitData.spo2}%` : "N/A" };
+
+  let rmssdStatusText = "--";
+  let rmssdStatusStyle = { color: 'var(--text-secondary)' }; // Estilo por defecto
+  const rmssdValue = parseFloat(fitbitData?.rmssd);
+
+  if (!isNaN(rmssdValue)) {
+    if (rmssdValue >= 50) {
+      rmssdStatusText = 'Excel·lent';
+      rmssdStatusStyle = { color: 'var(--accent-color)' };
+    } else if (rmssdValue >= 30) {
+      rmssdStatusText = 'Normal';
+      rmssdStatusStyle = { color: 'var(--accent-color)' };
+    } else {
+      rmssdStatusText = 'Baix';
+      rmssdStatusStyle = { color: '#B3E04D' }; // Tono más oscuro del accent
+    }
+  } else {
+    rmssdStatusText = 'N/A';
+  }
+  const displayRmssdValue = !isNaN(rmssdValue) ? `${rmssdValue.toFixed(0)} ms` : "N/A";
   const respRateData = { value: fitbitData?.full_sleep_breathing_rate ? `${fitbitData.full_sleep_breathing_rate.toFixed(1)} rpm` : "N/A" };
   const heartRateRestingData = { value: fitbitData?.resting_hr ? `${fitbitData.resting_hr} bpm` : "N/A" };
   const heartRateMinMaxData = { value: (fitbitData?.min_hr && fitbitData?.max_hr) ? `${fitbitData.min_hr}/${fitbitData.max_hr}` : "N/A" };
@@ -112,16 +130,20 @@ export default function Dashboard() {
         <main className="dashboard-grid">
           {/* Column 1: Fatigue, Activity, AI Assistant */}
           <div className="dashboard-section">
-            <div className="widget fatigue-widget">
-              <h3>Predicció de Fatiga</h3>
-              {/* Content for fatigue widget */}
-              <p>Probabilitat: {fatigueData.probability}% ({fatigueData.status})</p>
-            </div>
+            <FatigueWidget probability={fatigueProbability} />
             <div className="widget activity-widget">
-              <h3>Activitat Diària</h3>
-              {/* Content for activity widget */}
-              <p>Passes: {activityData.steps}</p>
-              <p>Calories: {activityData.calories}</p>
+              <div className="widget-content">
+                <div className="metrics-summary">
+                  <div>
+                    <span>{activityData.steps.toLocaleString('ca-ES')}</span>
+                    <p>Passes</p>
+                  </div>
+                  <div>
+                    <span>{activityData.calories.toLocaleString('ca-ES')}</span>
+                    <p>Calories</p>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="widget ai-assistant-widget">
               <h3><FontAwesomeIcon icon={faRobot} /> Assistent IA</h3>
@@ -133,9 +155,12 @@ export default function Dashboard() {
           {/* Column 2: RMSSD, Activity Charts, Biomarkers */}
           <div className="dashboard-section">
             <div className="widget rmssd-widget">
-              <h3>RMSSD</h3>
-              {/* Content for RMSSD widget */}
-              <p>{rmssdData.value} ms ({rmssdData.status})</p>
+              <h3 className="widget-title"><FontAwesomeIcon icon={faWaveSquare} />RMSSD</h3>
+              <div className="widget-content">
+                <div className="rmssd-value-display">{displayRmssdValue}</div>
+                <div className="rmssd-status-display" style={rmssdStatusStyle}>{rmssdStatusText}</div>
+                <div className="rmssd-subtitle">Variabilitat de freqüència cardíaca</div>
+              </div>
             </div>
             <div className="widget activity-charts-widget">
               <h3>Gràfics d'Activitat</h3>
