@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import WelcomePopup from "./components/WelcomePopup";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -14,6 +15,7 @@ export default function App() {
         isOpen={showWelcome}
         onClose={handleCloseWelcome}
       />
+      <Dashboard />
     </main>
   );
 }

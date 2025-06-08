@@ -1,0 +1,316 @@
+/* frontend/src/components/Dashboard/Dashboard.css */
+
+:root {
+    --primary-bg: #000000;
+    --secondary-bg: #1A1A1A;
+    --tertiary-bg: #2A2A2A; /* For hover states or less prominent elements */
+    --accent-color: #D4FF58;
+    --accent-hover: #b8e040;
+    --text-primary: #F5F5F5;
+    --text-secondary: #758680;
+    --border-color: #333333;
+    --card-border-radius: 16px;
+    --sidebar-width-expanded: 260px;
+    --sidebar-width-collapsed: 70px; /* Adjusted for icon-only */
+    --header-height: 70px;
+}
+
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--primary-bg);
+    color: var(--text-primary);
+}
+
+/* --- Sidebar --- */
+#sidebar {
+    background-color: var(--primary-bg);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    border-right: 1px solid var(--border-color);
+    transition: width 0.3s ease-in-out;
+    overflow-x: hidden; /* Hide text when collapsed */
+    flex-shrink: 0;
+    padding-top: 15px;
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar {
+    width: var(--sidebar-width-collapsed);
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:hover {
+    width: var(--sidebar-width-expanded);
+}
+
+/* For mobile/toggleable sidebar */
+.dashboard-container.sidebar-open #sidebar {
+    width: var(--sidebar-width-expanded);
+}
+
+.sidebar-header-toggle {
+    display: none; /* Hidden by default, shown in mobile */
+    padding: 0 15px 15px 15px;
+    text-align: right;
+}
+
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.greeting {
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    text-align: left;
+    overflow: hidden; /* Crucial for hiding text smoothly */
+}
+
+.greeting-icon {
+    font-size: 1.8rem;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+    display: none; /* Initially hidden, shown when sidebar is collapsed and text is hidden */
+}
+
+.greeting-text h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--text-primary);
+}
+
+.greeting-text p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.navigation {
+    flex-grow: 1;
+    overflow-y: auto; /* For scrollable nav items if they exceed height */
+    overflow-x: hidden;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0 15px;
+    margin: 0;
+}
+
+.nav-item {
+    margin-bottom: 5px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-weight: 500;
+    white-space: nowrap; /* Prevent text wrapping */
+    height: 48px;
+    overflow: hidden;
+}
+
+.nav-link .fa-icon, /* Assuming FontAwesomeIcon renders as svg or i with fa-icon */
+.nav-link svg {
+    width: 24px; /* Fixed width for icon */
+    min-width: 24px; /* Ensure it doesn't shrink */
+    text-align: center;
+    font-size: 1.1em;
+    margin-right: 20px; /* Space between icon and text */
+    transition: margin-right 0.3s ease-in-out;
+}
+
+.nav-link .nav-link-text {
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out 0.1s; /* Delay text fade slightly */
+}
+
+.nav-link:hover {
+    background-color: var(--tertiary-bg);
+    color: var(--text-primary);
+}
+
+.nav-link.active {
+    background-color: var(--accent-color);
+    color: var(--primary-bg); /* Dark text on accent background */
+    font-weight: 600;
+}
+
+/* Sidebar collapsed state (hoverable) */
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link {
+    justify-content: center; /* Center icon */
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link .fa-icon,
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link svg {
+    margin-right: 0;
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .logo-text,
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link-text {
+    opacity: 0;
+    width: 0; /* Effectively hide and prevent layout shift */
+    visibility: hidden;
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .greeting-icon {
+    display: block; /* Show icon when text is hidden */
+    text-align: center;
+}
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .greeting {
+    text-align: center;
+}
+
+
+.sidebar-settings {
+    padding: 10px 0;
+    margin-top: auto; /* Pushes to bottom if navigation doesn't fill space */
+    border-top: 1px solid var(--border-color);
+}
+
+.sidebar-footer {
+    padding: 15px 20px;
+    text-align: left;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.sidebar-footer p {
+    margin: 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.sidebar-footer .nav-version {
+    font-size: 0.75rem;
+}
+
+/* --- Main Content --- */
+.dashboard-main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto; /* Allow content to scroll if it exceeds viewport */
+    padding-left: 0; /* No padding when sidebar is part of the flex */
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    height: var(--header-height);
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--primary-bg); /* Or secondary-bg if preferred */
+    flex-shrink: 0;
+}
+
+.header-title h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+#currentDateSubtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
+    gap: 20px;
+    padding: 25px;
+    flex-grow: 1;
+    overflow-y: auto; /* If grid itself needs to scroll, though sections handle it */
+}
+
+.dashboard-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0; /* For flex/grid item proper sizing */
+    /* Sections can scroll if their content overflows */
+    /* overflow-y: auto; 
+    max-height: calc(100vh - var(--header-height) - 50px); /* Adjust based on padding */
+}
+
+/* --- Widgets --- */
+.widget {
+    background-color: var(--secondary-bg);
+    border-radius: var(--card-border-radius);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.widget h3 .fa-icon,
+.widget h3 svg {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+
+/* Specific widget styling can be added here or in their own CSS files */
+.fatigue-widget,
+.activity-widget,
+.ai-assistant-widget,
+.rmssd-widget,
+.activity-charts-widget,
+.biomarkers-widget,
+.sleep-analysis-widget {
+    /* Basic styling, can be expanded */
+    min-height: 150px; /* Example minimum height */
+}
+
+/* Responsive adjustments for sidebar toggle */
+@media (max-width: 1024px) {
+    .dashboard-container.sidebar-collapsed-hoverable #sidebar {
+        width: 0; /* Fully collapse on mobile if not explicitly opened */
+        padding-left: 0;
+        padding-right: 0;
+        border-right: none;
+    }
+    .dashboard-container.sidebar-collapsed-hoverable #sidebar:hover {
+        width: var(--sidebar-width-expanded); /* Hover still works if desired, or remove */
+    }
+
+    .dashboard-container.sidebar-open #sidebar {
+        width: var(--sidebar-width-expanded);
+        padding-left: 15px; /* Restore padding when open */
+        padding-right: 15px;
+        border-right: 1px solid var(--border-color);
+    }
+
+    .sidebar-header-toggle {
+        display: block; /* Show toggle button on smaller screens */
+    }
+
+    /* Adjust main content padding when sidebar is fully collapsed or open on mobile */
+
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Stack widgets on smaller screens */
+    }
+}

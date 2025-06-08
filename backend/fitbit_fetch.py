@@ -215,7 +215,7 @@ def _process_data_and_predict(df: pd.DataFrame) -> pd.DataFrame:
 
 # --- Funció Principal d'Execució ---
 
-def main() -> list[dict]:
+def fetch_fitbit_data() -> list[dict]:
     """Orquestra tot el procés: carregar, actualitzar, processar, desar i retornar."""
     yesterday = dt.date.today() - dt.timedelta(days=1)
     yesterday_str = yesterday.strftime('%Y-%m-%d')
@@ -254,14 +254,3 @@ def main() -> list[dict]:
     
     print(f"\n--- Pipeline finalitzat. No hi ha dades disponibles per a {yesterday_str} ---")
     return []
-
-# --- Execució de Prova ---
-if __name__ == "__main__":
-    final_data = main()
-    
-    if final_data:
-        print("\n--- Resultat Final (dades d'ahir) ---")
-        print(json.dumps(final_data, indent=2))
-    else:
-        print("\n--- Resultat Final ---")
-        print("No s'han pogut obtenir ni processar les dades d'ahir.")
