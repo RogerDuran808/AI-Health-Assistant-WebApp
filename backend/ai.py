@@ -6,8 +6,7 @@ import openai
 # Configuració d'OpenAI
 # --------------------------------------------------------------
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    raise RuntimeError("Falta la variable d'entorn OPENAI_API_KEY")
+
 openai.api_key = OPENAI_API_KEY
 MODEL = "gpt-4o-mini"
 

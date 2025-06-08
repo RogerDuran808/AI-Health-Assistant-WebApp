@@ -248,7 +248,181 @@
     max-height: calc(100vh - var(--header-height) - 50px); /* Adjust based on padding */
 }
 
-/* --- Widgets --- */
+/* --- WIDGETS --- */
+
+/* Styles for FatigueWidget based on docs/style.css */
+.fatigue-widget {
+    background: transparent !important; /* Override general widget background */
+    box-shadow: none !important; /* Override general widget shadow */
+    padding: 10px !important; /* Override general widget padding */
+    align-items: center;
+    justify-content: center;
+    /* flex: 0 1 300px; */ /* Controlat per la graella del dashboard */
+    /* min-height: 400px; */ /* Alçada controlada pel contenidor del grid */
+    border: none !important; /* Override general widget border */
+    height: 100%; /* Ocupar l'alçada disponible del seu contenidor de graella */
+}
+
+.fatigue-indicator-container {
+    position: relative;
+    width: 100%;
+    max-width: 280px; /* Ajustat per encaixar millor */
+    height: 100%; /* Ocupar l'alçada del widget */
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fatigue-text-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+}
+
+#fatigueProbabilityText {
+    display: block;
+    font-size: 3rem; /* Ajustat lleugerament */
+    font-weight: 800;
+    line-height: 1;
+    /* color is set dynamically via inline style */
+}
+
+#fatigueStatusText {
+    display: block; /* Assegura que estigui en una nova línia */
+    font-size: 1.1rem; /* Ajustat lleugerament */
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 8px;
+    /* color is set dynamically via inline style */
+}
+
+/* Styles for ActivityWidget based on docs/style.css */
+.activity-widget {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border: none !important;
+    /* La altura puede ser gestionada por el grid row definition */
+    /* Si se desea una altura fija específica como en docs, descomentar y ajustar */
+    /* min-height: 80px; */ 
+    /* height: 80px; */
+}
+
+.activity-widget .widget-content {
+    padding: 0; /* Eliminar padding si el widget padre ya no lo tiene o es específico */
+    height: 100%;
+}
+
+.metrics-summary {
+    display: flex;
+    justify-content: space-around;
+    align-items: center; /* Centra verticalmente los items */
+    text-align: center;
+    height: 100%; /* Ocupa toda la altura del .activity-widget .widget-content */
+}
+
+.metrics-summary div span {
+    font-size: 1.8rem; /* Coincide con docs */
+    font-weight: 700;
+    display: block;
+    color: var(--text-primary);
+}
+
+.metrics-summary div p {
+    font-size: 0.8rem; /* Coincide con docs */
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-top: 4px; /* Pequeño ajuste para espaciado */
+}
+
+/* Styles for AI Assistant Widget */
+.ai-assistant-widget .widget-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes actions to bottom */
+    height: 100%;
+}
+
+.ai-assistant-widget h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 15px; /* Space below title */
+    display: flex;
+    align-items: center;
+}
+
+.ai-assistant-widget h3 .fa-robot {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+
+.recommendation-area {
+    flex-grow: 1; /* Takes available space */
+    background-color: var(--primary-bg); /* Slightly darker than card bg */
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px; /* Space before action buttons */
+    overflow-y: auto; /* Scroll if content overflows */
+    min-height: 100px; /* Minimum height */
+    max-height: 200px; /* Max height before scroll, adjust as needed */
+    border: 1px solid var(--border-color);
+}
+
+.recommendation-area p {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    white-space: pre-wrap; /* Respect newlines from AI */
+}
+
+.widget-actions {
+    display: flex;
+    justify-content: space-between; /* Align buttons */
+    gap: 10px; /* Space between buttons */
+}
+
+/* General Button Styles (if not already globally defined) */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-align: center;
+    flex-grow: 1; /* Make buttons take equal width if needed */
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: var(--primary-bg);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+}
+
+.btn-secondary {
+    background-color: var(--tertiary-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: var(--border-color);
+}
+
 .widget {
     background-color: var(--secondary-bg);
     border-radius: var(--card-border-radius);
