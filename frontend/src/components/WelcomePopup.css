@@ -1,11 +1,21 @@
 :root {
-    --popup-bg: #1a1a3a; /* Similar to sidebar bg-secondary */
-    --popup-card-bg: rgba(255, 255, 255, 0.05); /* Similar to bg-card */
-    --popup-border: rgba(255, 255, 255, 0.1);
-    --popup-text-primary: #ffffff;
-    --popup-text-secondary: #a1a1aa;
-    --popup-accent: #6366f1; /* Primary color from dashboard */
-    --popup-radius: 12px;
+    /* Main application color palette */
+    --main-bg: #000000;
+    --card-bg: #1A1A1A;
+    --accent-color: #D4FF58;
+    --text-primary: #F5F5F5;
+    --text-secondary: #758680;
+    --border-color: #333333;
+
+    /* WelcomePopup specific variables using the main palette */
+    --popup-bg: var(--main-bg); 
+    --popup-card-bg: var(--card-bg);
+    --popup-border: var(--border-color);
+    --popup-text-primary: var(--text-primary);
+    --popup-text-secondary: var(--text-secondary);
+    --popup-accent: var(--accent-color);
+    --popup-radius: 16px; /* Consistent with --card-border-radius from Dashboard.css */
+    --popup-accent-hover: #b8e040; /* Consistent with --accent-hover from Dashboard.css */
 }
 
 .welcome-popup-overlay {
@@ -23,7 +33,7 @@
 }
 
 .welcome-popup-content {
-    background-color: var(--popup-bg);
+    background-color: var(--card-bg); /* Use card-bg for the popup content itself for contrast */
     padding: 2.5rem 3rem;
     border-radius: var(--popup-radius);
     border: 1px solid var(--popup-border);
@@ -140,7 +150,7 @@
 }
 
 .understand-button:hover {
-    background-color: var(--primary-dark); /* Using a variable from root dashboard css */
+    background-color: var(--popup-accent-hover);
 }
 
 /* Responsive adjustments */

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import useFitbitData from '../../hooks/useFitbitData';
 import './Dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -8,6 +9,7 @@ import {
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
+  const { data: fitbitData, loading: isLoading, error } = useFitbitData();
 
   useEffect(() => {
     const today = new Date();
@@ -19,16 +21,26 @@ export default function Dashboard() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Placeholder data - this will eventually come from the backend
-  const userName = "Roger";
-  const fatigueData = { probability: 75, status: "Alt" };
-  const activityData = { steps: 10500, calories: 2300 };
-  const rmssdData = { value: 45, status: "Normal" };
-  const spo2Data = { value: "97%" };
-  const respRateData = { value: "15 rpm" };
-  const heartRateRestingData = { value: "58 bpm" };
-  const heartRateMinMaxData = { value: "50/160" };
-  const tempVariationData = { value: "+0.2°C" };
+  // Data from backend, with fallbacks to placeholders if needed
+  const userName = fitbitData?.name || "Usuari";
+  const fatigueData = {
+    probability: fitbitData?.tired_prob !== undefined ? (fitbitData.tired_prob * 100).toFixed(0) : "N/A",
+    status: fitbitData?.tired_pred !== undefined ? (fitbitData.tired_pred === 1 ? "CANSAT" : "DESCANSAT") : "N/A"
+  };
+  const activityData = {
+    steps: fitbitData?.steps || 0,
+    calories: fitbitData?.calories || 0
+  };
+  const rmssdData = {
+    value: fitbitData?.rmssd || "N/A",
+    // Podríem afegir lògica per determinar l'estat (Normal, Baix, Alt) basat en el valor de rmssd
+    status: fitbitData?.rmssd ? "Disponible" : "N/A" 
+  };
+  const spo2Data = { value: fitbitData?.spo2 ? `${fitbitData.spo2}%` : "N/A" };
+  const respRateData = { value: fitbitData?.full_sleep_breathing_rate ? `${fitbitData.full_sleep_breathing_rate.toFixed(1)} rpm` : "N/A" };
+  const heartRateRestingData = { value: fitbitData?.resting_hr ? `${fitbitData.resting_hr} bpm` : "N/A" };
+  const heartRateMinMaxData = { value: (fitbitData?.min_hr && fitbitData?.max_hr) ? `${fitbitData.min_hr}/${fitbitData.max_hr}` : "N/A" };
+  const tempVariationData = { value: fitbitData?.daily_temperature_variation ? `${fitbitData.daily_temperature_variation.toFixed(1)}°C` : "N/A" };
 
   const navItems = [
     { id: 'dashboard', icon: faTachometerAlt, text: 'Tauler de Control', active: true },
@@ -40,6 +52,12 @@ export default function Dashboard() {
   ];
 
   const settingsItem = { id: 'settings', icon: faCog, text: 'Configuració', active: false };
+
+  // Els estats de càrrega i error ara es gestionen de manera que no bloquegen el render del dashboard.
+  // Si hi ha un error, es podria registrar a la consola o gestionar d'una altra manera no visualment intrusiva aquí.
+  if (error) {
+    console.error("Error en carregar les dades de Fitbit:", error);
+  }
 
   return (
     <div className={`dashboard-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed-hoverable'}`}>
