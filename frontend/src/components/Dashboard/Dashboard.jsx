@@ -66,10 +66,20 @@ export default function Dashboard() {
   const minutesAsleep = fitbitData?.minutesAsleep || 0;
   const minutesAwake = fitbitData?.minutesAwake || 0;
 
+  // Prepare data for BiomarkersWidget
+  const biomarkersForWidget = {
+    spo2: fitbitData?.spo2, // Expects number or N/A
+    respRate: fitbitData?.full_sleep_breathing_rate, // Expects number or N/A
+    hrResting: fitbitData?.resting_hr, // Expects number or N/A
+    hrMin: fitbitData?.min_hr, // Expects number or --
+    hrMax: fitbitData?.max_hr, // Expects number or --
+    tempVariation: fitbitData?.daily_temperature_variation // Expects number or null
+  };
+
   const sleepStagesForWidget = [
-    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * minutesAsleep), color: '#D4FF58', cssClass: 'deep' },
-    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * minutesAsleep), color: '#A5C9FF', cssClass: 'light' },
-    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * minutesAsleep), color: '#F5F5F5', cssClass: 'rem' },
+    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * (minutesAsleep + minutesAwake)), color: '#D4FF58', cssClass: 'deep' },
+    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * (minutesAsleep + minutesAwake)), color: '#A5C9FF', cssClass: 'light' },
+    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * (minutesAsleep + minutesAwake)), color: '#F5F5F5', cssClass: 'rem' },
     { name: 'Despert', minutes: Math.round(minutesAwake), color: '#758680', cssClass: 'awake' } // Using minutesAwake directly
   ];
 
@@ -180,7 +190,7 @@ export default function Dashboard() {
               {/* Placeholder for charts */}
               <p>Gràfics aniran aquí...</p>
             </div>
-            <BiomarkersWidget />
+            <BiomarkersWidget biomarkersData={biomarkersForWidget} />
           </div>
 
           {/* Column 3: Sleep Analysis */}

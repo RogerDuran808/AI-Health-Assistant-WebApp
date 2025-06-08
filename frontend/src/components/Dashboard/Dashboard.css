@@ -299,17 +299,20 @@
     padding: 10px !important; /* Override general widget padding */
     align-items: center;
     justify-content: center;
-    flex: 0 1 300px; /* Controlat per la graella del dashboard */
-    min-height: 400px; /* Alçada controlada pel contenidor del grid */
+    flex: 1 1 auto; /* Allow widget to grow and shrink */
+    min-height: 500px; /* Increased min-height */
     border: none !important; /* Override general widget border */
-    height: 100%; /* Ocupar l'alçada disponible del seu contenidor de graella */
+    height: 100%; /* Occupy full height of grid container */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .fatigue-indicator-container {
     position: relative;
     width: 100%;
-    max-width: 280px; /* Ajustat per encaixar millor */
-    height: 100%; /* Ocupar l'alçada del widget */
+    max-width: 400px; /* Increased max-width */
+    height: 400px; /* Fixed height for better control */
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -327,18 +330,19 @@
 
 #fatigueProbabilityText {
     display: block;
-    font-size: 3rem; /* Ajustat lleugerament */
+    font-size: 4rem; /* Increased font size */
     font-weight: 800;
     line-height: 1;
     /* color is set dynamically via inline style */
 }
 
 #fatigueStatusText {
-    display: block; /* Assegura que estigui en una nova línia */
-    font-size: 1.1rem; /* Ajustat lleugerament */
+    display: block;
+    font-size: 1.5rem; /* Increased font size */
     font-weight: 600;
     text-transform: uppercase;
-    margin-top: 8px;
+    margin-top: 12px; /* Slightly more space between number and text */
+    letter-spacing: 1px; /* Improve readability */
     /* color is set dynamically via inline style */
 }
 
