@@ -1,31 +1,34 @@
+print("[FITBIT_RAW_DEBUG] Script started")
 # -----------------------------------------------------------------------------
 # IMPORTS
 # -----------------------------------------------------------------------------
-import fitbit
-import pandas as pd
-import datetime as dt
-import numpy as np
-import json, requests, os, time
-from dotenv import load_dotenv
-pd.set_option('display.max_columns', None)  
-load_dotenv()
+print("[FITBIT_RAW_DEBUG] Importing fitbit..."); import fitbit; print("[FITBIT_RAW_DEBUG] Imported fitbit.")
+print("[FITBIT_RAW_DEBUG] Importing pandas..."); import pandas as pd; print("[FITBIT_RAW_DEBUG] Imported pandas.")
+print("[FITBIT_RAW_DEBUG] Importing datetime..."); import datetime as dt; print("[FITBIT_RAW_DEBUG] Imported datetime.")
+print("[FITBIT_RAW_DEBUG] Importing numpy..."); import numpy as np; print("[FITBIT_RAW_DEBUG] Imported numpy.")
+print("[FITBIT_RAW_DEBUG] Importing json, requests, os, time..."); import json, requests, os, time; print("[FITBIT_RAW_DEBUG] Imported json, requests, os, time.")
+print("[FITBIT_RAW_DEBUG] Importing load_dotenv from dotenv..."); from dotenv import load_dotenv; print("[FITBIT_RAW_DEBUG] Imported load_dotenv from dotenv.")
+print("[FITBIT_RAW_DEBUG] Setting pandas option..."); pd.set_option('display.max_columns', None); print("[FITBIT_RAW_DEBUG] Pandas option set.")  
+print("[FITBIT_RAW_DEBUG] Calling load_dotenv()..."); load_dotenv(); print("[FITBIT_RAW_DEBUG] Called load_dotenv().")
 
-import os
-from pathlib import Path
-import joblib
+print("[FITBIT_RAW_DEBUG] Importing os (second time, for Path)..."); import os; print("[FITBIT_RAW_DEBUG] Imported os (second time).")
+print("[FITBIT_RAW_DEBUG] Importing Path from pathlib..."); from pathlib import Path; print("[FITBIT_RAW_DEBUG] Imported Path.")
+print("[FITBIT_RAW_DEBUG] Importing joblib..."); import joblib; print("[FITBIT_RAW_DEBUG] Imported joblib.")
 
 # -----------------------------------------------------------------------------
 # CREDENCIALS Y CLIENT OAuth2
 # -----------------------------------------------------------------------------
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+print("[FITBIT_RAW_DEBUG] Getting CLIENT_ID from env..."); CLIENT_ID = os.getenv("CLIENT_ID"); print(f"[FITBIT_RAW_DEBUG] CLIENT_ID: {CLIENT_ID}")
+print("[FITBIT_RAW_DEBUG] Getting CLIENT_SECRET from env..."); CLIENT_SECRET = os.getenv("CLIENT_SECRET"); print(f"[FITBIT_RAW_DEBUG] CLIENT_SECRET: {CLIENT_SECRET}")
+print("[FITBIT_RAW_DEBUG] Getting ACCESS_TOKEN from env..."); ACCESS_TOKEN = os.getenv("ACCESS_TOKEN"); print(f"[FITBIT_RAW_DEBUG] ACCESS_TOKEN: {ACCESS_TOKEN}")
 
 
+print("[FITBIT_RAW_DEBUG] Creating HEADERS...")
 HEADERS = {
     'accept': 'application/json',
-    'authorization': 'Bearer ' + ACCESS_TOKEN
+    'authorization': 'Bearer ' + str(ACCESS_TOKEN)  # Ensure ACCESS_TOKEN is string
 }
+print(f"[FITBIT_RAW_DEBUG] HEADERS: {HEADERS}")
 
 # -----------------------------------------------------------------------------
 # RECOLECCIÓ DE DADES DEL DIA ANTERIOR
@@ -205,6 +208,14 @@ for cur_date in pd.date_range(yesterday, yesterday):
 # -----------------------------------------------------------------------------
 
 df = pd.DataFrame(all_days_data)
+print(f"[FITBIT_RAW_DEBUG] DataFrame 'df' created. Shape: {df.shape if 'df' in locals() and isinstance(df, pd.DataFrame) else 'Not a DataFrame or not created'}")
+if 'df' in locals() and isinstance(df, pd.DataFrame) and not df.empty:
+    print("[FITBIT_RAW_DEBUG] First 5 rows of DataFrame 'df':")
+    print(df.head().to_string())
+elif 'df' in locals() and isinstance(df, pd.DataFrame) and df.empty:
+    print("[FITBIT_RAW_DEBUG] DataFrame 'df' is empty.")
+else:
+    print("[FITBIT_RAW_DEBUG] DataFrame 'df' was not created or is not a DataFrame object.")
 
 # -----------------------------------------------------------------------------  
 # CARREGUEM EL MODEL  
