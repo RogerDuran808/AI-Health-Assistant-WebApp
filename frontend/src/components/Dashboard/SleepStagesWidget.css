@@ -1,0 +1,162 @@
+:root {
+    --primary-bg: #000000;
+    --secondary-bg: #1A1A1A;
+    --tertiary-bg: #2A2A2A;
+    --accent-color: #D4FF58;
+    --text-primary: #F5F5F5;
+    --text-secondary: #758680;
+    --border-color: #333333;
+    --card-border-radius: 16px;
+}
+
+/* Styles adapted from docs/style.css for the sleep widget */
+.widget.sleep-widget {
+    background-color: var(--secondary-bg);
+    border-radius: var(--card-border-radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    /* Assuming it might take more space, adjust flex properties as needed */
+    flex: 1; 
+    min-height: 300px; /* Example minimum height */
+}
+
+.sleep-widget .widget-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+.sleep-widget .widget-title svg {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+
+.sleep-widget .widget-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden; /* Changed from visible to hidden to contain content */
+}
+
+/* Basic tab styling (can be expanded later) */
+.sleep-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+    flex-shrink: 0;
+}
+
+.sleep-tabs .tab-button {
+    background: var(--tertiary-bg);
+    border: 1px solid var(--border-color);
+    padding: 8px 15px;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    flex: 1;
+    text-align: center;
+}
+
+.sleep-tabs .tab-button:hover {
+    background: #444;
+    color: var(--text-primary);
+}
+
+.sleep-tabs .tab-button.active {
+    background: var(--accent-color);
+    color: var(--primary-bg); /* Dark text on accent */
+    border-color: var(--accent-color);
+    font-weight: 600;
+}
+
+.sleep-tab-content {
+    display: none;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.sleep-tab-content.active {
+    display: flex;
+}
+
+.sleep-phases-content {
+    display: flex;
+    flex-direction: column; /* Changed from row to column for better layout in limited space */
+    gap: 20px;
+    width: 100%;
+    flex-grow: 1;
+}
+
+.sleep-chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 250px; /* Max width for the chart */
+    min-height: 200px; /* Ensure chart has some height */
+    align-self: center; /* Center chart if space allows */
+    margin-bottom: 15px; /* Space between chart and legend */
+}
+
+.sleep-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    font-size: 0.85rem;
+}
+
+.stage-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stage-item:last-child {
+    border-bottom: none;
+}
+
+.stage-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stage-color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.stage-name {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.stage-details {
+    display: flex;
+    gap: 10px;
+    color: var(--text-secondary);
+}
+
+.stage-time {
+    min-width: 50px; /* Ensure time aligns somewhat */
+    text-align: right;
+}
+
+.stage-percentage {
+    min-width: 30px; /* Ensure percentage aligns somewhat */
+    text-align: right;
+    font-weight: 500;
+}
+

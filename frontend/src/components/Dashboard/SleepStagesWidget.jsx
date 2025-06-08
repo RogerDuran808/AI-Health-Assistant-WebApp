@@ -1,0 +1,111 @@
+import React from 'react';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import './SleepStagesWidget.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMoon } from '@fortawesome/free-solid-svg-icons';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+// Helper function from docs/script.js
+function formatMinutesToHoursAndMinutes(totalMinutes) {
+    if (totalMinutes === undefined || totalMinutes === null || totalMinutes < 0) return "0m";
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.round(totalMinutes % 60);
+    return `${hours > 0 ? hours + 'h ' : ''}${minutes}m`;
+}
+
+const SleepStagesWidget = ({ stagesData }) => {
+    // Default to an empty array if stagesData is not provided or not an array
+    const G_STAGES_DATA = Array.isArray(stagesData) ? stagesData : [];
+
+    // Use a default structure if G_STAGES_DATA is empty to prevent errors
+    const sleepData = {
+        stages: G_STAGES_DATA.length > 0 ? G_STAGES_DATA : [
+            { name: 'Profund', minutes: 0, color: '#D4FF58', cssClass: 'deep' },
+            { name: 'Lleuger', minutes: 0, color: '#A5C9FF', cssClass: 'light' },
+            { name: 'REM', minutes: 0, color: '#F5F5F5', cssClass: 'rem' },
+            { name: 'Despert', minutes: 0, color: '#758680', cssClass: 'awake' }
+        ]
+    };
+
+    // Ensure all stages have a minutes property, defaulting to 0 if not
+    const safeStages = sleepData.stages.map(stage => ({ ...stage, minutes: stage.minutes ?? 0 }));
+    const totalSleepMinutes = safeStages.reduce((sum, stage) => sum + stage.minutes, 0);
+
+
+    const chartData = {
+        labels: safeStages.map(s => s.name),
+        datasets: [{
+            data: safeStages.map(s => s.minutes),
+            backgroundColor: safeStages.map(s => s.color),
+            borderColor: '#1A1A1A', // Card Background for contrast
+            borderWidth: 2,
+            hoverOffset: 8
+        }]
+    };
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%',
+        plugins: {
+            legend: {
+                display: false // Custom legend will be used
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed !== null) {
+                            label += formatMinutesToHoursAndMinutes(context.parsed);
+                        }
+                        return label;
+                    }
+                }
+            }
+        }
+    };
+
+    return (
+        <div className="widget sleep-widget">
+            <h3 className="widget-title">
+                <FontAwesomeIcon icon={faMoon} />Anàlisi de Son
+            </h3>
+            <div className="widget-content">
+                {/* Tabs can be added here later */}
+                <div className="sleep-tab-content active" id="stages-tab">
+                    <div className="sleep-phases-content">
+                        <div className="sleep-chart-container">
+                            <Doughnut data={chartData} options={chartOptions} />
+                        </div>
+                        <div className="sleep-legend">
+                            {safeStages.map(stage => {
+                                const stageMinutes = stage.minutes ?? 0; // Ensure minutes is not undefined
+                                const percentage = totalSleepMinutes > 0 ? Math.round((stageMinutes / totalSleepMinutes) * 100) : 0;
+                                return (
+                                    <div key={stage.name} className={`stage-item ${stage.cssClass}`}>
+                                        <div className="stage-info">
+                                            <span className="stage-color-indicator" style={{ backgroundColor: stage.color }}></span>
+                                            <span className="stage-name">{stage.name}</span>
+                                        </div>
+                                        <div className="stage-details">
+                                            <span className="stage-time">{formatMinutesToHoursAndMinutes(stage.minutes)}</span>
+                                            <span className="stage-percentage">{percentage}%</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+                {/* Other tab contents can be added here */}
+            </div>
+        </div>
+    );
+};
+
+export default SleepStagesWidget;

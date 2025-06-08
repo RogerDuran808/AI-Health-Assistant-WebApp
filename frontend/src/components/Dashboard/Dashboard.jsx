@@ -3,9 +3,11 @@ import useFitbitData from '../../hooks/useFitbitData';
 import './Dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTachometerAlt, faRobot, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare
+  faTachometerAlt, faRobot, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare, faLungs, faWind, faHeartbeat, faThermometerHalf
 } from '@fortawesome/free-solid-svg-icons';
 import FatigueWidget from './FatigueWidget';
+import BiomarkersWidget from './BiomarkersWidget';
+import SleepStagesWidget from './SleepStagesWidget';
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -60,6 +62,17 @@ export default function Dashboard() {
   const heartRateMinMaxData = { value: (fitbitData?.min_hr && fitbitData?.max_hr) ? `${fitbitData.min_hr}/${fitbitData.max_hr}` : "N/A" };
   const tempVariationData = { value: fitbitData?.daily_temperature_variation ? `${fitbitData.daily_temperature_variation.toFixed(1)}°C` : "N/A" };
 
+  // Prepare data for SleepStagesWidget
+  const minutesAsleep = fitbitData?.minutesAsleep || 0;
+  const minutesAwake = fitbitData?.minutesAwake || 0;
+
+  const sleepStagesForWidget = [
+    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * minutesAsleep), color: '#D4FF58', cssClass: 'deep' },
+    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * minutesAsleep), color: '#A5C9FF', cssClass: 'light' },
+    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * minutesAsleep), color: '#F5F5F5', cssClass: 'rem' },
+    { name: 'Despert', minutes: Math.round(minutesAwake), color: '#758680', cssClass: 'awake' } // Using minutesAwake directly
+  ];
+
   const navItems = [
     { id: 'dashboard', icon: faTachometerAlt, text: 'Tauler de Control', active: true },
     { id: 'assistant', icon: faRobot, text: 'Assistent IA', active: false },
@@ -113,8 +126,8 @@ export default function Dashboard() {
           </ul>
         </div>
         <div className="sidebar-footer">
-          <p><span className="nav-link-text logo-text">BenestarIA Dashboard</span></p>
-          <p><span className="nav-version nav-link-text logo-text">v1.0.0</span></p>
+          <p><span className="nav-link-text logo-text">Fit Dashboard</span></p>
+          <p><span className="nav-version nav-link-text logo-text">v0.5.1</span></p>
         </div>
       </aside>
 
@@ -167,24 +180,12 @@ export default function Dashboard() {
               {/* Placeholder for charts */}
               <p>Gràfics aniran aquí...</p>
             </div>
-            <div className="widget biomarkers-widget">
-              <h3>Biomarcadors Clau</h3>
-              {/* Content for biomarkers */}
-              <p>SpO2: {spo2Data.value}</p>
-              <p>Freq. Resp.: {respRateData.value}</p>
-              <p>FC Repòs: {heartRateRestingData.value}</p>
-              <p>FC Min/Max: {heartRateMinMaxData.value}</p>
-              <p>Variació Temp.: {tempVariationData.value}</p>
-            </div>
+            <BiomarkersWidget />
           </div>
 
           {/* Column 3: Sleep Analysis */}
           <div className="dashboard-section">
-            <div className="widget sleep-analysis-widget">
-              <h3>Anàlisi de Son</h3>
-              {/* Content for sleep analysis */}
-              <p>Dades de son aquí...</p>
-            </div>
+            <SleepStagesWidget stagesData={sleepStagesForWidget} />
           </div>
         </main>
       </div>
