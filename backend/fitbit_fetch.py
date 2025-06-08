@@ -1,7 +1,10 @@
 """
-Run fitbit_raw.py and return the DataFrame as a JSON list.
-If data for yesterday is already in the SQLite database, it's returned from there
-instead of calling fitbit_raw.py.
+Script principal per obtenir, processar i predir dades de Fitbit.
+1. Carrega totes les dades històriques de la base de dades SQLite.
+2. Si falten les dades d'ahir, les obté de l'API (executant fitbit_raw.py) i les afegeix a la BD.
+3. Aplica enginyeria de característiques i fa prediccions amb un model sobre TOTES les dades.
+4. Desa aquestes noves característiques i prediccions a la base de dades.
+5. Retorna les dades completes i processades d'ahir en format JSON.
 """
 
 import importlib.util
@@ -10,172 +13,255 @@ import pandas as pd
 from pathlib import Path
 import sqlite3
 import datetime as dt
-import sys # Potentially needed for module manipulation if issues arise
+import sys
+import joblib  # Importat aquí
 
-# --- Configuration ---
-RAW_PATH = Path(__file__).resolve().parent / "fitbit_raw.py"
-DB_PATH = Path(__file__).resolve().parent / "fitbit_data.db"
+# --- Configuració ---
+BASE_DIR = Path(__file__).resolve().parent
+RAW_PATH = BASE_DIR / "fitbit_raw.py"
+DB_PATH = BASE_DIR / "fitbit_data.db"
+MODEL_PATH = BASE_DIR / 'models' / 'BalancedRandomForest_TIRED.joblib'
 TABLE_NAME = "fitbit_daily_data"
 
-# Define column names and their SQLite types based on fitbit_raw.py output DataFrame (df)
-# This ensures consistency for table creation and data retrieval.
+# --- Definició Completa de les Columnes de la Base de Dades ---
+# Inclou dades crues, de feature engineering i prediccions.
 COLUMN_DEFINITIONS = {
-    "date": "TEXT PRIMARY KEY",
-    "name": "TEXT", "age": "INTEGER", "gender": "TEXT", "bmi": "REAL", "weight": "REAL", "height": "REAL",
-    "calories": "INTEGER", "steps": "INTEGER",
-    "lightly_active_minutes": "INTEGER", "moderately_active_minutes": "INTEGER",
-    "very_active_minutes": "INTEGER", "sedentary_minutes": "INTEGER", "resting_hr": "INTEGER",
+    # Dades crues de l'API
+    "date": "TEXT PRIMARY KEY", "name": "TEXT", "age": "INTEGER", "gender": "TEXT",
+    "bmi": "REAL", "weight": "REAL", "height": "REAL", "calories": "INTEGER",
+    "steps": "INTEGER", "lightly_active_minutes": "INTEGER",
+    "moderately_active_minutes": "INTEGER", "very_active_minutes": "INTEGER",
+    "sedentary_minutes": "INTEGER", "resting_hr": "INTEGER",
     "minutes_below_default_zone_1": "INTEGER", "minutes_in_default_zone_1": "INTEGER",
     "minutes_in_default_zone_2": "INTEGER", "minutes_in_default_zone_3": "INTEGER",
-    "max_hr": "INTEGER", "min_hr": "INTEGER",
-    "minutesToFallAsleep": "INTEGER", "minutesAsleep": "INTEGER", "minutesAwake": "INTEGER",
-    "minutesAfterWakeup": "INTEGER", "sleep_efficiency": "INTEGER",
-    "sleep_deep_ratio": "REAL", "sleep_light_ratio": "REAL", "sleep_rem_ratio": "REAL", "sleep_wake_ratio": "REAL",
-    "daily_temperature_variation": "REAL", "rmssd": "REAL", "spo2": "REAL", "full_sleep_breathing_rate": "REAL",
-    # Columns added after initial test run based on fitbit_raw.py output
-    "wake_after_sleep_pct": "REAL",
-    "cat__age_<30": "INTEGER",
-    "cat__age_>=30": "INTEGER",
-    "cat__gender_FEMALE": "INTEGER",
-    "cat__gender_MALE": "INTEGER",
-    "tired_pred": "REAL",
-    "tired_prob": "REAL"
+    "max_hr": "INTEGER", "min_hr": "INTEGER", "minutesToFallAsleep": "INTEGER",
+    "minutesAsleep": "INTEGER", "minutesAwake": "INTEGER", "minutesAfterWakeup": "INTEGER",
+    "sleep_efficiency": "INTEGER", "sleep_deep_ratio": "REAL", "sleep_light_ratio": "REAL",
+    "sleep_rem_ratio": "REAL", "sleep_wake_ratio": "REAL",
+    "daily_temperature_variation": "REAL", "rmssd": "REAL", "spo2": "REAL",
+    "full_sleep_breathing_rate": "REAL",
+    
+    # Columnes de Feature Engineering
+    "wake_after_sleep_pct": "REAL", "cat__age_<30": "INTEGER", "cat__age_>=30": "INTEGER",
+    "cat__gender_FEMALE": "INTEGER", "cat__gender_MALE": "INTEGER",
+    
+    # Columnes de Predicció
+    "tired_pred": "REAL", "tired_prob": "REAL"
 }
-ORDERED_COLUMN_NAMES = list(COLUMN_DEFINITIONS.keys())
+RAW_COLUMN_NAMES = list(pd.read_csv(BASE_DIR / 'models' / 'raw_features.csv')['feature']) # Noms de les columnes originals
 
-# --- Database Helper Functions ---
+# --- Funcions de Gestió de la Base de Dades ---
+
+def _add_missing_columns(conn: sqlite3.Connection):
+    """Comprova si falten columnes a la taula i les afegeix si és necessari."""
+    cursor = conn.cursor()
+    cursor.execute(f"PRAGMA table_info({TABLE_NAME})")
+    existing_columns = {row[1] for row in cursor.fetchall()}
+    
+    for col_name, col_type in COLUMN_DEFINITIONS.items():
+        if col_name not in existing_columns:
+            print(f"[_add_missing_columns] Afegint columna '{col_name}' a la taula '{TABLE_NAME}'...")
+            try:
+                cursor.execute(f'ALTER TABLE {TABLE_NAME} ADD COLUMN "{col_name}" {col_type}')
+            except sqlite3.OperationalError as e:
+                print(f"Avís: No s'ha pogut afegir la columna '{col_name}'. Potser ja existeix. Error: {e}")
+    conn.commit()
+
+
 def _init_db():
-    """Initializes the database and creates the data table if it doesn't exist."""
-    print(f"[_init_db] Attempting to connect to DB at: {DB_PATH}")
+    """Inicia la connexió a la BD, crea la taula si no existeix i afegeix columnes que falten."""
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
-        cols_sql = ", ".join([f'\"{col_name}\" {col_type}' for col_name, col_type in COLUMN_DEFINITIONS.items()])
-        create_table_sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} ({cols_sql})"
-        print(f"[_init_db] Executing SQL: {create_table_sql}")
+        
+        # Crea la taula amb les columnes RAW inicials si no existeix
+        raw_cols_sql = ", ".join([f'"{name}" {COLUMN_DEFINITIONS[name]}' for name in RAW_COLUMN_NAMES if name in COLUMN_DEFINITIONS])
+        create_table_sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} ({raw_cols_sql})"
         cursor.execute(create_table_sql)
         conn.commit()
-        print(f"[_init_db] Table {TABLE_NAME} ensured to exist.")
+        
+        # Assegura que totes les columnes (incloent les de features/prediccions) existeixen
+        _add_missing_columns(conn)
+
     except sqlite3.Error as e:
-        print(f"[_init_db] Database initialization error: {e}")
+        print(f"[_init_db] Error en inicialitzar la base de dades: {e}")
         raise
     finally:
         if 'conn' in locals() and conn:
-            print(f"[_init_db] Closing DB connection.")
             conn.close()
 
-def _get_data_from_db(date_str: str) -> list[dict] | None:
-    """Fetches data for a specific date from the database. Returns a list of dicts or None."""
-    print(f"[_get_data_from_db] Attempting to fetch data for date: {date_str}")
+
+def _get_all_data_from_db() -> pd.DataFrame:
+    """Carrega totes les dades de la taula en un DataFrame de pandas."""
+    print("[_get_all_data_from_db] Carregant tot l'historial de la base de dades...")
     try:
         conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        
-        select_cols_sql = ", ".join([f'\"{col_name}\"' for col_name in ORDERED_COLUMN_NAMES])
-        query = f"SELECT {select_cols_sql} FROM {TABLE_NAME} WHERE date = ?"
-        print(f"[_get_data_from_db] Executing SQL: {query} with params ({date_str},)")
-        
-        cursor.execute(query, (date_str,))
-        row = cursor.fetchone()
-        
-        if row:
-            print(f"[_get_data_from_db] Data found for {date_str}.")
-            return [dict(row)]
-        else:
-            print(f"[_get_data_from_db] No data found for {date_str}.")
-            return None
-    except sqlite3.Error as e:
-        print(f"[_get_data_from_db] Error fetching data for date {date_str}: {e}")
-        return None
+        df = pd.read_sql_query(f"SELECT * FROM {TABLE_NAME}", conn)
+        print(f"[_get_all_data_from_db] S'han carregat {len(df)} registres.")
+        return df
+    except (sqlite3.Error, pd.io.sql.DatabaseError) as e:
+        print(f"[_get_all_data_from_db] Error carregant dades: {e}. Es retorna un DataFrame buit.")
+        return pd.DataFrame()
     finally:
         if 'conn' in locals() and conn:
-            print(f"[_get_data_from_db] Closing DB connection for date {date_str}.")
             conn.close()
 
-def _insert_data_into_db(df: pd.DataFrame):
-    """Inserts data from the DataFrame into the database."""
-    if df.empty:
-        print("[_insert_data_into_db] DataFrame is empty, nothing to insert.")
-        return
-
-    print(f"[_insert_data_into_db] Attempting to insert {len(df)} row(s). First row date: {df.iloc[0]['date'] if 'date' in df.columns and not df.empty else 'N/A'}")
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        df_for_sql = df.copy()
-        df_for_sql = df_for_sql.fillna(value=pd.NA).where(~df_for_sql.isna(), None)
-        
-        print(f"[_insert_data_into_db] Before df.to_sql(TABLE_NAME='{TABLE_NAME}', if_exists='append')")
-        df_for_sql.to_sql(TABLE_NAME, conn, if_exists="append", index=False)
-        print(f"[_insert_data_into_db] After df.to_sql(), before commit.")
-        conn.commit()
-        print(f"[_insert_data_into_db] Data committed successfully for date: {df.iloc[0]['date'] if 'date' in df.columns and not df.empty else 'N/A'}.")
-    except sqlite3.IntegrityError as e:
-        print(f"[_insert_data_into_db] IntegrityError inserting data. Date {df.iloc[0]['date'] if 'date' in df.columns and not df.empty else 'Unknown'} likely already exists. Error: {e}")
-    except sqlite3.Error as e:
-        print(f"[_insert_data_into_db] SQLite Error inserting data: {e}")
-    except Exception as e:
-        print(f"[_insert_data_into_db] Unexpected error inserting data: {e}")
-    finally:
-        if 'conn' in locals() and conn:
-            print(f"[_insert_data_into_db] Closing DB connection.")
-            conn.close()
-
-# --- Main Fetch Function (Simplified for Debugging) ---
-def fetch_fitbit_data() -> list[dict]:
-    """DEBUG: Executes fitbit_raw.py and prints info about its DataFrame."""
-    print("[DEBUG_FETCH] Attempting to execute fitbit_raw.py...")
+def _get_data_from_api() -> pd.DataFrame | None:
+    """Executa fitbit_raw.py i retorna el seu DataFrame."""
+    print("[_get_data_from_api] Executant fitbit_raw.py per obtenir dades de l'API...")
     try:
         spec = importlib.util.spec_from_file_location("fitbit_raw", str(RAW_PATH))
-        if spec is None or spec.loader is None:
-            raise ImportError(f"[DEBUG_FETCH] Could not create module spec from {RAW_PATH}")
-        
         fitbit_raw_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(fitbit_raw_module)
-        print("[DEBUG_FETCH] fitbit_raw.py executed.")
 
-        if not hasattr(fitbit_raw_module, "df") or not isinstance(fitbit_raw_module.df, pd.DataFrame):
-            print("[DEBUG_FETCH] fitbit_raw.py did not define a valid pandas DataFrame named 'df'.")
-            return []
-        
-        df_from_api = fitbit_raw_module.df
-        print(f"[DEBUG_FETCH] DataFrame 'df' found in fitbit_raw_module.")
-        print(f"[DEBUG_FETCH] DataFrame shape: {df_from_api.shape}")
-        print(f"[DEBUG_FETCH] DataFrame columns: {df_from_api.columns.tolist()}")
-        
-        if df_from_api.empty:
-            print("[DEBUG_FETCH] DataFrame is empty.")
-        else:
-            print("[DEBUG_FETCH] DataFrame head(1):")
-            # Using to_string() for potentially better console output than raw print
-            print(df_from_api.head(1).to_string())
-        
-        # Return a simple list of dicts if not empty, otherwise empty list
-        if not df_from_api.empty:
-            return df_from_api.head(1).to_dict(orient="records") 
-        else:
-            return []
-
-    except ImportError as e:
-        print(f"[DEBUG_FETCH] Failed to import or execute fitbit_raw.py: {e}")
-        raise
-    except RuntimeError as e:
-        print(f"[DEBUG_FETCH] Error during fitbit_raw.py execution or data processing: {e}")
-        raise
+        if hasattr(fitbit_raw_module, "df") and isinstance(fitbit_raw_module.df, pd.DataFrame):
+            print("[_get_data_from_api] Dades obtingudes correctament de l'API.")
+            # Assegurem que només tenim les columnes RAW
+            return fitbit_raw_module.df[RAW_COLUMN_NAMES]
+        return None
     except Exception as e:
-        print(f"[DEBUG_FETCH] An unexpected error occurred: {e}")
-        raise
+        print(f"[_get_data_from_api] Error executant fitbit_raw.py: {e}")
+        return None
 
-# --- Test Execution (Simplified for Debugging) ---
-if __name__ == "__main__":
-    print("[DEBUG_MAIN] Starting simplified test execution...")
+
+def _insert_raw_data_into_db(df: pd.DataFrame):
+    """Insereix només les dades crues (noves) a la base de dades."""
+    if df.empty: return
+    print(f"[_insert_raw_data_into_db] Inserint {len(df)} registres nous a la BD...")
     try:
-        result_data = fetch_fitbit_data()
-        if result_data:
-            print(f"[DEBUG_MAIN] fetch_fitbit_data returned: {json.dumps(result_data, indent=2)}")
-        else:
-            print("[DEBUG_MAIN] fetch_fitbit_data returned no data or an empty list.")
+        conn = sqlite3.connect(DB_PATH)
+        df_to_insert = df[RAW_COLUMN_NAMES].copy()
+        df_to_insert.to_sql(TABLE_NAME, conn, if_exists="append", index=False)
+        conn.commit()
+        print(f"[_insert_raw_data_into_db] Inserció completada.")
     except Exception as e:
-        print(f"[DEBUG_MAIN] An error occurred during test execution: {e}")
+        print(f"[_insert_raw_data_into_db] Error en inserir dades crues: {e}")
     finally:
-        print("[DEBUG_MAIN] Simplified test execution finished.")
+        if 'conn' in locals() and conn:
+            conn.close()
+
+def _update_features_in_db(df: pd.DataFrame):
+    """Actualitza les files de la BD amb les columnes de features i prediccions."""
+    cols_to_update = [col for col in COLUMN_DEFINITIONS if col not in RAW_COLUMN_NAMES]
+    if not cols_to_update or df.empty:
+        print("[_update_features_in_db] No hi ha columnes per actualitzar o el DataFrame està buit.")
+        return
+        
+    print(f"[_update_features_in_db] Actualitzant les columnes: {', '.join(cols_to_update)}...")
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        df_for_update = df[['date'] + cols_to_update].copy()
+        
+        # Converteix NaN a None per a la compatibilitat amb SQL
+        df_for_update = df_for_update.where(pd.notna(df_for_update), None)
+
+        set_clause = ", ".join([f'"{col}" = ?' for col in cols_to_update])
+        update_query = f'UPDATE {TABLE_NAME} SET {set_clause} WHERE "date" = ?'
+        
+        # Prepara les dades per a executemany: (valor1, valor2, ..., data)
+        data_tuples = [tuple(row[cols_to_update]) + (row['date'],) for index, row in df_for_update.iterrows()]
+
+        cursor.executemany(update_query, data_tuples)
+        conn.commit()
+        print(f"[_update_features_in_db] {cursor.rowcount} files actualitzades correctament.")
+    except Exception as e:
+        print(f"[_update_features_in_db] Error actualitzant features: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+# --- Funcions de Processament i Predicció ---
+
+def _process_data_and_predict(df: pd.DataFrame) -> pd.DataFrame:
+    """Aplica feature engineering i prediccions del model a un DataFrame."""
+    if df.empty: return df
+    print(f"[_process_data_and_predict] Processant {len(df)} registres...")
+    
+    # FEATURE ENGINEERING
+    df['wake_after_sleep_pct'] = ((df['minutesAwake'] + df['minutesAfterWakeup']) / (df['minutesAsleep'] + df['minutesAwake'] + df['minutesAfterWakeup'])).fillna(0)
+    df['cat__age_<30'] = (df['age'] < 30).astype(int)
+    df['cat__age_>=30'] = (df['age'] >= 30).astype(int)
+    df['cat__gender_FEMALE'] = (df['gender'] == 'FEMALE').astype(int)
+    df['cat__gender_MALE'] = (df['gender'] == 'MALE').astype(int)
+
+    # PREPARACIÓ DE DADES PER AL MODEL
+    model_features = pd.read_csv(BASE_DIR / 'models' / 'model_features.csv')['feature'].tolist()
+    
+    X = df.copy()
+    # Assegurem que totes les columnes del model existeixen, omplint amb 0 si falten
+    for col in model_features:
+        if col not in X.columns:
+            X[col] = 0
+    X = X[model_features]
+
+    # CÀRREGA DEL MODEL I PREDICCIÓ
+    try:
+        model = joblib.load(MODEL_PATH)
+        df['tired_pred'] = model.predict(X)
+        df['tired_prob'] = model.predict_proba(X)[:, 1]
+        print("[_process_data_and_predict] Prediccions generades correctament.")
+    except FileNotFoundError:
+        print(f"Error: No es troba el fitxer del model a {MODEL_PATH}")
+        df['tired_pred'] = None
+        df['tired_prob'] = None
+    except Exception as e:
+        print(f"Error durant la predicció: {e}")
+        df['tired_pred'] = None
+        df['tired_prob'] = None
+        
+    return df
+
+# --- Funció Principal d'Execució ---
+
+def main() -> list[dict]:
+    """Orquestra tot el procés: carregar, actualitzar, processar, desar i retornar."""
+    yesterday = dt.date.today() - dt.timedelta(days=1)
+    yesterday_str = yesterday.strftime('%Y-%m-%d')
+    print(f"\n--- Iniciant pipeline per a la data: {yesterday_str} ---")
+
+    # 1. Inicialitzar BD (crea taula/columnes si cal)
+    _init_db()
+
+    # 2. Carregar tot l'historial de la BD
+    df_full = _get_all_data_from_db()
+
+    # 3. Comprovar si falten les dades d'ahir i obtenir-les de l'API si cal
+    if df_full.empty or yesterday_str not in df_full['date'].values:
+        print(f"Les dades per a '{yesterday_str}' no es troben a la BD. Cridant a l'API...")
+        df_from_api = _get_data_from_api()
+        
+        if df_from_api is not None and not df_from_api.empty:
+            _insert_raw_data_into_db(df_from_api)
+            # Refrescar el dataframe complet amb les noves dades
+            df_full = pd.concat([df_full, df_from_api], ignore_index=True)
+        else:
+            print("No s'han pogut obtenir dades noves de l'API.")
+
+    # 4. Si tenim dades, processar-les i enriquir-les
+    if not df_full.empty:
+        df_processed = _process_data_and_predict(df_full)
+
+        # 5. Actualitzar la BD amb les noves features i prediccions
+        _update_features_in_db(df_processed)
+
+        # 6. Seleccionar i retornar només les dades d'ahir
+        yesterday_data = df_processed[df_processed['date'] == yesterday_str]
+        if not yesterday_data.empty:
+            print(f"\n--- Pipeline finalitzat. Retornant dades processades per a {yesterday_str} ---")
+            return yesterday_data.to_dict(orient="records")
+    
+    print(f"\n--- Pipeline finalitzat. No hi ha dades disponibles per a {yesterday_str} ---")
+    return []
+
+# --- Execució de Prova ---
+if __name__ == "__main__":
+    final_data = main()
+    
+    if final_data:
+        print("\n--- Resultat Final (dades d'ahir) ---")
+        print(json.dumps(final_data, indent=2))
+    else:
+        print("\n--- Resultat Final ---")
+        print("No s'han pogut obtenir ni processar les dades d'ahir.")
