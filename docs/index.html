@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Benestar v2.2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <aside id="sidebar">
+        <div class="greeting">
+            <div class="greeting-icon"><i class="fa-solid fa-hand-wave"></i></div>
+            <div class="greeting-text">
+                <h2>Hola Roger!</h2>
+                <p>Preparat per planificar?</p>
+            </div>
+        </div>
+        <nav class="navigation">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" id="dashboardLink">
+                        <i class="fas fa-th-large"></i><span class="nav-text">Tauler de control</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="profileLink">
+                        <i class="fas fa-user-circle"></i><span class="nav-text">Perfil</span>
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <a href="#" class="nav-link" id="reportsLink">
+                        <i class="fas fa-chart-line"></i><span class="nav-text">Informes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="medicalContextLink">
+                        <i class="fas fa-notes-medical"></i><span class="nav-text">Context Mèdic</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-settings">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="configLink">
+                        <i class="fas fa-cog"></i><span class="nav-text">Configuració</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-footer">
+            <p><span class="nav-text">BenestarIA Dashboard</span></p>
+            <p><span class="nav-version">v2.2.0</span></p>
+        </div>
+    </aside>
+
+    <div class="dashboard-main-content">
+        <header class="dashboard-header">
+             <div class="header-title">
+                <h2>Dashboard Interactiu</h2>
+                <p id="currentDateSubtitle">Carregant data...</p>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Columna Esquerra -->
+            <div class="dashboard-section">
+                <div class="widget fatigue-widget">
+                    <div class="widget-content">
+                        <div class="fatigue-indicator-container">
+                            <canvas id="fatigueIndicatorChart"></canvas>
+                            <div class="fatigue-text-overlay">
+                                <span id="fatigueProbabilityText">--%</span>
+                                <span id="fatigueStatusText">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="widget activity-widget">
+                     <div class="widget-content">
+                        <div class="metrics-summary">
+                            <div><span id="activitySteps">----</span><p>Passes</p></div>
+                            <div><span id="activityCalories">----</span><p>Calories</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget activity-recommendation-widget">
+                    <h3 class="widget-title"><i class="fas fa-robot"></i>Assistent IA</h3>
+                    <div class="widget-content">
+                        <p id="ai-intro-text">Genera un pla personalitzat basat en les teves dades d'avui.</p>
+                        <div id="ai-actions">
+                            <button id="generateSimpleRecommendation" class="ai-button">
+                                <i class="fas fa-lightbulb"></i> Recomanació
+                            </button>
+                            <button id="generateStructuredPlan" class="ai-button">
+                                <i class="fas fa-calendar-alt"></i> Pla Estructurat
+                            </button>
+                        </div>
+                        <div id="ai-recommendation-output">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Central -->
+            <div class="dashboard-section">
+                <div class="widget rmssd-widget">
+                    <h3 class="widget-title"><i class="fas fa-wave-square"></i>RMSSD</h3>
+                    <div class="widget-content">
+                        <div id="rmssdValue" class="rmssd-value-display">-- ms</div>
+                        <div id="rmssdStatus" class="rmssd-status-display">--</div>
+                        <div class="rmssd-subtitle">Variabilitat de freqüència cardíaca</div>
+                    </div>
+                </div>
+
+                <div class="widget activity-charts-widget">
+                    <div class="tabs">
+                        <button class="tab-button active" data-tab="activity-chart-tab">Activitat</button>
+                        <button class="tab-button" data-tab="hr-zones-chart-tab">Zones FC</button>
+                        <button class="tab-button" data-tab="trends-chart-tab">Tendències</button>
+                    </div>
+                    <div class="tab-content">
+                        <div id="activity-chart-tab" class="chart-container active">
+                            <canvas id="activityBarsChart"></canvas>
+                        </div>
+                        <div id="hr-zones-chart-tab" class="chart-container">
+                            <canvas id="hrZonesChart"></canvas>
+                        </div>
+                        <div id="trends-chart-tab" class="chart-container">
+                            <div class="trends-container">
+                                <div class="trend-chart">
+                                    <h4>Tendència Activitat</h4>
+                                    <canvas id="activityTrendChart"></canvas>
+                                </div>
+                                <div class="trend-chart">
+                                    <h4>Tendència Zones FC</h4>
+                                    <canvas id="hrTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget biomarkers-widget">
+                    <h3 class="widget-title"><i class="fas fa-chart-line"></i>Biomarcadors Clau</h3>
+                    <div class="widget-content">
+                        <div class="biomarkers-grid">
+                            <div class="biomarker-card">
+                                <div class="biomarker-icon"><i class="fas fa-lungs"></i></div>
+                                <div class="biomarker-info">
+                                    <div class="biomarker-value" id="spo2Value">--</div>
+                                    <div class="biomarker-label">SpO2</div>
+                                </div>
+                            </div>
+                            <div class="biomarker-card">
+                                <div class="biomarker-icon"><i class="fas fa-wind"></i></div>
+                                <div class="biomarker-info">
+                                    <div class="biomarker-value" id="respRateValue">--</div>
+                                    <div class="biomarker-label">Freq. Resp.</div>
+                                </div>
+                            </div>
+                             <div class="biomarker-card">
+                                <div class="biomarker-icon"><i class="fas fa-heartbeat"></i></div>
+                                <div class="biomarker-info">
+                                    <div class="biomarker-value" id="heartRateResting">--</div>
+                                    <div class="biomarker-label">FC Repòs</div>
+                                    <div class="biomarker-sublabel" id="heartRateMinMax">--/--</div>
+                                </div>
+                            </div>
+                             <div class="biomarker-card">
+                                <div class="biomarker-icon"><i class="fas fa-thermometer-half"></i></div>
+                                <div class="biomarker-info">
+                                    <div class="biomarker-value" id="tempVariation">--</div>
+                                    <div class="biomarker-label">Variació Temp.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Dreta -->
+            <div class="dashboard-section">
+                <div class="widget sleep-widget">
+                    <h3 class="widget-title"><i class="fas fa-moon"></i>Anàlisi de Son</h3>
+                    <div class="widget-content">
+                         <div class="sleep-tabs">
+                            <button class="tab-button active" data-tab="stages-tab">Fases</button>
+                            <button class="tab-button" data-tab="efficiency-tab">Mètriques</button>
+                            <button class="tab-button" data-tab="sleep-trends-tab">Tendències</button>
+                        </div>
+                        <div class="sleep-tab-content active" id="stages-tab">
+                            <div class="sleep-phases-content">
+                                <div class="sleep-chart-container">
+                                    <canvas id="sleepStagesChart"></canvas>
+                                </div>
+                                <div class="sleep-stages-legend" id="sleepStagesList">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sleep-tab-content" id="efficiency-tab">
+                           <div class="sleep-metrics-grid">
+                               <div class="metric-card">
+                                   <div class="metric-icon"><i class="fas fa-clock"></i></div>
+                                   <div class="metric-info">
+                                       <div class="metric-value" id="totalSleepTimeMetric">--</div>
+                                       <div class="metric-label">Temps total dormit</div>
+                                   </div>
+                               </div>
+                               <div class="metric-card">
+                                   <div class="metric-icon"><i class="fas fa-bed"></i></div>
+                                   <div class="metric-info">
+                                       <div class="metric-value" id="timeInBedMetric">--</div>
+                                       <div class="metric-label">Temps al llit</div>
+                                   </div>
+                               </div>
+                               <div class="metric-card">
+                                   <div class="metric-icon"><i class="fas fa-percentage"></i></div>
+                                   <div class="metric-info">
+                                       <div class="metric-value" id="sleepEfficiencyMetric">--%</div>
+                                       <div class="metric-label">Eficiència</div>
+                                   </div>
+                               </div>
+                               <div class="metric-card">
+                                   <div class="metric-icon"><i class="fas fa-eye-slash"></i></div>
+                                   <div class="metric-info">
+                                       <div class="metric-value" id="timeAwakeMetric">--</div>
+                                       <div class="metric-label">Temps despert</div>
+                                   </div>
+                               </div>
+                           </div>
+                        </div>
+                        <div class="sleep-tab-content" id="sleep-trends-tab">
+                            <div class="trend-chart-container">
+                                <h4>Tendència Fases del Son</h4>
+                                <canvas id="sleepTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget medical-conditions-widget">
+                    <h3 class="widget-title"><i class="fas fa-notes-medical"></i>Condicions Mèdiques</h3>
+                    <div class="widget-content">
+                        <div class="conditions-list" id="medicalConditionsList">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="medicalContextModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Context Mèdic</h2>
+                <button id="closeMedicalModalBtn" class="close-btn">×</button>
+            </div>
+            <form id="medicalContextForm">
+                <div class="modal-body">
+                    <div id="existing-conditions-container"></div>
+                    <div id="new-conditions-container"></div>
+                    <button type="button" id="addConditionBtn"><i class="fas fa-plus-circle"></i> Afegir Nova Condició</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancelMedicalModalBtn">Cancel·lar</button>
+                    <button type="submit" id="saveMedicalModalBtn">Guardar Canvis</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast-notification"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

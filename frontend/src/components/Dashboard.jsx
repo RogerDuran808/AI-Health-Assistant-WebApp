@@ -185,21 +185,21 @@ export default function Dashboard({ isLoading }) {
         <div className="main-header">
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             <div className="header-title-date">
-              <h1>Tauler de Control Intel·ligent</h1>
-              <p>{getFormattedDate()}</p>
+              <h1 style={{fontSize: '1.5rem'}}>Tauler de Control Intel·ligent</h1>
+              <p style={{fontSize: '0.875rem'}}>{getFormattedDate()}</p>
             </div>
             
             <div style={{
               width: '100%',
-              maxWidth: '350px',
-              marginTop: '1rem',
+              maxWidth: '300px',
+              marginTop: '0.5rem',
               paddingLeft: '15px'
             }}>
               {/* Gráfico de fatiga */}
               <div style={{
                 display: 'flex',
                 justifyContent: 'flex-start',
-                marginBottom: '1rem'
+                marginBottom: '0.5rem'
               }}>
                 <FatigueBadge 
                   pred={data ? data.tired_pred : 0} 
@@ -212,10 +212,10 @@ export default function Dashboard({ isLoading }) {
               {data && (
                 <div style={{
                   width: '100%',
-                  marginTop: '1rem',
+                  marginTop: '0.5rem',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '1rem'
+                  gap: '0.5rem'
                 }}>
                   {/* Sección de Pasos */}
                   <div style={{
@@ -232,12 +232,12 @@ export default function Dashboard({ isLoading }) {
                     }}>
                       <i className="fas fa-shoe-prints" style={{
                         color: '#3b82f6',
-                        fontSize: '1.1rem',
-                        minWidth: '24px',
+                        fontSize: '1rem',
+                        minWidth: '22px',
                         textAlign: 'center'
                       }}></i>
                       <span style={{
-                        fontSize: '0.9rem',
+                        fontSize: '0.8rem',
                         color: '#64748b',
                         fontWeight: '500',
                         textTransform: 'uppercase',
@@ -245,7 +245,7 @@ export default function Dashboard({ isLoading }) {
                         marginRight: 'auto'
                       }}>Pasos</span>
                       <span style={{
-                        fontSize: '1.4rem',
+                        fontSize: '1.2rem',
                         fontWeight: '600',
                         color: '#3b82f6',
                         marginLeft: '0.5rem',
@@ -273,12 +273,12 @@ export default function Dashboard({ isLoading }) {
                     }}>
                       <i className="fas fa-fire" style={{
                         color: '#ef4444',
-                        fontSize: '1.1rem',
-                        minWidth: '24px',
+                        fontSize: '1rem',
+                        minWidth: '22px',
                         textAlign: 'center'
                       }}></i>
                       <span style={{
-                        fontSize: '0.9rem',
+                        fontSize: '0.8rem',
                         color: '#64748b',
                         fontWeight: '500',
                         textTransform: 'uppercase',
@@ -286,7 +286,7 @@ export default function Dashboard({ isLoading }) {
                         marginRight: 'auto'
                       }}>Calorías</span>
                       <span style={{
-                        fontSize: '1.1rem',
+                        fontSize: '1rem',
                         fontWeight: '500',
                         color: '#ef4444',
                         marginLeft: '0.5rem',
@@ -312,20 +312,20 @@ export default function Dashboard({ isLoading }) {
             margin: '0 auto',
             padding: '0 1rem',
             boxSizing: 'border-box',
-            paddingTop: '1rem'
+            paddingTop: '0.5rem'
           }}> 
 
 
           {/* Mètriques */}
           {Object.entries(METRICS).map(([title, keys]) => (
-            <section key={title} className="mb-10">
-              <h3 className="mb-4 text-lg font-semibold" style={{color: 'var(--text-primary)'}}>{title}</h3>
+            <section key={title} className="mb-4">
+              <h3 className="mb-2 text-base font-semibold" style={{color: 'var(--text-primary)'}}>{title}</h3>
               <div style={{
                 display: 'grid',
-                gap: '1.5rem',
+                gap: '0.5rem',
                 gridTemplateColumns: (title === 'Activitat' || title === 'Freqüència cardíaca') 
-                  ? 'minmax(280px, auto) minmax(300px, 2fr)' 
-                  : 'repeat(auto-fill, minmax(280px, 1fr))',
+                  ? 'minmax(180px, auto) minmax(200px, 1.2fr)' 
+                  : 'repeat(auto-fill, minmax(160px, 1fr))',
                 width: '100%',
                 margin: '0 auto',
                 padding: '0 0.5rem',
@@ -336,16 +336,16 @@ export default function Dashboard({ isLoading }) {
                   <>
                     {(title === 'Activitat' || title === 'Freqüència cardíaca') ? (
                       <>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                          <MetricCardSkeleton />
-                          {title === 'Activitat' && <MetricCardSkeleton />}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <MetricCardSkeleton compact={true} />
+                          {title === 'Activitat' && <MetricCardSkeleton compact={true} />}
                         </div>
                         <div className="skeleton-shimmer" 
                           style={{
-                            height: '324px', 
+                            height: '120px', 
                             background: 'var(--bg-card)', 
                             borderRadius: 'var(--radius-lg)', 
-                            padding: '1.5rem', 
+                            padding: '0.25rem', 
                             display: 'flex', 
                             alignItems: 'center', 
                             justifyContent: 'center', 
@@ -362,9 +362,9 @@ export default function Dashboard({ isLoading }) {
                   </>
                 ) : title === 'Activitat' ? (
                   <>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                       {keys.map((k) => (
-                        <MetricCard key={k} name={k} value={data?.[k]} loading={!data} />
+                        <MetricCard key={k} name={k} value={data?.[k]} loading={!data} compact={true} />
                       ))}
                     </div>
                     <ActivityBarChart 
@@ -379,10 +379,10 @@ export default function Dashboard({ isLoading }) {
                   </>
                 ) : title === 'Freqüència cardíaca' ? (
                   <>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                       {/* 'keys' para "Freqüència cardíaca" es ["resting_hr"] según METRICS */}
                       {keys.map((k) => ( 
-                        <MetricCard key={k} name={k} value={data?.[k]} loading={!data} />
+                        <MetricCard key={k} name={k} value={data?.[k]} loading={!data} compact={true} />
                       ))}
                     </div>
                     <HeartRateZoneChart 
@@ -393,7 +393,7 @@ export default function Dashboard({ isLoading }) {
                 ) : (
                   /* Renderizado por defecto para otras secciones (ej. Biomarcadors) */
                   keys.map((k) => (
-                    <MetricCard key={k} name={k} value={data?.[k]} loading={!data} />
+                    <MetricCard key={k} name={k} value={data?.[k]} loading={!data} compact={true} />
                   ))
                 )}
               </div>
@@ -402,20 +402,22 @@ export default function Dashboard({ isLoading }) {
 
           {/* Gràfic de son */}
           {loading || !data ? (
-            <div className="skeleton-shimmer" style={{ height: '300px', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', marginBottom: '2.5rem' }}></div>
+            <div className="skeleton-shimmer" style={{ height: '100px', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', marginBottom: '0.75rem' }}></div>
           ) : (
-            <SleepOverviewCard sleepData={sleepData} totalSleepHours={data ? data.total_sleep_duration_hours : 0} />
+            <div style={{ marginBottom: '0.75rem' }}>
+              <SleepOverviewCard sleepData={sleepData} totalSleepHours={data ? data.total_sleep_duration_hours : 0} />
+            </div>
           )}
 
           {/* Recomanació personalitzada */}
-          <div className="mt-8">
+          <div className="mt-2">
             <button
               onClick={() => generate(data)}
               disabled={genLoading || !data}
               // El estilo de este botón podría necesitar una actualización para coincidir con el nuevo diseño
               // Por ahora, mantenemos las clases de Tailwind, pero puedes crear una clase CSS específica
-              className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
-              style={{background: 'var(--primary)', color: 'var(--text-primary)'}} // Ejemplo de uso de variables CSS
+              className="px-3 py-1.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
+              style={{background: 'var(--primary)', color: 'var(--text-primary)', fontSize: '0.875rem'}} // Ejemplo de uso de variables CSS
             >
               {genLoading ? "Generant…" : "Generar recomanació personalitzada"}
             </button>
@@ -423,7 +425,7 @@ export default function Dashboard({ isLoading }) {
             {genErr && <p className="mt-4 text-red-500">Error: {genErr}</p>}
 
             {loading || !data ? (
-              <div className="skeleton-shimmer" style={{ height: '100px', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', marginTop: '1rem' }}></div>
+              <div className="skeleton-shimmer" style={{ height: '50px', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', marginTop: '0.25rem' }}></div>
             ) : (
               <RecommendationCard text={recommendation} />
             )}
