@@ -166,19 +166,47 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
     }));
   };
 
-  const handleSave = () => {
-    const profileData = {
-      mainGoal,
-      experienceLevel,
-      trainingDaysPerWeek,
-      trainingMinutesPerSession,
-      availableEquipment,
-      activityPreferences,
-      trainingSchedule
+  const handleSave = async () => {
+    // Converteix els estats del formulari al format que espera el backend
+    const equipArray = Object.keys(availableEquipment).filter(k => availableEquipment[k]);
+    const prefArray = Object.keys(activityPreferences).filter(k => activityPreferences[k]);
+
+    const mapDay = {
+      dilluns: 'Lunes',
+      dimarts: 'Martes',
+      dimecres: 'Miércoles',
+      dijous: 'Jueves',
+      divendres: 'Viernes',
+      dissabte: 'Sabado',
+      diumenge: 'Domingo',
     };
-    console.log('Saving Profile Data:', profileData);
-    // Logic to save data will go here
-    onClose(); // Close modal after save
+    const schedule = {};
+    Object.entries(trainingSchedule).forEach(([day, info]) => {
+      if (info.enabled) schedule[mapDay[day] || day] = [info.from, info.to];
+    });
+
+    const payload = {
+      main_training_goal: mainGoal,
+      experience_level: experienceLevel,
+      training_days_per_week: trainingDaysPerWeek,
+      training_minutes_per_session: trainingMinutesPerSession,
+      available_equipment: equipArray,
+      activity_preferences: prefArray,
+      weekly_schedule: schedule,
+    };
+
+    try {
+      const r = await fetch('http://localhost:8000/user-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!r.ok) throw new Error('Error al desar el perfil');
+    } catch (e) {
+      console.error('Error guardant el perfil:', e);
+    } finally {
+      onClose();
+    }
   };
 
   const renderCheckboxGroup = (options, state, handler, groupName) => (
