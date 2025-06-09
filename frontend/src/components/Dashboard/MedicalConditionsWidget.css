@@ -1,0 +1,70 @@
+:root {
+    --primary-bg: #000000;
+    --secondary-bg: #1A1A1A;
+    --tertiary-bg: #2A2A2A;
+    --accent-color: #D4FF58;
+    --text-primary: #F5F5F5;
+    --text-secondary: #758680;
+    --border-color: #333333;
+    --card-border-radius: 16px;
+}
+
+.medical-conditions-widget {
+    flex-grow: 1;
+    padding: 20px;
+    min-height: 50px;
+    overflow-y: auto;
+    max-height: 35%;
+    background-color: var(--secondary-bg);
+    border-radius: var(--card-border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.medical-conditions-widget .widget-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+.medical-conditions-widget .widget-title svg {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+
+.medical-conditions-widget .widget-content {
+    overflow-y: auto;
+}
+
+.conditions-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.condition-item {
+    background-color: var(--tertiary-bg);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    min-height: 50px;
+    border: 1px solid var(--border-color);
+}
+
+.condition-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.condition-name:before {
+    content: "\2022";
+    color: var(--accent-color);
+    font-size: 1.2em;
+}

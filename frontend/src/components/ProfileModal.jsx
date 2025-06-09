@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import useUserProfile from '../hooks/useUserProfile'; // Hook per llegir el perfil
 import './ProfileModal.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faTimes, faCalendarAlt, faClock, faDumbbell, faPersonRunning, faBullseye, faStar, faCheckSquare, faSquare } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faTimes, faCalendarAlt, faClock, faDumbbell, faPersonRunning, faBullseye, faStar, faCheckSquare, faSquare, faNotesMedical } from '@fortawesome/free-solid-svg-icons';
 
 const mainGoalOptions = [
   { value: 'maintenance', label: 'Manteniment general' },
@@ -86,6 +86,7 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
     activityPreferenceOptions.reduce((acc, curr) => ({ ...acc, [curr.id]: false }), {})
   );
   const [trainingSchedule, setTrainingSchedule] = useState(initialTrainingSchedule);
+  const [medicalConditions, setMedicalConditions] = useState('');
 
   const { data: profileData, refetch } = useUserProfile(); // Obté el perfil i la funció de refetch
 
@@ -123,6 +124,8 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
           {}
         )
       );
+
+      setMedicalConditions(source.medical_conditions || '');
 
       const schedule = source.weekly_schedule || source.trainingSchedule;
       if (schedule) {
@@ -193,6 +196,7 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
       available_equipment: equipArray,
       activity_preferences: prefArray,
       weekly_schedule: schedule,
+      medical_conditions: medicalConditions,
     };
 
     try {
@@ -304,8 +308,8 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
           <div className="form-section">
             <h4 className="form-section-title"><FontAwesomeIcon icon={faClock} /> Disponibilitat d'Entrenament Horària</h4>
             <div className="schedule-grid">
-              {daysOfWeek.map(day => (
-                <div key={day} className={`schedule-day-row ${trainingSchedule[day].enabled ? 'day-enabled' : ''}`}>
+          {daysOfWeek.map(day => (
+            <div key={day} className={`schedule-day-row ${trainingSchedule[day].enabled ? 'day-enabled' : ''}`}>
                   <label className="checkbox-label schedule-day-toggle">
                     <input 
                       type="checkbox" 
@@ -335,9 +339,24 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
                     </div>
                   )}
                 </div>
-              ))}
-            </div>
+            ))}
           </div>
+        </div>
+
+        <div className="form-section">
+          <h4 className="form-section-title">
+            <FontAwesomeIcon icon={faNotesMedical} /> Limitacions i Condicions Mèdiques
+          </h4>
+          <div className="form-group">
+            <textarea
+              className="form-textarea"
+              rows="3"
+              value={medicalConditions}
+              onChange={(e) => setMedicalConditions(e.target.value)}
+              placeholder="Ex.: Asma, lesió al genoll..."
+            />
+          </div>
+        </div>
 
           <div className="button-group">
             <button onClick={onClose} className="button button-secondary">Tancar</button>
