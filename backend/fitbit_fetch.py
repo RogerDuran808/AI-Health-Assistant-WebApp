@@ -288,7 +288,7 @@ def fetch_fitbit_data() -> list[dict]:
     """Orquestra tot el procés: carregar, actualitzar, processar, desar i retornar."""
 
 
-    yesterday = dt.date.today() - dt.timedelta(days=1) # Podem modificar per veure altres dades registrades a la base de dades
+    yesterday = dt.date.today() - dt.timedelta(days=8) # Podem modificar per veure altres dades registrades a la base de dades
     yesterday_str = yesterday.strftime('%Y-%m-%d')
 
     print(f"\n--- Iniciant pipeline per a la data: {yesterday_str} ---")

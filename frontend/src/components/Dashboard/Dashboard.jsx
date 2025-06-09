@@ -184,7 +184,12 @@ export default function Dashboard() {
           {/* Add user profile icon or other header elements here */}
         </header>
 
-        <main className="dashboard-grid">
+        {isLoading ? (
+          <div className="loading-message"><p>Carregant dades...</p></div>
+        ) : error ? (
+          <div className="error-message"><p>Error en carregar les dades: {error.message}</p></div>
+        ) : (
+          <main className="dashboard-grid">
           {/* Column 1: Fatigue, Activity, AI Assistant */}
           <div className="dashboard-section">
             <FatigueWidget probability={fatigueProbability} />
@@ -218,6 +223,7 @@ export default function Dashboard() {
             <SleepStagesWidget stagesData={sleepStagesForWidget} metricsData={sleepMetricsForWidget} />
           </div>
         </main>
+  )} 
       </div>
       
       <ProfileModal 

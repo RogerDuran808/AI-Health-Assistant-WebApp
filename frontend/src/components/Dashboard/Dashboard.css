@@ -569,3 +569,26 @@
         grid-template-columns: 1fr; /* Stack widgets on smaller screens */
     }
 }
+
+/* Loading and Error Messages */
+.loading-message,
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Ocupa l'alçada de l'àrea de contingut principal */
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.loading-message p,
+.error-message p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.error-message p {
+  color: #ff6b6b; /* Un color vermellós per als errors */
+}
