@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTachometerAlt, faRobot, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare, faLungs, faWind, faHeartbeat, faThermometerHalf
 } from '@fortawesome/free-solid-svg-icons';
+import ProfileModal from '../ProfileModal';
 import FatigueWidget from './FatigueWidget';
 import ActivityWidget from './ActivityWidget'; // Added import
 import BiomarkersWidget from './BiomarkersWidget';
@@ -12,6 +13,7 @@ import SleepStagesWidget from './SleepStagesWidget';
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
   const { data: fitbitData, loading: isLoading, error } = useFitbitData();
 
@@ -111,7 +113,7 @@ export default function Dashboard() {
   const navItems = [
     { id: 'dashboard', icon: faTachometerAlt, text: 'Tauler de Control', active: true },
     { id: 'assistant', icon: faRobot, text: 'Assistent IA', active: false },
-    { id: 'profile', icon: faUser, text: 'Perfil', active: false },
+    { id: 'profile', icon: faUser, text: 'Perfil', active: false, onClick: () => setIsProfileModalOpen(true) },
     // Add other nav items from docs/index.html if needed, e.g., Informes, Context Mèdic
     // { id: 'reports', icon: faChartLine, text: 'Informes', active: false },
     // { id: 'medicalContext', icon: faNotesMedical, text: 'Context Mèdic', active: false },
@@ -144,7 +146,14 @@ export default function Dashboard() {
           <ul className="nav-list">
             {navItems.map(item => (
               <li className="nav-item" key={item.id}>
-                <a href="#" className={`nav-link ${item.active ? 'active' : ''}`}>
+                <a 
+                  href="#" 
+                  className={`nav-link ${item.active ? 'active' : ''}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (item.onClick) item.onClick();
+                  }}
+                >
                   <FontAwesomeIcon icon={item.icon} /><span className="nav-link-text logo-text">{item.text}</span>
                 </a>
               </li>
@@ -210,6 +219,19 @@ export default function Dashboard() {
           </div>
         </main>
       </div>
+      
+      <ProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)}
+        userData={{
+          name: userName,
+          age: 30, // You might want to get this from fitbitData or another source
+          height: fitbitData?.height || 0,
+          weight: fitbitData?.weight || 0,
+          bmi: fitbitData?.bmi ? fitbitData.bmi.toFixed(1) : 0,
+          role: 'Atleta Amateur' // Default role
+        }}
+      />
     </div>
   );
 }
