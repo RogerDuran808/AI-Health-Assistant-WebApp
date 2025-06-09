@@ -190,7 +190,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
                     )}
                     {activeTab === 'tendencia' && (
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                            <p>Pròximes implementacions</p>
+                            <p>Pròximament...</p>
                         </div>
                     )}
                 </div>

@@ -64,20 +64,26 @@
     height: 100vh;
     border-right: 1px solid var(--border-color);
     transition: width 0.3s ease-in-out;
-    overflow-x: hidden; /* Hide text when collapsed */
+    overflow-x: hidden;
     flex-shrink: 0;
-    padding-top: 15px;
+    padding: 8px 0; /* Uniform padding */
+    box-sizing: border-box;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    width: var(--sidebar-width-expanded);
 }
 
-.dashboard-container.sidebar-collapsed-hoverable #sidebar {
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) {
     width: var(--sidebar-width-collapsed);
+    padding: 8px 0;
 }
 
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:hover {
     width: var(--sidebar-width-expanded);
 }
 
-/* For mobile/toggleable sidebar */
 .dashboard-container.sidebar-open #sidebar {
     width: var(--sidebar-width-expanded);
 }
@@ -127,6 +133,7 @@
     flex-grow: 1;
     overflow-y: auto; /* For scrollable nav items if they exceed height */
     overflow-x: hidden;
+    padding-top: 5px; /* Add some top padding to the navigation area */
 }
 
 .nav-list {
@@ -142,25 +149,35 @@
 .nav-link {
     display: flex;
     align-items: center;
-    padding: 12px 15px;
+    padding: 0 16px;
     color: var(--text-secondary);
     text-decoration: none;
     border-radius: 8px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: all 0.3s ease-in-out;
     font-weight: 500;
-    white-space: nowrap; /* Prevent text wrapping */
-    height: 48px;
+    white-space: nowrap;
+    height: 40px;
     overflow: hidden;
+    box-sizing: border-box;
+    width: calc(100% - 8px);
+    margin: 2px 4px;
+    position: relative;
 }
 
-.nav-link .fa-icon, /* Assuming FontAwesomeIcon renders as svg or i with fa-icon */
+.nav-link .fa-icon,
 .nav-link svg {
-    width: 24px; /* Fixed width for icon */
-    min-width: 24px; /* Ensure it doesn't shrink */
+    width: 20px; /* Slightly reduced width */
+    min-width: 20px; /* Ensure it doesn't shrink */
+    max-width: 20px; /* Ensure consistent width */
+    height: 20px; /* Fixed height for consistency */
     text-align: center;
     font-size: 1.1em;
-    margin-right: 20px; /* Space between icon and text */
-    transition: margin-right 0.3s ease-in-out;
+    margin: 0 10px 0 0; /* Right margin only when expanded */
+    transition: all 0.3s ease-in-out;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .nav-link .nav-link-text {
@@ -181,14 +198,22 @@
 
 /* Sidebar collapsed state (hoverable) */
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link {
-    justify-content: center; /* Center icon */
-    padding-left: 0;
-    padding-right: 0;
+    justify-content: center;
+    padding: 0;
+    width: 100%;
+    height: 40px;
+    margin: 2px 0;
+    display: flex;
+    align-items: center;
 }
 
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link .fa-icon,
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link svg {
-    margin-right: 0;
+    margin: 0 auto;
+    transform: none;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
 }
 
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .logo-text,
@@ -235,9 +260,20 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow-y: auto; /* Allow content to scroll if it exceeds viewport */
-    padding-left: 0; /* No padding when sidebar is part of the flex */
+    min-height: 100vh;
+    margin-left: var(--sidebar-width-collapsed);
+    transition: margin-left 0.3s ease-in-out;
+    overflow-y: auto;
+    width: calc(100% - var(--sidebar-width-collapsed));
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) + .dashboard-main-content {
+    margin-left: var(--sidebar-width-collapsed);
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:hover + .dashboard-main-content,
+.dashboard-container.sidebar-open .dashboard-main-content {
+    margin-left: var(--sidebar-width-expanded);
 }
 
 .dashboard-header {
@@ -246,7 +282,6 @@
     align-items: center;
     padding: 0 25px;
     height: var(--header-height);
-    border-bottom: 1px solid var(--border-color);
     background-color: var(--primary-bg); /* Or secondary-bg if preferred */
     flex-shrink: 0;
 }

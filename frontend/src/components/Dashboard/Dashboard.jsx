@@ -184,7 +184,7 @@ export default function Dashboard() {
             <div className="widget ai-assistant-widget">
               <h3><FontAwesomeIcon icon={faRobot} /> Assistent IA</h3>
               {/* Content for AI assistant widget */}
-              <p>Recomanacions aquí...</p>
+              <p>Pròximament...</p>
             </div>
           </div>
 

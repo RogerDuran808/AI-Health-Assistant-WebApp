@@ -153,7 +153,7 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
 
                 {activeTab === 'tendencies' && (
                     <div className="sleep-tab-content active" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
-                        <p>Pròximes implementacions</p>
+                        <p>Pròximament...</p>
                     </div>
                 )}
             </div>
