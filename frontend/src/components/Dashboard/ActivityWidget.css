@@ -55,3 +55,36 @@
     margin-right: 6px;
     font-size: 0.9em; /* Ajustar tamaño del icono relativo al texto */
 }
+
+/* Chart Tabs Styling */
+.chart-tabs {
+    display: flex;
+    justify-content: center; /* Center tabs if there are few, or use flex-start if many */
+    margin-bottom: 15px; /* Space below tabs */
+    border-bottom: 1px solid var(--border-color); /* Optional: a subtle line under the tabs container */
+}
+
+.tab-button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid transparent; /* For active indicator */
+    cursor: pointer;
+    transition: color 0.3s ease, border-bottom-color 0.3s ease;
+    margin: 0 5px; /* Space between tab buttons */
+    text-transform: uppercase;
+}
+
+.tab-button:hover {
+    color: var(--text-primary);
+}
+
+.tab-button.active {
+    color: var(--accent-color);
+    font-weight: 700;
+    border-bottom-color: var(--accent-color);
+}
+

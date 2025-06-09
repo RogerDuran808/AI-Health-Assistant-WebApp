@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -30,43 +30,41 @@ const formatMinutesToHoursAndMinutes = (totalMinutes) => {
     return `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
 };
 
-const ActivityWidget = ({ data, type, intensityData }) => {
-    if (type === 'intensityChart') {
-        if (!intensityData || 
+const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
+    const [activeTab, setActiveTab] = useState('activity'); // 'activity', 'hrZones', or 'tendencia'
+
+    if (type === 'chartTabs') {
+        // Loading state checks
+        if (activeTab === 'activity' && (!intensityData || 
             typeof intensityData.sedentary === 'undefined' ||
             typeof intensityData.light === 'undefined' ||
             typeof intensityData.moderate === 'undefined' ||
-            typeof intensityData.intense === 'undefined') {
+            typeof intensityData.intense === 'undefined')) {
             return (
                 <div className="widget activity-widget chart-widget">
-                    <div className="widget-content">
-                        <p style={{textAlign: 'center', margin: 'auto'}}>Carregant dades d'intensitat...</p>
+                    <div className="widget-content" style={{padding: '15px', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '250px' }}>
+                        <p>Carregant dades d'intensitat...</p>
                     </div>
                 </div>
             );
         }
 
-        const chartData = {
-            labels: ['Sedentari', 'Lleu', 'Moderat', 'Intens'],
-            datasets: [
-                {
-                    label: 'Minuts',
-                    data: [
-                        intensityData.sedentary,
-                        intensityData.light,
-                        intensityData.moderate,
-                        intensityData.intense,
-                    ],
-                    backgroundColor: ['#758680', '#A5A5A5', '#D4FF58', '#F5F5F5'],
-                    borderRadius: 4,
-                    borderWidth: 0,
-                    barPercentage: 0.6, // Adjusted for thinner bars
-                    categoryPercentage: 0.7, // Adjusted for spacing between categories
-                },
-            ],
-        };
+        if (activeTab === 'hrZones' && (!hrZonesData || 
+            typeof hrZonesData.below === 'undefined' ||
+            typeof hrZonesData.inZone1 === 'undefined' ||
+            typeof hrZonesData.inZone2 === 'undefined' ||
+            typeof hrZonesData.inZone3 === 'undefined')) {
+            return (
+                <div className="widget activity-widget chart-widget">
+                     <div className="widget-content" style={{padding: '15px', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '250px' }}>
+                        <p>Carregant dades de zones FC...</p>
+                    </div>
+                </div>
+            );
+        }
 
-        const chartOptions = {
+        // Common Chart Options
+        const commonChartOptions = {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
@@ -122,10 +120,79 @@ const ActivityWidget = ({ data, type, intensityData }) => {
             },
         };
 
+        // Intensity Chart Data
+        const intensityChartData = {
+            labels: ['Sedentari', 'Lleu', 'Moderat', 'Intens'],
+            datasets: [
+                {
+                    label: 'Minuts',
+                    data: intensityData ? [
+                        intensityData.sedentary,
+                        intensityData.light,
+                        intensityData.moderate,
+                        intensityData.intense,
+                    ] : [],
+                    backgroundColor: ['#758680', '#A5A5A5', '#D4FF58', '#F5F5F5'],
+                    borderRadius: 4,
+                    borderWidth: 0,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7,
+                },
+            ],
+        };
+
+        // HR Zones Chart Data
+        const hrZonesChartData = {
+            labels: ['Repòs', 'Suau', 'Moderat', 'Pic'],
+            datasets: [
+                {
+                    label: 'Minuts',
+                    data: hrZonesData ? [
+                        hrZonesData.below,
+                        hrZonesData.inZone1,
+                        hrZonesData.inZone2,
+                        hrZonesData.inZone3,
+                    ] : [],
+                    backgroundColor: ['#758680', '#A5A5A5', '#D4FF58', '#F5F5F5'], // Palette colors
+                    borderRadius: 4,
+                    borderWidth: 0,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7,
+                },
+            ],
+        };
+        
         return (
-            <div className="widget-content" style={{padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1, minHeight: '200px' }}> {/* Ensure widget-content allows chart to fill space & has min height */}
-                <div style={{ flexGrow: 1, position: 'relative', height: '100%', width: '100%' }}>
-                    <Bar options={chartOptions} data={chartData} />
+            <div className="widget-content" style={{padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1, minHeight: '250px' }}>
+                <div className="chart-tabs">
+                    <button 
+                        className={`tab-button ${activeTab === 'activity' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('activity')}>
+                        Activitat
+                    </button>
+                    <button 
+                        className={`tab-button ${activeTab === 'hrZones' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('hrZones')}>
+                        Zones FC
+                    </button>
+                    <button 
+                        className={`tab-button ${activeTab === 'tendencia' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('tendencia')}>
+                        Tendencia
+                    </button>
+                </div>
+                <div style={{ flexGrow: 1, position: 'relative', height: '100%', width: '100%', marginTop: '10px' }}>
+                    {activeTab === 'activity' && intensityData && (
+                        <Bar options={commonChartOptions} data={intensityChartData} />
+                    )}
+                    {activeTab === 'hrZones' && hrZonesData && (
+                        <Bar options={commonChartOptions} data={hrZonesChartData} />
+                    )}
+                    {activeTab === 'tendencia' && (
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                            <p>Pròximes implementacions</p>
+                        </div>
+                    )}
                 </div>
             </div>
         );

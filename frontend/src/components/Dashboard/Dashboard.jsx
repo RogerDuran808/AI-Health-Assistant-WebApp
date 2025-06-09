@@ -82,12 +82,20 @@ export default function Dashboard() {
   console.log('Data passed to SleepStagesWidget:', sleepStagesForWidget); // DEBUG
 
   const intensityDataForChart = {
-    sedentary: fitbitData?.summary?.minutes_below_default_zone_1 || 0,
-    light: fitbitData?.summary?.minutes_in_default_zone_1 || 0,
-    moderate: fitbitData?.summary?.minutes_in_default_zone_2 || 0,
-    intense: fitbitData?.summary?.minutes_in_default_zone_3 || 0,
+    sedentary: fitbitData?.sedentary_minutes || 0,
+    light: fitbitData?.lightly_active_minutes || 0,
+    moderate: fitbitData?.moderately_active_minutes || 0,
+    intense: fitbitData?.very_active_minutes || 0,
   };
   console.log('Intensity Data for Chart:', intensityDataForChart); // DEBUG
+
+  const hrZonesDataForChart = {
+    below: fitbitData?.minutes_below_default_zone_1 || 0,
+    inZone1: fitbitData?.minutes_in_default_zone_1 || 0,
+    inZone2: fitbitData?.minutes_in_default_zone_2 || 0,
+    inZone3: fitbitData?.minutes_in_default_zone_3 || 0,
+  };
+  console.log('HR Zones Data for Chart:', hrZonesDataForChart); // DEBUG
 
   const navItems = [
     { id: 'dashboard', icon: faTachometerAlt, text: 'Tauler de Control', active: true },
@@ -160,7 +168,7 @@ export default function Dashboard() {
           {/* Column 1: Fatigue, Activity, AI Assistant */}
           <div className="dashboard-section">
             <FatigueWidget probability={fatigueProbability} />
-            <ActivityWidget activityData={activityData} />
+            <ActivityWidget data={activityData} />
             {/* The old static activity widget block was here and has been removed */}
             <div className="widget ai-assistant-widget">
               <h3><FontAwesomeIcon icon={faRobot} /> Assistent IA</h3>
@@ -180,9 +188,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="widget activity-charts-widget">
-              <h3>Gràfics d'Activitat</h3>
-              {/* Placeholder for charts */}
-              <ActivityWidget type="intensityChart" intensityData={intensityDataForChart} />
+              <ActivityWidget type="chartTabs" intensityData={intensityDataForChart} hrZonesData={hrZonesDataForChart} />
             </div>
             <BiomarkersWidget biomarkersData={biomarkersForWidget} />
           </div>

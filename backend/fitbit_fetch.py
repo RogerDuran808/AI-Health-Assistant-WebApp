@@ -74,9 +74,24 @@ def _init_db():
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         
-        # Crea la taula amb les columnes RAW inicials si no existeix
-        raw_cols_sql = ", ".join([f'"{name}" {COLUMN_DEFINITIONS[name]}' for name in RAW_COLUMN_NAMES if name in COLUMN_DEFINITIONS])
-        create_table_sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} ({raw_cols_sql})"
+        # Crea la taula amb les columnes RAW inicials si no existeix, definint 'date' com PRIMARY KEY
+        cols_for_create = []
+        if 'date' in COLUMN_DEFINITIONS: # Utilitza la definició de COLUMN_DEFINITIONS per a 'date'
+            date_type = COLUMN_DEFINITIONS['date']
+            if 'PRIMARY KEY' not in date_type.upper(): # Afegeix PRIMARY KEY si no hi és
+                cols_for_create.append(f'"date" {date_type} PRIMARY KEY')
+            else:
+                cols_for_create.append(f'"date" {date_type}') # Ja té PRIMARY KEY
+        else:
+            # Fallback si 'date' no està a COLUMN_DEFINITIONS (poc probable però segur)
+            cols_for_create.append('"date" TEXT PRIMARY KEY')
+
+        for name in RAW_COLUMN_NAMES:
+            if name != 'date' and name in COLUMN_DEFINITIONS: # Afegeix la resta de columnes RAW
+                cols_for_create.append(f'"{name}" {COLUMN_DEFINITIONS[name]}')
+        
+        final_cols_sql = ", ".join(cols_for_create)
+        create_table_sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} ({final_cols_sql})"
         cursor.execute(create_table_sql)
         conn.commit()
         
@@ -130,10 +145,24 @@ def _insert_raw_data_into_db(df: pd.DataFrame):
     print(f"[_insert_raw_data_into_db] Inserint {len(df)} registres nous a la BD...")
     try:
         conn = sqlite3.connect(DB_PATH)
-        df_to_insert = df[RAW_COLUMN_NAMES].copy()
-        df_to_insert.to_sql(TABLE_NAME, conn, if_exists="append", index=False)
+        # Selecciona només les columnes RAW i converteix NaN a None per compatibilitat amb SQL
+        df_for_insert = df[RAW_COLUMN_NAMES].copy().where(pd.notna(df[RAW_COLUMN_NAMES]), None)
+
+        cursor = conn.cursor()
+        
+        # Prepara els noms de columna i els placeholders per a la consulta SQL
+        cols_for_sql = ", ".join([f'"{col}"' for col in df_for_insert.columns])
+        placeholders = ", ".join(["?"] * len(df_for_insert.columns))
+        
+        # Utilitza INSERT OR REPLACE per inserir noves dades o reemplaçar les existents per a la mateixa data
+        sql_query = f"INSERT OR REPLACE INTO {TABLE_NAME} ({cols_for_sql}) VALUES ({placeholders})"
+        
+        # Converteix les files del DataFrame a una llista de tuples per a executemany
+        data_to_insert = [tuple(row) for row in df_for_insert.itertuples(index=False)]
+        
+        cursor.executemany(sql_query, data_to_insert)
         conn.commit()
-        print(f"[_insert_raw_data_into_db] Inserció completada.")
+        print(f"[_insert_raw_data_into_db] {cursor.rowcount} files inserides/reemplaçades correctament.")
     except Exception as e:
         print(f"[_insert_raw_data_into_db] Error en inserir dades crues: {e}")
     finally:
