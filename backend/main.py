@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
-from fitbit_fetch import fetch_fitbit_data, fetch_user_profile
+from fitbit_fetch import fetch_fitbit_data, fetch_user_profile, save_user_profile
 from ai import get_recommendation
 
 import numpy as np
@@ -100,6 +100,19 @@ def user_profile():
         return JSONResponse(content=payload)
     except Exception as exc:
         log.exception("/user-profile failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/user-profile")
+def update_user_profile(payload: dict):
+    """Rep un perfil i l'emmagatzema a la BD."""
+    try:
+        ok = save_user_profile(payload)
+        if not ok:
+            raise HTTPException(status_code=500, detail="No s'ha pogut guardar el perfil")
+        return {"status": "ok"}
+    except Exception as exc:
+        log.exception("/user-profile POST failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 

@@ -352,5 +352,33 @@ def fetch_user_profile(user_id: str = "default") -> dict:
             conn.close()
 
 
+def save_user_profile(profile: dict, user_id: str = "default") -> bool:
+    """Actualitza o insereix el perfil d'usuari a la BD."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+
+        profile_with_id = {"user_id": user_id, **profile}
+        for field in ("available_equipment", "activity_preferences", "weekly_schedule"):
+            if field in profile_with_id and not isinstance(profile_with_id[field], str):
+                profile_with_id[field] = json.dumps(profile_with_id[field])
+
+        columns = ", ".join(profile_with_id.keys())
+        placeholders = ", ".join(["?"] * len(profile_with_id))
+        cursor.execute(
+            f"INSERT OR REPLACE INTO {PROFILE_TABLE_NAME} ({columns}) VALUES ({placeholders})",
+            tuple(profile_with_id.values()),
+        )
+        conn.commit()
+        return True
+    except sqlite3.Error as e:
+        print(f"[save_user_profile] Error: {e}")
+        return False
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
 if __name__ == "__main__":
     fetch_fitbit_data()
