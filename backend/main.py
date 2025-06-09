@@ -10,7 +10,8 @@ import numpy as np
 import logging
 
 app = FastAPI(title="Fit Dashboard")
-log = logging.getLogger(__name__)
+
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,6 +20,17 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def startup_event():
+    print("FastAPI application startup: Running fitbit_fetch_data...")
+    try:
+        fetch_fitbit_data()
+        print("fitbit_fetch_data completed successfully during startup.")
+    except Exception as e:
+        print(f"Error during fitbit_fetch_data on startup: {e}")
+
+log = logging.getLogger(__name__)
 
 # ---------- Helper -----------------------------------------------------------
 def get_fitbit_data() -> dict:
@@ -84,3 +96,7 @@ def fitbit_data():
 #     except Exception as exc:
 #         log.exception("/recommend failed")
 #         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

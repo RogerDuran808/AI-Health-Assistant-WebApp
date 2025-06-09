@@ -9,6 +9,7 @@ import time
 from dotenv import load_dotenv
 from pathlib import Path
 import joblib
+# from fitbit_fetch import d # Removed erroneous import
 
 pd.set_option('display.max_columns', None)
 load_dotenv()
@@ -30,7 +31,7 @@ HEADERS = {
 # RECOLECCIÓ DE DADES DEL DIA ANTERIOR
 # -----------------------------------------------------------------------------
 
-yesterday = dt.date.today() - dt.timedelta(days=1)
+yesterday = dt.date.today() - dt.timedelta(days=1) # Podem modificar per veure altres dades registrades a la base de dades
 all_days_data = []
 
 # -----------------------------------------------------------------------------

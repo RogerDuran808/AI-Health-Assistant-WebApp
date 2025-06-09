@@ -22,6 +22,7 @@ RAW_PATH = BASE_DIR / "fitbit_raw.py"
 DB_PATH = BASE_DIR / "fitbit_data.db"
 MODEL_PATH = BASE_DIR / 'models' / 'BalancedRandomForest_TIRED.joblib'
 TABLE_NAME = "fitbit_daily_data"
+PROFILE_TABLE_NAME = "user_profile"
 
 # --- Definició Completa de les Columnes de la Base de Dades ---
 # Inclou dades crues, de feature engineering i prediccions.
@@ -40,10 +41,6 @@ COLUMN_DEFINITIONS = {
     "sleep_rem_ratio": "REAL", "sleep_wake_ratio": "REAL",
     "daily_temperature_variation": "REAL", "rmssd": "REAL", "spo2": "REAL",
     "full_sleep_breathing_rate": "REAL",
-    
-    # Columnes de Feature Engineering
-    "wake_after_sleep_pct": "REAL", "cat__age_<30": "INTEGER", "cat__age_>=30": "INTEGER",
-    "cat__gender_FEMALE": "INTEGER", "cat__gender_MALE": "INTEGER",
     
     # Columnes de Predicció
     "tired_pred": "REAL", "tired_prob": "REAL"
@@ -96,9 +93,8 @@ def _init_db():
         # conn.commit() # Commit later after all table creations
 
         # Create user_profile table
-        user_profile_table_name = "user_profile"
         create_user_profile_table_sql = f"""
-        CREATE TABLE IF NOT EXISTS {user_profile_table_name} (
+        CREATE TABLE IF NOT EXISTS {PROFILE_TABLE_NAME} (
             user_id TEXT PRIMARY KEY,
             main_training_goal TEXT,
             experience_level TEXT,
@@ -106,7 +102,8 @@ def _init_db():
             training_minutes_per_session INTEGER,
             available_equipment TEXT, 
             activity_preferences TEXT,
-            weekly_schedule TEXT
+            weekly_schedule TEXT,
+            medical_conditions TEXT
         );
         """
         cursor.execute(create_user_profile_table_sql)
@@ -263,8 +260,11 @@ def _process_data_and_predict(df: pd.DataFrame) -> pd.DataFrame:
 
 def fetch_fitbit_data() -> list[dict]:
     """Orquestra tot el procés: carregar, actualitzar, processar, desar i retornar."""
-    yesterday = dt.date.today() - dt.timedelta(days=1)
+
+
+    yesterday = dt.date.today() - dt.timedelta(days=1) # Podem modificar per veure altres dades registrades a la base de dades
     yesterday_str = yesterday.strftime('%Y-%m-%d')
+
     print(f"\n--- Iniciant pipeline per a la data: {yesterday_str} ---")
 
     # 1. Inicialitzar BD (crea taula/columnes si cal)
@@ -275,7 +275,7 @@ def fetch_fitbit_data() -> list[dict]:
 
     # 3. Comprovar si falten les dades d'ahir i obtenir-les de l'API si cal
     if df_full.empty or yesterday_str not in df_full['date'].values:
-        print(f"Les dades per a '{yesterday_str}' no es troben a la BD. Cridant a l'API...")
+        print(f"Les dades per a '{yesterday_str}' no es troben a la BD. Cridant a l'API de fitbit...")
         df_from_api = _get_data_from_api()
         
         if df_from_api is not None and not df_from_api.empty:
