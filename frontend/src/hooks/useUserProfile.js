@@ -1,22 +1,49 @@
 import { useState, useEffect } from "react";
 
 // Hook per obtenir el perfil d'usuari des del backend
-
 export default function useUserProfile() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/user-profile")
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then(j => setData(j))
-      .catch(e => setError(e))
-      .finally(() => setLoading(false));
-  }, []);
+    let isMounted = true; // Per controlar si el component està muntat
+
+    console.log('useUserProfile: Iniciant càrrega del perfil amb reintents: 20, retard: 6000ms');
+    
+    const fetchProfileWithRetry = async (retriesLeft = 20, delay = 6000) => {
+      try {
+        const response = await fetch("http://localhost:8000/user-profile");
+        if (!response.ok) {
+          // Llançar error per activar el reintent o el missatge d'error final
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const jsonData = await response.json();
+        if (isMounted) {
+          setData(jsonData);
+          setError(null); // Netejar errors si la petició té èxit
+          setLoading(false); // Dades carregades amb èxit
+        }
+      } catch (e) {
+        if (isMounted) {
+          if (retriesLeft > 0) {
+            console.warn(`Error en obtenir el perfil d'usuari: ${e.message}. Reintentant en ${delay / 1000}s... (${retriesLeft} intents restants)`);
+            setTimeout(() => fetchProfileWithRetry(retriesLeft - 1, delay), delay);
+          } else {
+            console.error("Error en obtenir el perfil d'usuari després de múltiples intents", e);
+            setError(e);
+            setLoading(false); // Tots els intents han fallat
+          }
+        }
+      }
+    };
+
+    fetchProfileWithRetry(); // Crida inicial
+
+    return () => {
+      isMounted = false; // Funció de neteja per quan el component es desmunta
+    };
+  }, []); // Array de dependències buit per executar només en muntar el component
 
   // Retorna l'estat del perfil i indicadors de càrrega o error
   return { data, loading, error };
