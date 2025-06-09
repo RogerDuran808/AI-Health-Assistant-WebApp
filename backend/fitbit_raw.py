@@ -31,7 +31,7 @@ HEADERS = {
 # RECOLECCIÓ DE DADES DEL DIA ANTERIOR
 # -----------------------------------------------------------------------------
 
-yesterday = dt.date.today() - dt.timedelta(days=8) # Podem modificar per veure altres dades registrades a la base de dades
+yesterday = dt.date.today() - dt.timedelta(days=1) # Podem modificar per veure altres dades registrades a la base de dades
 all_days_data = []
 
 # -----------------------------------------------------------------------------
