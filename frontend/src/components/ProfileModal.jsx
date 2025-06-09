@@ -45,8 +45,22 @@ const activityPreferenceOptions = [
 
 const daysOfWeek = ['dilluns', 'dimarts', 'dimecres', 'dijous', 'divendres', 'dissabte', 'diumenge'];
 
+// Helper to generate time options in 15-minute intervals
+const generateTimeOptions = () => {
+  const options = [];
+  for (let h = 0; h < 24; h++) {
+    for (let m = 0; m < 60; m += 15) {
+      const hour = h.toString().padStart(2, '0');
+      const minute = m.toString().padStart(2, '0');
+      options.push(`${hour}:${minute}`);
+    }
+  }
+  return options;
+};
+const timeOptions = generateTimeOptions();
+
 const initialTrainingSchedule = daysOfWeek.reduce((acc, day) => {
-  acc[day] = { enabled: false, from: '', to: '' };
+  acc[day] = { enabled: false, from: timeOptions[32], to: timeOptions[36] }; // Default 08:00 to 09:00
   return acc;
 }, {});
 
@@ -218,19 +232,21 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
                   </label>
                   {trainingSchedule[day].enabled && (
                     <div className="time-inputs">
-                      <input 
-                        type="time" 
-                        className="form-input time-input"
+                      <select 
+                        className="form-select time-input"
                         value={trainingSchedule[day].from}
                         onChange={(e) => handleScheduleChange(day, 'from', e.target.value)}
-                      />
+                      >
+                        {timeOptions.map(time => <option key={`from-${day}-${time}`} value={time}>{time}</option>)}
+                      </select>
                       <span> - </span>
-                      <input 
-                        type="time" 
-                        className="form-input time-input"
+                      <select 
+                        className="form-select time-input"
                         value={trainingSchedule[day].to}
                         onChange={(e) => handleScheduleChange(day, 'to', e.target.value)}
-                      />
+                      >
+                        {timeOptions.map(time => <option key={`to-${day}-${time}`} value={time}>{time}</option>)}
+                      </select>
                     </div>
                   )}
                 </div>
