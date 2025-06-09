@@ -5,6 +5,9 @@ export default function useUserProfile() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [trigger, setTrigger] = useState(0);
+
+  const refetch = () => setTrigger((prev) => prev + 1);
 
   useEffect(() => {
     let isMounted = true; // Per controlar si el component està muntat
@@ -38,13 +41,14 @@ export default function useUserProfile() {
       }
     };
 
+    setLoading(true);
     fetchProfileWithRetry(); // Crida inicial
 
     return () => {
       isMounted = false; // Funció de neteja per quan el component es desmunta
     };
-  }, []); // Array de dependències buit per executar només en muntar el component
+  }, [trigger]); // Array de dependències per executar en muntar i quan 'trigger' canvia
 
-  // Retorna l'estat del perfil i indicadors de càrrega o error
-  return { data, loading, error };
+  // Retorna l'estat del perfil, indicadors de càrrega o error, i la funció de refetch
+  return { data, loading, error, refetch };
 }

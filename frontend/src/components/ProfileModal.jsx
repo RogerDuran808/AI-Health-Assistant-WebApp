@@ -87,7 +87,7 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
   );
   const [trainingSchedule, setTrainingSchedule] = useState(initialTrainingSchedule);
 
-  const { data: profileData } = useUserProfile(); // Obté el perfil guardat a la BD
+  const { data: profileData, refetch } = useUserProfile(); // Obté el perfil i la funció de refetch
 
   // Actualitza els estats del perfil quan arriben dades del backend o de les prop
   useEffect(() => {
@@ -202,10 +202,13 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
         body: JSON.stringify(payload),
       });
       if (!r.ok) throw new Error('Error al desar el perfil');
-    } catch (e) {
-      console.error('Error guardant el perfil:', e);
-    } finally {
-      onClose();
+      
+      console.log('Profile saved successfully!');
+      refetch(); // Torna a carregar les dades del perfil
+      onClose(); // Tanca el modal després de guardar
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      // TODO: Mostra un missatge d'error a l'usuari
     }
   };
 
