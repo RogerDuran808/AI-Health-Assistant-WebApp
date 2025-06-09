@@ -62,6 +62,17 @@ export default function Dashboard() {
   console.log('Sleep Times (Asleep, Awake):', minutesAsleep, minutesAwake); // DEBUG
   console.log('Sleep Ratios (Deep, Light, REM):', fitbitData?.sleep_deep_ratio, fitbitData?.sleep_light_ratio, fitbitData?.sleep_rem_ratio); // DEBUG
 
+  const sleepEfficiency = fitbitData?.sleep_efficiency; // Expects a number (e.g., 96 for 96%)
+  const timeInBed = minutesAsleep + minutesAwake;
+
+  const sleepMetricsForWidget = {
+    totalTimeAsleep: minutesAsleep,
+    timeInBed: timeInBed,
+    efficiency: sleepEfficiency, 
+    totalTimeAwake: minutesAwake,
+  };
+  console.log('Sleep Metrics for Widget:', sleepMetricsForWidget); //DEBUG
+
   // Prepare data for BiomarkersWidget
   const biomarkersForWidget = {
     spo2: fitbitData?.spo2, // Expects number or N/A
@@ -195,7 +206,7 @@ export default function Dashboard() {
 
           {/* Column 3: Sleep Analysis */}
           <div className="dashboard-section">
-            <SleepStagesWidget stagesData={sleepStagesForWidget} />
+            <SleepStagesWidget stagesData={sleepStagesForWidget} metricsData={sleepMetricsForWidget} />
           </div>
         </main>
       </div>
