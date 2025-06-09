@@ -1,5 +1,6 @@
 #!/bin/sh
 
+mkdir -p /app/db
 
 # Executeu l'script per refrescar la base de dades abans d'iniciar el servidor
 echo "Actualitzant la base de dades de Fitbit..."

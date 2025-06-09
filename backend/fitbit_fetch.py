@@ -19,7 +19,7 @@ import joblib  # Importat aquí
 # --- Configuració ---
 BASE_DIR = Path(__file__).resolve().parent
 RAW_PATH = BASE_DIR / "fitbit_raw.py"
-DB_PATH = BASE_DIR / "fitbit_data.db"
+DB_PATH = BASE_DIR / "db" / "fitbit_data.db"
 MODEL_PATH = BASE_DIR / 'models' / 'BalancedRandomForest_TIRED.joblib'
 TABLE_NAME = "fitbit_daily_data"
 PROFILE_TABLE_NAME = "user_profile"

@@ -6,7 +6,8 @@ COPY . .
 
 # Copy the start script and make it executable
 COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+# Convert line endings to Unix format and make executable
+RUN sed -i 's/\r$//' /app/start.sh && chmod +x /app/start.sh
 
 # Set the entrypoint to the start script
 CMD ["/app/start.sh"]

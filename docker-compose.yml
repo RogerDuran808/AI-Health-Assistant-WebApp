@@ -10,7 +10,7 @@ services:
       - CLIENT_SECRET=${CLIENT_SECRET}
       - ACCESS_TOKEN=${ACCESS_TOKEN}
     volumes:
-      - fitbit_db:/app/fitbit_data.db
+      - fitbit_db:/app/db
   ui:
     build: ./frontend
     command: npm run dev -- --host 0.0.0.0 --port 5173
