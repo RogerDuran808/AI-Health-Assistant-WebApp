@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useFitbitData from '../../hooks/useFitbitData';
+import useUserProfile from '../../hooks/useUserProfile';
 import './Dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -10,12 +11,14 @@ import FatigueWidget from './FatigueWidget';
 import ActivityWidget from './ActivityWidget'; // Added import
 import BiomarkersWidget from './BiomarkersWidget';
 import SleepStagesWidget from './SleepStagesWidget';
+import MedicalConditionsWidget from './MedicalConditionsWidget';
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
   const { data: fitbitData, loading: isLoading, error } = useFitbitData();
+  const { data: profileData } = useUserProfile();
 
   console.log('Fitbit Data from hook:', fitbitData); // DEBUG
 
@@ -36,6 +39,7 @@ export default function Dashboard() {
     steps: fitbitData?.steps || 0,
     calories: fitbitData?.calories || 0
   };
+  const medicalConditionsText = profileData?.medical_conditions || '';
 
   let rmssdStatusText = "--";
   let rmssdStatusStyle = { color: 'var(--text-secondary)' }; // Estilo por defecto
@@ -218,9 +222,10 @@ export default function Dashboard() {
             <BiomarkersWidget biomarkersData={biomarkersForWidget} />
           </div>
 
-          {/* Column 3: Sleep Analysis */}
+          {/* Column 3: Sleep Analysis i Condicions Mèdiques */}
           <div className="dashboard-section">
             <SleepStagesWidget stagesData={sleepStagesForWidget} metricsData={sleepMetricsForWidget} />
+            <MedicalConditionsWidget conditionsText={medicalConditionsText} />
           </div>
         </main>
   )} 
