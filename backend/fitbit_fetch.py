@@ -107,7 +107,33 @@ def _init_db():
         );
         """
         cursor.execute(create_user_profile_table_sql)
-        conn.commit() # Commit after all table creations
+
+        # Insereix un perfil per defecte si la taula és buida
+        cursor.execute(f"SELECT COUNT(*) FROM {PROFILE_TABLE_NAME}")
+        if cursor.fetchone()[0] == 0:
+            default_profile = {
+                "user_id": "default",
+                "main_training_goal": "Mantenimient general",
+                "experience_level": "Principiant",
+                "training_days_per_week": 3,
+                "training_minutes_per_session": 30,
+                "available_equipment": json.dumps(["Pes corporal / sense material"]),
+                "activity_preferences": json.dumps(["Cardio"]),
+                "weekly_schedule": json.dumps({
+                    "Lunes": ["17:00", "19:00"],
+                    "Miércoles": ["17:00", "19:00"],
+                    "Viernes": ["17:00", "19:00"],
+                }),
+                "medical_conditions": "None",
+            }
+            columns = ", ".join(default_profile.keys())
+            placeholders = ", ".join(["?"] * len(default_profile))
+            cursor.execute(
+                f"INSERT INTO {PROFILE_TABLE_NAME} ({columns}) VALUES ({placeholders})",
+                tuple(default_profile.values()),
+            )
+
+        conn.commit()  # Commit after all table creations i possibles insercions
         
         # Assegura que totes les columnes (incloent les de features/prediccions) existeixen per a la taula TABLE_NAME
         _add_missing_columns(conn)
@@ -300,6 +326,60 @@ def fetch_fitbit_data() -> list[dict]:
     
     print(f"\n--- Pipeline finalitzat. No hi ha dades disponibles per a {yesterday_str} ---")
     return []
+
+
+def fetch_user_profile(user_id: str = "default") -> dict:
+    """Recupera el perfil d'usuari de la BD."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM {PROFILE_TABLE_NAME} WHERE user_id = ?", (user_id,))
+        row = cursor.fetchone()
+        if not row:
+            return {}
+        cols = [d[0] for d in cursor.description]
+        profile = dict(zip(cols, row))
+        for field in ("available_equipment", "activity_preferences", "weekly_schedule"):
+            if profile.get(field):
+                profile[field] = json.loads(profile[field])
+        return profile
+    except sqlite3.Error as e:
+        print(f"[fetch_user_profile] Error: {e}")
+        return {}
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def update_user_profile(profile: dict, user_id: str = "default") -> None:
+    """Desa el perfil d'usuari a la BD."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+
+        profile = {**profile, "user_id": user_id}
+
+        # Serialitza camps llista o dict a JSON
+        for field in ("available_equipment", "activity_preferences", "weekly_schedule"):
+            if field in profile and isinstance(profile[field], (list, dict)):
+                profile[field] = json.dumps(profile[field])
+
+        columns = ", ".join(profile.keys())
+        placeholders = ", ".join(["?"] * len(profile))
+        sql = (
+            f"INSERT OR REPLACE INTO {PROFILE_TABLE_NAME} ({columns}) "
+            f"VALUES ({placeholders})"
+        )
+        cursor.execute(sql, tuple(profile.values()))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"[update_user_profile] Error: {e}")
+        raise
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
 
 
 if __name__ == "__main__":

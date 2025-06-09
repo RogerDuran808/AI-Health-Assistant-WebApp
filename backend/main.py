@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
-from fitbit_fetch import fetch_fitbit_data
+from fitbit_fetch import fetch_fitbit_data, fetch_user_profile, update_user_profile
 from ai import get_recommendation
 
 import numpy as np
@@ -76,6 +76,12 @@ def get_fitbit_data() -> dict:
     return jsonable_encoder(record, exclude_none=True)
 
 
+def get_user_profile() -> dict:
+    """Obté el perfil d'usuari de la BD i el prepara per enviar."""
+    profile = fetch_user_profile()
+    return jsonable_encoder(profile, exclude_none=True)
+
+
 # ---------- Endpoints --------------------------------------------------------
 @app.get("/fitbit-data")
 def fitbit_data():
@@ -84,6 +90,26 @@ def fitbit_data():
         return JSONResponse(content=payload)
     except Exception as exc:
         log.exception("/fitbit-data failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/user-profile")
+def user_profile():
+    try:
+        payload = get_user_profile()
+        return JSONResponse(content=payload)
+    except Exception as exc:
+        log.exception("/user-profile failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/user-profile")
+def save_user_profile(payload: dict):
+    try:
+        update_user_profile(payload)
+        return {"status": "ok"}
+    except Exception as exc:
+        log.exception("/user-profile POST failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
