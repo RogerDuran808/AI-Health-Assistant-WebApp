@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import useUserProfile from '../hooks/useUserProfile'; // Hook per llegir el perfil
 import './ProfileModal.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faTimes, faCalendarAlt, faClock, faDumbbell, faPersonRunning, faBullseye, faStar, faCheckSquare, faSquare } from '@fortawesome/free-solid-svg-icons';
@@ -86,18 +87,71 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
   );
   const [trainingSchedule, setTrainingSchedule] = useState(initialTrainingSchedule);
 
-  // Effect to update profile states if userData changes and contains these fields
+  const { data: profileData } = useUserProfile(); // Obté el perfil guardat a la BD
+
+  // Actualitza els estats del perfil quan arriben dades del backend o de les prop
   useEffect(() => {
-    if (userData) {
-      setMainGoal(userData.mainGoal || mainGoalOptions[0].value);
-      setExperienceLevel(userData.experienceLevel || experienceLevelOptions[0].value);
-      setTrainingDaysPerWeek(userData.trainingDaysPerWeek || trainingDaysOptions[2].value);
-      setTrainingMinutesPerSession(userData.trainingMinutesPerSession || trainingMinutesOptions[3].value);
-      setAvailableEquipment(prev => equipmentOptions.reduce((acc, curr) => ({ ...acc, [curr.id]: userData.availableEquipment?.[curr.id] || false }), {}));
-      setActivityPreferences(prev => activityPreferenceOptions.reduce((acc, curr) => ({ ...acc, [curr.id]: userData.activityPreferences?.[curr.id] || false }), {}));
-      setTrainingSchedule(userData.trainingSchedule || initialTrainingSchedule);
+    const source = profileData || userData;
+    if (source) {
+      setMainGoal(source.main_training_goal || source.mainGoal || mainGoalOptions[0].value);
+      setExperienceLevel(source.experience_level || source.experienceLevel || experienceLevelOptions[0].value);
+      setTrainingDaysPerWeek(source.training_days_per_week || source.trainingDaysPerWeek || trainingDaysOptions[2].value);
+      setTrainingMinutesPerSession(source.training_minutes_per_session || source.trainingMinutesPerSession || trainingMinutesOptions[3].value);
+
+      const equipList = source.available_equipment || source.availableEquipment;
+      setAvailableEquipment(
+        equipmentOptions.reduce(
+          (acc, curr) => ({
+            ...acc,
+            [curr.id]: Array.isArray(equipList)
+              ? equipList.includes(curr.label) || equipList.includes(curr.id)
+              : equipList?.[curr.id] || false,
+          }),
+          {}
+        )
+      );
+
+      const prefList = source.activity_preferences || source.activityPreferences;
+      setActivityPreferences(
+        activityPreferenceOptions.reduce(
+          (acc, curr) => ({
+            ...acc,
+            [curr.id]: Array.isArray(prefList)
+              ? prefList.includes(curr.label) || prefList.includes(curr.id)
+              : prefList?.[curr.id] || false,
+          }),
+          {}
+        )
+      );
+
+      const schedule = source.weekly_schedule || source.trainingSchedule;
+      if (schedule) {
+        const mapDay = {
+          Lunes: 'dilluns',
+          Martes: 'dimarts',
+          Miércoles: 'dimecres',
+          Jueves: 'dijous',
+          Viernes: 'divendres',
+          Sabado: 'dissabte',
+          Domingo: 'diumenge',
+        };
+        const newSchedule = { ...initialTrainingSchedule };
+        Object.entries(schedule).forEach(([day, range]) => {
+          const catDay = mapDay[day] || day;
+          if (newSchedule[catDay]) {
+            newSchedule[catDay] = {
+              enabled: true,
+              from: range[0],
+              to: range[1],
+            };
+          }
+        });
+        setTrainingSchedule(newSchedule);
+      } else {
+        setTrainingSchedule(initialTrainingSchedule);
+      }
     }
-  }, [userData]);
+  }, [profileData, userData]);
 
   if (!isOpen) return null;
 
