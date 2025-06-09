@@ -93,9 +93,26 @@ def _init_db():
         final_cols_sql = ", ".join(cols_for_create)
         create_table_sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} ({final_cols_sql})"
         cursor.execute(create_table_sql)
-        conn.commit()
+        # conn.commit() # Commit later after all table creations
+
+        # Create user_profile table
+        user_profile_table_name = "user_profile"
+        create_user_profile_table_sql = f"""
+        CREATE TABLE IF NOT EXISTS {user_profile_table_name} (
+            user_id TEXT PRIMARY KEY,
+            main_training_goal TEXT,
+            experience_level TEXT,
+            training_days_per_week INTEGER,
+            training_minutes_per_session INTEGER,
+            available_equipment TEXT, 
+            activity_preferences TEXT,
+            weekly_schedule TEXT
+        );
+        """
+        cursor.execute(create_user_profile_table_sql)
+        conn.commit() # Commit after all table creations
         
-        # Assegura que totes les columnes (incloent les de features/prediccions) existeixen
+        # Assegura que totes les columnes (incloent les de features/prediccions) existeixen per a la taula TABLE_NAME
         _add_missing_columns(conn)
 
     except sqlite3.Error as e:
@@ -283,3 +300,7 @@ def fetch_fitbit_data() -> list[dict]:
     
     print(f"\n--- Pipeline finalitzat. No hi ha dades disponibles per a {yesterday_str} ---")
     return []
+
+
+if __name__ == "__main__":
+    fetch_fitbit_data()

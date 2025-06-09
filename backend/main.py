@@ -9,7 +9,7 @@ from ai import get_recommendation
 import numpy as np
 import logging
 
-app = FastAPI(title="Fitbit Dashboard API")
+app = FastAPI(title="Fit Dashboard")
 log = logging.getLogger(__name__)
 
 app.add_middleware(
@@ -26,6 +26,7 @@ def get_fitbit_data() -> dict:
     Converteix el resultat de fetch_fitbit_data a dict serialitzable.
     Accepta dict, list[dict] o pandas.DataFrame.
     """
+
     raw = fetch_fitbit_data()
 
     # 1) dict ----------------------------------------------------------
@@ -74,11 +75,12 @@ def fitbit_data():
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
-@app.post("/recommend")
-def recommend(payload: dict):
-    try:
-        text = get_recommendation(payload)
-        return {"text": text}
-    except Exception as exc:
-        log.exception("/recommend failed")
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+# De moment no toquem la recomanació
+# @app.post("/recommend")
+# def recommend(payload: dict):
+#     try:
+#         text = get_recommendation(payload)
+#         return {"text": text}
+#     except Exception as exc:
+#         log.exception("/recommend failed")
+#         raise HTTPException(status_code=500, detail=str(exc)) from exc

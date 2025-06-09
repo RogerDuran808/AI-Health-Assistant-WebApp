@@ -186,6 +186,45 @@
   margin-bottom: 2rem;
 }
 
+/* Custom Scrollbar for Time Dropdowns */
+.time-input select::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.time-input select::-webkit-scrollbar-track {
+  background: #1A1A1A;
+  border-radius: 5px;
+}
+
+.time-input select::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 5px;
+  border: 2px solid #1A1A1A;
+}
+
+.time-input select::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+.time-input select::-webkit-scrollbar-thumb:active {
+  background: #D4FF58;
+}
+
+/* Firefox scrollbar */
+.time-input select {
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #1A1A1A;
+}
+
+.time-input select:hover {
+  scrollbar-color: #444444 #1A1A1A;
+}
+
+.time-input select:active {
+  scrollbar-color: #D4FF58 #1A1A1A;
+}
+
 .form-section-title {
   font-size: 1.1rem;
   font-weight: 600;
