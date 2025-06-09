@@ -1,0 +1,57 @@
+.activity-widget {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border: none !important;
+    /* Altura gestionada por el contenido o el grid del dashboard */
+    min-height: 80px; /* Altura mínima para asegurar visibilidad */
+    height: auto; /* Permitir que crezca si es necesario */
+    display: flex;
+    align-items: center; /* Centrar contenido verticalmente */
+}
+
+.activity-widget .widget-content {
+    padding: 0;
+    width: 100%; /* Ocupar todo el ancho disponible */
+    height: 100%;
+    display: flex; /* Para centrar metrics-summary si es necesario */
+    align-items: center;
+    justify-content: center;
+}
+
+.metrics-summary {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    width: 100%; /* Ocupar todo el ancho del widget-content */
+    height: 100%;
+}
+
+.metrics-summary div {
+    flex: 1; /* Distribuir espacio equitativamente */
+    padding: 0 10px; /* Espacio entre elementos */
+}
+
+.metrics-summary div span {
+    font-size: 1.8rem; /* Basado en docs/style.css */
+    font-weight: 700;
+    display: block;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.metrics-summary div p {
+    font-size: 0.8rem; /* Basado en docs/style.css */
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.metrics-summary div p .svg-inline--fa {
+    margin-right: 6px;
+    font-size: 0.9em; /* Ajustar tamaño del icono relativo al texto */
+}

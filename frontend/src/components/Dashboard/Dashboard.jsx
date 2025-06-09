@@ -6,6 +6,7 @@ import {
   faTachometerAlt, faRobot, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare, faLungs, faWind, faHeartbeat, faThermometerHalf
 } from '@fortawesome/free-solid-svg-icons';
 import FatigueWidget from './FatigueWidget';
+import ActivityWidget from './ActivityWidget'; // Added import
 import BiomarkersWidget from './BiomarkersWidget';
 import SleepStagesWidget from './SleepStagesWidget';
 
@@ -13,6 +14,8 @@ export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
   const { data: fitbitData, loading: isLoading, error } = useFitbitData();
+
+  console.log('Fitbit Data from hook:', fitbitData); // DEBUG
 
   useEffect(() => {
     const today = new Date();
@@ -31,12 +34,6 @@ export default function Dashboard() {
     steps: fitbitData?.steps || 0,
     calories: fitbitData?.calories || 0
   };
-  const rmssdData = {
-    value: fitbitData?.rmssd || "N/A",
-    // Podríem afegir lògica per determinar l'estat (Normal, Baix, Alt) basat en el valor de rmssd
-    status: fitbitData?.rmssd ? "Disponible" : "N/A" 
-  };
-  const spo2Data = { value: fitbitData?.spo2 ? `${fitbitData.spo2}%` : "N/A" };
 
   let rmssdStatusText = "--";
   let rmssdStatusStyle = { color: 'var(--text-secondary)' }; // Estilo por defecto
@@ -57,14 +54,13 @@ export default function Dashboard() {
     rmssdStatusText = 'N/A';
   }
   const displayRmssdValue = !isNaN(rmssdValue) ? `${rmssdValue.toFixed(0)} ms` : "N/A";
-  const respRateData = { value: fitbitData?.full_sleep_breathing_rate ? `${fitbitData.full_sleep_breathing_rate.toFixed(1)} rpm` : "N/A" };
-  const heartRateRestingData = { value: fitbitData?.resting_hr ? `${fitbitData.resting_hr} bpm` : "N/A" };
-  const heartRateMinMaxData = { value: (fitbitData?.min_hr && fitbitData?.max_hr) ? `${fitbitData.min_hr}/${fitbitData.max_hr}` : "N/A" };
-  const tempVariationData = { value: fitbitData?.daily_temperature_variation ? `${fitbitData.daily_temperature_variation.toFixed(1)}°C` : "N/A" };
 
   // Prepare data for SleepStagesWidget
   const minutesAsleep = fitbitData?.minutesAsleep || 0;
   const minutesAwake = fitbitData?.minutesAwake || 0;
+
+  console.log('Sleep Times (Asleep, Awake):', minutesAsleep, minutesAwake); // DEBUG
+  console.log('Sleep Ratios (Deep, Light, REM):', fitbitData?.sleep_deep_ratio, fitbitData?.sleep_light_ratio, fitbitData?.sleep_rem_ratio); // DEBUG
 
   // Prepare data for BiomarkersWidget
   const biomarkersForWidget = {
@@ -82,6 +78,16 @@ export default function Dashboard() {
     { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * (minutesAsleep + minutesAwake)), color: '#F5F5F5', cssClass: 'rem' },
     { name: 'Despert', minutes: Math.round(minutesAwake), color: '#758680', cssClass: 'awake' } // Using minutesAwake directly
   ];
+
+  console.log('Data passed to SleepStagesWidget:', sleepStagesForWidget); // DEBUG
+
+  const intensityDataForChart = {
+    sedentary: fitbitData?.summary?.minutes_below_default_zone_1 || 0,
+    light: fitbitData?.summary?.minutes_in_default_zone_1 || 0,
+    moderate: fitbitData?.summary?.minutes_in_default_zone_2 || 0,
+    intense: fitbitData?.summary?.minutes_in_default_zone_3 || 0,
+  };
+  console.log('Intensity Data for Chart:', intensityDataForChart); // DEBUG
 
   const navItems = [
     { id: 'dashboard', icon: faTachometerAlt, text: 'Tauler de Control', active: true },
@@ -154,20 +160,8 @@ export default function Dashboard() {
           {/* Column 1: Fatigue, Activity, AI Assistant */}
           <div className="dashboard-section">
             <FatigueWidget probability={fatigueProbability} />
-            <div className="widget activity-widget">
-              <div className="widget-content">
-                <div className="metrics-summary">
-                  <div>
-                    <span>{activityData.steps.toLocaleString('ca-ES')}</span>
-                    <p>Passes</p>
-                  </div>
-                  <div>
-                    <span>{activityData.calories.toLocaleString('ca-ES')}</span>
-                    <p>Calories</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ActivityWidget activityData={activityData} />
+            {/* The old static activity widget block was here and has been removed */}
             <div className="widget ai-assistant-widget">
               <h3><FontAwesomeIcon icon={faRobot} /> Assistent IA</h3>
               {/* Content for AI assistant widget */}
@@ -188,7 +182,7 @@ export default function Dashboard() {
             <div className="widget activity-charts-widget">
               <h3>Gràfics d'Activitat</h3>
               {/* Placeholder for charts */}
-              <p>Gràfics aniran aquí...</p>
+              <ActivityWidget type="intensityChart" intensityData={intensityDataForChart} />
             </div>
             <BiomarkersWidget biomarkersData={biomarkersForWidget} />
           </div>

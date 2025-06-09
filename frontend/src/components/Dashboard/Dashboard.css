@@ -274,7 +274,7 @@
 .dashboard-section {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Space between widgets within a column */
+    gap: 10px; /* Reduced space between widgets within a column */
 }
 
 .dashboard-main-content > .dashboard-section:nth-child(1) {
@@ -296,24 +296,24 @@
 .fatigue-widget {
     background: transparent !important; /* Override general widget background */
     box-shadow: none !important; /* Override general widget shadow */
-    padding: 10px !important; /* Override general widget padding */
+    padding: 5px !important; /* Reduced padding */
+    margin-bottom: 0 !important; /* Remove any bottom margin */
     align-items: center;
-    justify-content: center;
-    flex: 1 1 auto; /* Allow widget to grow and shrink */
-    min-height: 500px; /* Increased min-height */
+    justify-content: flex-start; /* Align to top */
+    flex: 0 0 auto; /* Don't grow or shrink */
+    min-height: auto; /* Remove fixed height */
     border: none !important; /* Override general widget border */
-    height: 100%; /* Occupy full height of grid container */
+    height: auto; /* Auto height */
     display: flex;
     flex-direction: column;
-    justify-content: center;
 }
 
 .fatigue-indicator-container {
     position: relative;
     width: 100%;
-    max-width: 400px; /* Increased max-width */
-    height: 400px; /* Fixed height for better control */
-    margin: 0 auto;
+    max-width: 300px; /* Slightly reduced max-width */
+    height: 300px; /* Reduced height */
+    margin: 0 auto 5px; /* Reduced bottom margin */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -330,7 +330,7 @@
 
 #fatigueProbabilityText {
     display: block;
-    font-size: 4rem; /* Increased font size */
+    font-size: 3rem; /* Slightly reduced font size */
     font-weight: 800;
     line-height: 1;
     /* color is set dynamically via inline style */
@@ -338,11 +338,11 @@
 
 #fatigueStatusText {
     display: block;
-    font-size: 1.5rem; /* Increased font size */
+    font-size: 1.2rem; /* Slightly reduced font size */
     font-weight: 600;
     text-transform: uppercase;
-    margin-top: 12px; /* Slightly more space between number and text */
-    letter-spacing: 1px; /* Improve readability */
+    margin-top: 8px; /* Reduced space between number and text */
+    letter-spacing: 0.5px; /* Slightly reduced letter spacing */
     /* color is set dynamically via inline style */
 }
 
