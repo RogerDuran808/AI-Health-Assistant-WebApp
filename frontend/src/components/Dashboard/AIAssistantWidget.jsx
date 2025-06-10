@@ -23,7 +23,7 @@ export default function AIAssistantWidget({ fitbitData }) {
         </div>
         {rec ? (
           <>
-            <p>Vols generar o modificar el teu pla d'entrenament, basat en les noves dades i la recomanació?</p>
+            <p>Vols generar / modificar el teu pla d'entrenament?</p>
             <div className="widget-actions">
               {/* Botó deshabilitat temporalment */}
               <button className="btn btn-secondary" disabled>Pla d'Entrenament (Pròximament...)</button>

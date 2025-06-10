@@ -3,11 +3,11 @@ import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import './SleepStagesWidget.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoon, faClock, faBed, faPercent, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faMoon, faClock, faBed, faPercent, faEye } from '@fortawesome/free-solid-svg-icons';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Helper function from docs/script.js
+// Format numeric
 function formatMinutesToHoursAndMinutes(totalMinutes) {
     if (totalMinutes === undefined || totalMinutes === null || totalMinutes < 0) return "0m";
     const hours = Math.floor(totalMinutes / 60);
@@ -17,6 +17,7 @@ function formatMinutesToHoursAndMinutes(totalMinutes) {
 
 const SleepStagesWidget = ({ stagesData, metricsData }) => {
     const [activeTab, setActiveTab] = useState('fases'); // 'fases', 'metriques', 'tendencies'
+
     // Default to an empty array if stagesData is not provided or not an array
     const G_STAGES_DATA = Array.isArray(stagesData) ? stagesData : [];
 
@@ -72,7 +73,7 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
     };
 
     const defaultMetrics = { totalTimeAsleep: 0, timeInBed: 0, efficiency: null, totalTimeAwake: 0 };
-    const currentMetrics = metricsData || defaultMetrics;
+    const currentMetrics = (metricsData && Object.keys(metricsData).length > 0) ? metricsData : defaultMetrics;
 
     return (
         <div className="widget sleep-widget">
@@ -130,7 +131,7 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
                     <div className="sleep-tab-content active sleep-metrics-content">
                         <div className="metric-card">
                             <FontAwesomeIcon icon={faClock} className="metric-icon" />
-                            <span className="metric-value">{formatMinutesToHoursAndMinutes(currentMetrics.totalTimeAsleep)}</span>
+                            <span className="metric-value">{formatMinutesToHoursAndMinutes(currentMetrics.totalTimeAsleep - currentMetrics.totalTimeAwake)}</span>
                             <p className="metric-label">Temps total dormit</p>
                         </div>
                         <div className="metric-card">
@@ -144,7 +145,7 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
                             <p className="metric-label">Eficiència {currentMetrics.efficiency === null || currentMetrics.efficiency === undefined ? "(Pròx. imp.)" : ""}</p>
                         </div>
                         <div className="metric-card">
-                            <FontAwesomeIcon icon={faEyeSlash} className="metric-icon" />
+                            <FontAwesomeIcon icon={faEye} className="metric-icon" />
                             <span className="metric-value">{formatMinutesToHoursAndMinutes(currentMetrics.totalTimeAwake)}</span>
                             <p className="metric-label">Temps despert</p>
                         </div>

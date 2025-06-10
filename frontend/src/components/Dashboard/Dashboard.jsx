@@ -82,9 +82,9 @@ export default function Dashboard() {
   };
 
   const sleepStagesForWidget = [
-    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * (minutesAsleep-minutesAwake)), color: '#D4FF58', cssClass: 'deep' },
-    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * (minutesAsleep-minutesAwake)), color: '#A5C9FF', cssClass: 'light' },
-    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * (minutesAsleep-minutesAwake)), color: '#F5F5F5', cssClass: 'rem' },
+    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * (minutesAsleep)), color: '#D4FF58', cssClass: 'deep' },
+    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * (minutesAsleep)), color: '#A5C9FF', cssClass: 'light' },
+    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * (minutesAsleep)), color: '#F5F5F5', cssClass: 'rem' },
     { name: 'Despert', minutes: Math.round(minutesAwake), color: '#758680', cssClass: 'awake' }
   ];
 
@@ -201,7 +201,7 @@ export default function Dashboard() {
 
             {/* Column 3: Sleep Analysis i Condicions Mèdiques */}
             <div className="dashboard-section">
-              <SleepStagesWidget sleepData={sleepMetricsForWidget} stagesData={sleepStagesForWidget} />
+              <SleepStagesWidget metricsData={sleepMetricsForWidget} stagesData={sleepStagesForWidget} />
               <MedicalConditionsWidget conditions={medicalConditions} />
             </div>
           </main>
