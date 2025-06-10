@@ -1,4 +1,5 @@
 import os
+import json
 from functools import lru_cache
 import openai
 
@@ -11,10 +12,41 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY") # Per possibles proves
 openai.api_key = OPENAI_API_KEY
 MODEL = "gpt-4o-mini"
 
+
+def _key(data: dict) -> str:
+    """Serialitza el diccionari per poder usar-lo com a clau de memòria cau."""
+    return json.dumps(data, sort_keys=True)
+
+
 @lru_cache(maxsize=32)
+def _cached_recommendation(payload_key: str) -> str:
+    """Versió memòria cau de la recomanació."""
+    fitbit_dict = json.loads(payload_key)
+    prompt = _build_prompt(fitbit_dict)
+    resposta = openai.chat.completions.create(
+        model=MODEL,
+        messages=[
+         {"role": "system",
+          "content": """You are a professional health coach and fitness expert specializing
+         in optimizing physical performance using wearable data and personal context.
+         Provide precise, personalized training and recovery recommendations
+         based on the user's metrics (fatigue, heart rate, sleep quality, activity)."""},
+
+         {"role": "user", "content": prompt}
+        ],
+        max_tokens=1000,
+    )
+    return resposta.choices[0].message.content.strip()
+
+
 def get_recommendation(fitbit_dict: dict) -> str:
-    """Genera recomanacions d'acord amb les dades de Fitbit"""
-    prompt = f"""
+    """Genera recomanacions d'acord amb les dades de Fitbit."""
+    return _cached_recommendation(_key(fitbit_dict))
+
+
+def _build_prompt(fitbit_dict: dict) -> str:
+    """Construeix el prompt per a OpenAI."""
+    return f"""
 Has rebut aquestes dades registrades ahir per un usuari de Fitbit:
 {fitbit_dict}
 
@@ -43,29 +75,20 @@ Format de resposta esperat:
    _Raonament científic_: …
 
 """
-    resposta = openai.chat.completions.create(
-        model=MODEL,
-        messages=[
-         {"role": "system", 
-          "content": """You are a professional health coach and fitness expert specializing 
-         in optimizing physical performance using wearable data and personal context. 
-         Provide precise, personalized training and recovery recommendations 
-         based on the user's metrics (fatigue, heart rate, sleep quality, activity)."""},
 
-         {"role": "user", "content": prompt}
-        ],
-        max_tokens=1000,
-    )
-    return resposta.choices[0].message.content.strip()
 
+
+def _pla_key(fitbit_dict: dict, recomanacions: str) -> str:
+    """Serialitza els arguments per a la memòria cau."""
+    return json.dumps({"fitbit": fitbit_dict, "rec": recomanacions}, sort_keys=True)
 
 
 @lru_cache(maxsize=32)
-def get_pla_estructurat(fitbit_dict: dict, recomanacions: str) -> str:
-    """
-    Genera un pla d'entrenament setmanal estructurat i personalitzat a partir de les dades Fitbit
-    i les recomanacions de get_recommendation.
-    """
+def _cached_pla(payload_key: str) -> str:
+    """Versió memòria cau del pla d'entrenament."""
+    data = json.loads(payload_key)
+    fitbit_dict = data["fitbit"]
+    recomanacions = data["rec"]
     prompt = f"""
 Tens la següent informació i recomanacions de salut de l'usuari, basades en dades de Fitbit:
 
@@ -90,7 +113,7 @@ Dona la resposta en format tabular
         model=MODEL,
         messages=[
             {"role": "system",
-             "content": """Ets un entrenador personal expert en ciència de l'esport i recuperació. 
+             "content": """Ets un entrenador personal expert en ciència de l'esport i recuperació.
              Genera rutines setmanals adaptades a l'usuari, integrant dades de wearables i recomanacions prèvies."""},
             {"role": "user", "content": prompt}
         ],
@@ -98,3 +121,7 @@ Dona la resposta en format tabular
     )
     return resposta.choices[0].message.content.strip()
 
+
+def get_pla_estructurat(fitbit_dict: dict, recomanacions: str) -> str:
+    """Genera un pla d'entrenament setmanal estructurat i personalitzat."""
+    return _cached_pla(_pla_key(fitbit_dict, recomanacions))

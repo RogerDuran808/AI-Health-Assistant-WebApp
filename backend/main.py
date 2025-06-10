@@ -92,7 +92,6 @@ def fitbit_data():
         log.exception("/fitbit-data failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
-
 @app.get("/user-profile")
 def user_profile():
     try:

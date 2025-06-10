@@ -112,8 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderCentralMetrics(data) {
         getElement('rmssdValue').textContent = `${data.rmssd} ms`;
         const rmssdStatusEl = getElement('rmssdStatus');
-        if (data.rmssd >= 50) { rmssdStatusEl.textContent = 'Excel·lent'; rmssdStatusEl.style.color = newPalette.accent; } 
-        else if (data.rmssd >= 30) { rmssdStatusEl.textContent = 'Normal'; rmssdStatusEl.style.color = newPalette.accent; } 
+        if (data.rmssd >= 60) { rmssdStatusEl.textContent = 'Excel·lent'; rmssdStatusEl.style.color = newPalette.accent; } // Exelent si hi ha un rmssd major de 60
+        else if (data.rmssd >= 40) { rmssdStatusEl.textContent = 'Normal'; rmssdStatusEl.style.color = newPalette.accent; } // Persones menys saludables entre 40 i 55
         else { rmssdStatusEl.textContent = 'Baix'; rmssdStatusEl.style.color = '#B3E04D'; } // Using a darker shade of accent for low
 
         getElement('spo2Value').textContent = `${data.spo2}%`;
@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Gràfic Barres Zones FC
         chartInstances['hrZonesChart'] = new Chart(getElement('hrZonesChart').getContext('2d'), { 
-            type: 'bar', data: { labels: ['Repòs', 'Suau', 'Moderat', 'Pic'], datasets: [{ data: Object.values(activityData.heartRateZones), backgroundColor: ['#758680', '#A5A5A5', '#D4FF58', '#F5F5F5'], borderRadius: 4 }] }, options: barOpts 
+            type: 'bar', data: { labels: ['Suau', 'Moderada', 'Intensa', 'Pic'], datasets: [{ data: Object.values(activityData.heartRateZones), backgroundColor: ['#758680', '#A5A5A5', '#D4FF58', '#F5F5F5'], borderRadius: 4 }] }, options: barOpts 
         });
 
         // Gràfic Tendència Activitat

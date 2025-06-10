@@ -45,10 +45,10 @@ export default function Dashboard() {
   const rmssdValue = parseFloat(fitbitData?.rmssd);
 
   if (!isNaN(rmssdValue)) {
-    if (rmssdValue >= 50) {
+    if (rmssdValue >= 60) {
       rmssdStatusText = 'Excel·lent';
       rmssdStatusStyle = { color: 'var(--accent-color)' };
-    } else if (rmssdValue >= 30) {
+    } else if (rmssdValue >= 40) {
       rmssdStatusText = 'Normal';
       rmssdStatusStyle = { color: 'var(--accent-color)' };
     } else {
@@ -63,7 +63,7 @@ export default function Dashboard() {
   const minutesAsleep = fitbitData?.minutesAsleep || 0;
   const minutesAwake = fitbitData?.minutesAwake || 0;
   const sleepEfficiency = fitbitData?.sleep_efficiency;
-  const timeInBed = minutesAsleep + minutesAwake;
+  const timeInBed = minutesAsleep;
 
   const sleepMetricsForWidget = {
     totalTimeAsleep: minutesAsleep,
@@ -82,9 +82,9 @@ export default function Dashboard() {
   };
 
   const sleepStagesForWidget = [
-    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * minutesAsleep), color: '#D4FF58', cssClass: 'deep' },
-    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * minutesAsleep), color: '#A5C9FF', cssClass: 'light' },
-    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * minutesAsleep), color: '#F5F5F5', cssClass: 'rem' },
+    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * (minutesAsleep-minutesAwake)), color: '#D4FF58', cssClass: 'deep' },
+    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * (minutesAsleep-minutesAwake)), color: '#A5C9FF', cssClass: 'light' },
+    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * (minutesAsleep-minutesAwake)), color: '#F5F5F5', cssClass: 'rem' },
     { name: 'Despert', minutes: Math.round(minutesAwake), color: '#758680', cssClass: 'awake' }
   ];
 
