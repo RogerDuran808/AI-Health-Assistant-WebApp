@@ -267,7 +267,8 @@
 
 /* General Input Styling (Selects, Text, Time) */
 .form-select,
-.form-input {
+.form-input,
+.form-textarea {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid #333333;
@@ -292,7 +293,8 @@
 }
 
 .form-select:focus,
-.form-input:focus {
+.form-input:focus,
+.form-textarea:focus {
   border-color: #D4FF58;
   box-shadow: 0 0 0 3px rgba(212, 255, 88, 0.25);
 }
@@ -430,6 +432,15 @@
   background-color: #222222;
   color: #F5F5F5;
   border-color: #444;
+}
+
+/* Condicions mèdiques */
+.condition-item-form {
+  margin-bottom: 1rem;
+}
+
+.add-condition-btn {
+  margin-top: 0.5rem;
 }
 
 /* Responsive Adjustments */
