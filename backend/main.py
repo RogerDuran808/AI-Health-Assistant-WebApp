@@ -116,15 +116,15 @@ def update_user_profile(payload: dict):
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
-# De moment no toquem la recomanació
-# @app.post("/recommend")
-# def recommend(payload: dict):
-#     try:
-#         text = get_recommendation(payload)
-#         return {"text": text}
-#     except Exception as exc:
-#         log.exception("/recommend failed")
-#         raise HTTPException(status_code=500, detail=str(exc)) from exc
+@app.post("/recommend")
+def recommend(payload: dict):
+    """Genera una recomanació personalitzada a partir de les dades Fitbit."""
+    try:
+        text = get_recommendation(payload)
+        return {"text": text}
+    except Exception as exc:
+        log.exception("/recommend failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 if __name__ == "__main__":
     import uvicorn

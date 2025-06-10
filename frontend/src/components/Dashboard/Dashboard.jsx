@@ -12,6 +12,7 @@ import ActivityWidget from './ActivityWidget';
 import BiomarkersWidget from './BiomarkersWidget';
 import SleepStagesWidget from './SleepStagesWidget';
 import MedicalConditionsWidget from './MedicalConditionsWidget';
+import AIAssistantWidget from './AIAssistantWidget';
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -179,10 +180,7 @@ export default function Dashboard() {
             <div className="dashboard-section">
               <FatigueWidget probability={fatigueProbability} />
               <ActivityWidget data={activityData} />
-              <div className="widget ai-assistant-widget">
-                <h3><FontAwesomeIcon icon={faRobot} /> Assistent IA</h3>
-                <p>Pròximament...</p>
-              </div>
+              <AIAssistantWidget fitbitData={fitbitData} />
             </div>
 
             {/* Column 2: RMSSD, Activity Charts, Biomarkers */}
