@@ -340,10 +340,14 @@ def fetch_user_profile(user_id: str = "default") -> dict:
             return {}
         cols = [d[0] for d in cursor.description]
         profile = dict(zip(cols, row))
-        for field in ("available_equipment", "activity_preferences", "weekly_schedule"):
+        for field in ("available_equipment", "activity_preferences", "weekly_schedule", "medical_conditions"):
             if profile.get(field):
-                profile[field] = json.loads(profile[field])
+                try:
+                    profile[field] = json.loads(profile[field])
+                except json.JSONDecodeError:
+                    pass
         return profile
+
     except sqlite3.Error as e:
         print(f"[fetch_user_profile] Error: {e}")
         return {}
@@ -360,7 +364,7 @@ def save_user_profile(profile: dict, user_id: str = "default") -> bool:
         cursor = conn.cursor()
 
         profile_with_id = {"user_id": user_id, **profile}
-        for field in ("available_equipment", "activity_preferences", "weekly_schedule"):
+        for field in ("available_equipment", "activity_preferences", "weekly_schedule", "medical_conditions"):
             if field in profile_with_id and not isinstance(profile_with_id[field], str):
                 profile_with_id[field] = json.dumps(profile_with_id[field])
 

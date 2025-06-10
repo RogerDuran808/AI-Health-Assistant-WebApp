@@ -65,7 +65,7 @@ const initialTrainingSchedule = daysOfWeek.reduce((acc, day) => {
   return acc;
 }, {});
 
-const ProfileModal = ({ isOpen, onClose, userData }) => {
+const ProfileModal = ({ isOpen, onClose, userData, onProfileUpdate }) => {
   // Basic Info (from userData, non-editable in this modal usually)
   const name = userData?.name || 'Usuari';
   const age = userData?.age;
@@ -86,7 +86,8 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
     activityPreferenceOptions.reduce((acc, curr) => ({ ...acc, [curr.id]: false }), {})
   );
   const [trainingSchedule, setTrainingSchedule] = useState(initialTrainingSchedule);
-  const [medicalConditions, setMedicalConditions] = useState('');
+  // Llista de condicions mèdiques {title, description}
+  const [medicalConditions, setMedicalConditions] = useState([]);
 
   const { data: profileData, refetch } = useUserProfile(); // Obté el perfil i la funció de refetch
 
@@ -125,7 +126,24 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
         )
       );
 
-      setMedicalConditions(source.medical_conditions || '');
+      // Les condicions poden venir com a llista o string JSON
+      let loadedConditions = [];
+      if (source.medical_conditions) {
+        if (Array.isArray(source.medical_conditions)) {
+          loadedConditions = source.medical_conditions;
+        } else {
+          try {
+            const parsed = JSON.parse(source.medical_conditions);
+            if (Array.isArray(parsed)) loadedConditions = parsed;
+          } catch {
+            loadedConditions = [];
+          }
+        }
+      }
+      if (loadedConditions.length === 0) {
+        loadedConditions = [{ title: '', description: '' }];
+      }
+      setMedicalConditions(loadedConditions);
 
       const schedule = source.weekly_schedule || source.trainingSchedule;
       if (schedule) {
@@ -168,6 +186,20 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
       [day]: { ...prev[day], [field]: value }
     }));
   };
+  
+// Actualitza una condició mèdica concreta
+const updateCondition = (index, field, value) => {
+  setMedicalConditions(prev => {
+    const copy = [...prev];
+    copy[index] = { ...copy[index], [field]: value };
+    return copy;
+  });
+};
+
+// Afegeix una nova condició buida
+const addCondition = () => {
+  setMedicalConditions(prev => [...prev, { title: '', description: '' }]);
+};
 
   const handleSave = async () => {
     // Converteix els estats del formulari al format que espera el backend
@@ -196,7 +228,7 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
       available_equipment: equipArray,
       activity_preferences: prefArray,
       weekly_schedule: schedule,
-      medical_conditions: medicalConditions,
+      medical_conditions: medicalConditions.filter(c => c.title || c.description),
     };
 
     try {
@@ -208,7 +240,10 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
       if (!r.ok) throw new Error('Error al desar el perfil');
       
       console.log('Profile saved successfully!');
-      refetch(); // Torna a carregar les dades del perfil
+      refetch(); // Re-fetch local data for the modal itself
+      if (onProfileUpdate) {
+        onProfileUpdate(); // Notifica al pare que cal refrescar
+      }
       onClose(); // Tanca el modal després de guardar
     } catch (error) {
       console.error('Error saving profile:', error);
@@ -308,7 +343,7 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
           <div className="form-section">
             <h4 className="form-section-title"><FontAwesomeIcon icon={faClock} /> Disponibilitat d'Entrenament Horària</h4>
             <div className="schedule-grid">
-          {daysOfWeek.map(day => (
+            {daysOfWeek.map(day => (
             <div key={day} className={`schedule-day-row ${trainingSchedule[day].enabled ? 'day-enabled' : ''}`}>
                   <label className="checkbox-label schedule-day-toggle">
                     <input 
@@ -341,22 +376,35 @@ const ProfileModal = ({ isOpen, onClose, userData }) => {
                 </div>
             ))}
           </div>
-        </div>
 
-        <div className="form-section">
+          </div>
+
+          <div className="form-section">
           <h4 className="form-section-title">
             <FontAwesomeIcon icon={faNotesMedical} /> Limitacions i Condicions Mèdiques
           </h4>
-          <div className="form-group">
-            <textarea
-              className="form-textarea"
-              rows="3"
-              value={medicalConditions}
-              onChange={(e) => setMedicalConditions(e.target.value)}
-              placeholder="Ex.: Asma, lesió al genoll..."
-            />
+          {medicalConditions.map((cond, idx) => (
+            <div key={idx} className="form-group condition-item-form">
+              <input
+                type="text"
+                className="form-input"
+                placeholder="Títol"
+                value={cond.title}
+                onChange={(e) => updateCondition(idx, 'title', e.target.value)}
+              />
+              <textarea
+                className="form-textarea"
+                rows="2"
+                placeholder="Descripció"
+                value={cond.description}
+                onChange={(e) => updateCondition(idx, 'description', e.target.value)}
+              />
+            </div>
+          ))}
+          <button type="button" onClick={addCondition} className="button button-secondary add-condition-btn">
+            + Afegir Condició
+          </button>
           </div>
-        </div>
 
           <div className="button-group">
             <button onClick={onClose} className="button button-secondary">Tancar</button>

@@ -434,6 +434,15 @@
   border-color: #444;
 }
 
+/* Condicions mèdiques */
+.condition-item-form {
+  margin-bottom: 1rem;
+}
+
+.add-condition-btn {
+  margin-top: 0.5rem;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .modal-container {

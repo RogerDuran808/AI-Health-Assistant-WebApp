@@ -68,3 +68,9 @@
     color: var(--accent-color);
     font-size: 1.2em;
 }
+
+.condition-desc {
+    color: var(--text-secondary);
+    margin-top: 4px;
+    font-size: 0.85rem;
+}
