@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import useUserProfile from '../hooks/useUserProfile'; // Hook per llegir el perfil
+import useFitbitData from '../hooks/useFitbitData'; // Hook per llegir les dades de Fitbit
 import './ProfileModal.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faTimes, faCalendarAlt, faClock, faDumbbell, faPersonRunning, faBullseye, faStar, faCheckSquare, faSquare, faNotesMedical } from '@fortawesome/free-solid-svg-icons';
@@ -38,7 +39,8 @@ const equipmentOptions = [
 ];
 
 const activityPreferenceOptions = [
-  { id: 'walking', label: 'Caminar' }, { id: 'running', label: 'Córrer' },
+  { id: 'walking', label: 'Caminar' }, 
+  { id: 'running', label: 'Córrer' },
   { id: 'cycling', label: 'Ciclisme' }, { id: 'swimming', label: 'Natació' },
   { id: 'weights_strength', label: 'Peses / força' }, { id: 'hiit', label: 'Entrenaments HIIT' },
   { id: 'mobility_stretching', label: 'Mobilitat i estiraments' }, { id: 'yoga_pilates', label: 'Ioga / pilates' },
@@ -66,12 +68,15 @@ const initialTrainingSchedule = daysOfWeek.reduce((acc, day) => {
 }, {});
 
 const ProfileModal = ({ isOpen, onClose, userData, onProfileUpdate }) => {
-  // Basic Info (from userData, non-editable in this modal usually)
-  const name = userData?.name || 'Usuari';
-  const age = userData?.age;
-  const height = userData?.height;
-  const weight = userData?.weight;
-  const bmi = userData?.bmi;
+  // Get Fitbit data for basic user info
+  const { data: fitbitData, loading: fitbitLoading, error: fitbitError } = useFitbitData();
+  
+  // Basic Info - prefer Fitbit data, fallback to userData
+  const name = fitbitData?.name || userData?.name || 'Usuari';
+  const age = fitbitData?.age || userData?.age;
+  const height = fitbitData?.height || userData?.height;
+  const weight = fitbitData?.weight || userData?.weight;
+  const bmi = fitbitData?.bmi || userData?.bmi;
 
   // Profile States
   const [mainGoal, setMainGoal] = useState(mainGoalOptions[0].value);
@@ -91,7 +96,7 @@ const ProfileModal = ({ isOpen, onClose, userData, onProfileUpdate }) => {
 
   const { data: profileData, refetch } = useUserProfile(); // Obté el perfil i la funció de refetch
 
-  // Actualitza els estats del perfil quan arriben dades del backend o de les prop
+  // Actualitza els estats del perfil quan arriben dades del backend, fitbit o de les prop
   useEffect(() => {
     const source = profileData || userData;
     if (source) {

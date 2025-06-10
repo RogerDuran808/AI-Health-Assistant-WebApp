@@ -31,7 +31,7 @@ export default function Dashboard() {
   };
 
   // Data from backend, with fallbacks
-  const userName = profileData?.name || fitbitData?.name || "Usuari";
+  const userName = fitbitData?.name || "Usuari";
   const fatigueProbability = fitbitData?.tired_prob !== undefined ? (fitbitData.tired_prob * 100) : NaN;
   const activityData = {
     steps: fitbitData?.steps || 0,
