@@ -76,7 +76,7 @@ const ProfileModal = ({ isOpen, onClose, userData, onProfileUpdate }) => {
   const age = fitbitData?.age || userData?.age;
   const height = fitbitData?.height || userData?.height;
   const weight = fitbitData?.weight || userData?.weight;
-  const bmi = fitbitData?.bmi || userData?.bmi;
+  const bmi = fitbitData?.bmi || userData?.bmi ? Number((fitbitData?.bmi || userData?.bmi).toFixed(1)) : null;
 
   // Profile States
   const [mainGoal, setMainGoal] = useState(mainGoalOptions[0].value);
