@@ -28,22 +28,44 @@ PROFILE_TABLE_NAME = "user_profile"
 # Inclou dades crues, de feature engineering i prediccions.
 COLUMN_DEFINITIONS = {
     # Dades crues de l'API
-    "date": "TEXT PRIMARY KEY", "name": "TEXT", "age": "INTEGER", "gender": "TEXT",
-    "bmi": "REAL", "weight": "REAL", "height": "REAL", "calories": "INTEGER",
-    "steps": "INTEGER", "lightly_active_minutes": "INTEGER",
-    "moderately_active_minutes": "INTEGER", "very_active_minutes": "INTEGER",
-    "sedentary_minutes": "INTEGER", "resting_hr": "INTEGER",
-    "minutes_below_default_zone_1": "INTEGER", "minutes_in_default_zone_1": "INTEGER",
-    "minutes_in_default_zone_2": "INTEGER", "minutes_in_default_zone_3": "INTEGER",
-    "max_hr": "INTEGER", "min_hr": "INTEGER", "minutesToFallAsleep": "INTEGER",
-    "minutesAsleep": "INTEGER", "minutesAwake": "INTEGER", "minutesAfterWakeup": "INTEGER",
-    "sleep_efficiency": "INTEGER", "sleep_deep_ratio": "REAL", "sleep_light_ratio": "REAL",
-    "sleep_rem_ratio": "REAL", "sleep_wake_ratio": "REAL",
-    "daily_temperature_variation": "REAL", "rmssd": "REAL", "spo2": "REAL",
+    "date": "TEXT PRIMARY KEY",
+    "user_id": "TEXT", 
+    "name": "TEXT", 
+    "age": "INTEGER", 
+    "gender": "TEXT",
+    "bmi": "REAL", 
+    "weight": "REAL", 
+    "height": "REAL", 
+    "calories": "INTEGER",
+    "steps": "INTEGER", 
+    "lightly_active_minutes": "INTEGER",
+    "moderately_active_minutes": "INTEGER", 
+    "very_active_minutes": "INTEGER",
+    "sedentary_minutes": "INTEGER", 
+    "resting_hr": "INTEGER",
+    "minutes_below_default_zone_1": "INTEGER", 
+    "minutes_in_default_zone_1": "INTEGER",
+    "minutes_in_default_zone_2": "INTEGER", 
+    "minutes_in_default_zone_3": "INTEGER",
+    "max_hr": "INTEGER", 
+    "min_hr": "INTEGER", 
+    "minutesToFallAsleep": "INTEGER",
+    "minutesAsleep": "INTEGER", 
+    "minutesAwake": "INTEGER", 
+    "minutesAfterWakeup": "INTEGER",
+    "sleep_efficiency": "INTEGER", 
+    "sleep_deep_ratio": "REAL", 
+    "sleep_light_ratio": "REAL",
+    "sleep_rem_ratio": "REAL", 
+    "sleep_wake_ratio": "REAL",
+    "daily_temperature_variation": "REAL", 
+    "rmssd": "REAL", 
+    "spo2": "REAL",
     "full_sleep_breathing_rate": "REAL",
     
     # Columnes de Predicció
-    "tired_pred": "REAL", "tired_prob": "REAL"
+    "tired_pred": "REAL", 
+    "tired_prob": "REAL"
 }
 RAW_COLUMN_NAMES = list(pd.read_csv(BASE_DIR / 'models' / 'raw_features.csv')['feature']) # Noms de les columnes originals
 
@@ -96,6 +118,11 @@ def _init_db():
         create_user_profile_table_sql = f"""
         CREATE TABLE IF NOT EXISTS {PROFILE_TABLE_NAME} (
             user_id TEXT PRIMARY KEY,
+            name TEXT,
+            age INTEGER,
+            height INTEGER,
+            weight INTEGER,
+            bmi INTEGER,
             main_training_goal TEXT,
             experience_level TEXT,
             training_days_per_week INTEGER,

@@ -1,5 +1,6 @@
 feature
 date
+user_id
 name
 age
 gender

@@ -42,7 +42,7 @@ profile = requests.get(
     headers=HEADERS
 ).json()['user']
 
-name, age, gender, height, weight = (profile['fullName'], profile['age'], profile['gender'], profile['height'], profile['weight'])
+id, name, age, gender, height, weight = (profile['encodedId'], profile['firstName'], profile['age'], profile['gender'], profile['height'], profile['weight'])
 
 bmi = None if not (height and weight) else weight / ((height/100)**2)
 
@@ -53,6 +53,7 @@ for cur_date in pd.date_range(yesterday, yesterday):
 
     d.update({
         'date': date_str,
+        'user_id': id,
         'name': name, 
         'age': age, 
         'gender': gender, 
