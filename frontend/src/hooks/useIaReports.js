@@ -9,6 +9,7 @@ export default function useIaReports(isOpen) {
   useEffect(() => {
     if (!isOpen) return;
     let mounted = true;
+    
     setLoading(true); // Reinicia l'estat de càrrega cada vegada que s'obre
     setData([]);     // Esborra l'últim resultat mentre es carrega de nou
 
