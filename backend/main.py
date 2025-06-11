@@ -9,8 +9,10 @@ from fitbit_fetch import (
     save_user_profile,
     save_ia_report,
     fetch_ia_reports,
+    update_latest_training_plan,
+    fetch_latest_training_plan,
 )
-from ai import get_recommendation
+from ai import get_recommendation, get_pla_estructurat
 
 import numpy as np
 import logging
@@ -132,6 +134,30 @@ def recommend(payload: dict):
         log.exception("/recommend failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
+
+@app.post("/training-plan")
+def training_plan(payload: dict):
+    """Genera i desa el pla d'entrenament estructurat."""
+    try:
+        text = get_pla_estructurat(
+            payload.get("fitbit", {}), payload.get("recommendation", "")
+        )
+        update_latest_training_plan(text, user_id=payload.get("user_id", "default"))
+        return {"text": text}
+    except Exception as exc:
+        log.exception("/training-plan failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/training-plan")
+def get_training_plan(user_id: str = "default"):
+    """Recupera l'últim pla d'entrenament de la BD."""
+    try:
+        text = fetch_latest_training_plan(user_id=user_id)
+        return {"text": text}
+    except Exception as exc:
+        log.exception("/training-plan GET failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 @app.get("/ia-reports")
 def ia_reports(limit: int = 10, user_id: str = "CJK8XS"): # Aqui poso el meu user ID, en un futur user id seria un parametre que s'extreuris de la taula de user profile
