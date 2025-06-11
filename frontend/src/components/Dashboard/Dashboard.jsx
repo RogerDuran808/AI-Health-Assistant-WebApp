@@ -4,7 +4,7 @@ import useUserProfile from '../../hooks/useUserProfile';
 import './Dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTachometerAlt, faRobot, faFileAlt, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare, faLungs, faWind, faHeartbeat, faThermometerHalf
+  faTachometerAlt, faRobot, faFileAlt, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare, faLungs, faWind, faHeartbeat, faThermometerHalf, faDumbbell
 } from '@fortawesome/free-solid-svg-icons';
 import ProfileModal from '../ProfileModal';
 import FatigueWidget from './FatigueWidget';
@@ -107,6 +107,7 @@ export default function Dashboard() {
   const navItems = [
     { id: 'dashboard', icon: faTachometerAlt, text: 'Tauler de Control', active: true },
     { id: 'assistant', icon: faFileAlt, text: 'Informes IA', active: false, onClick: () => setIsReportsModalOpen(true) },
+    { id: 'plan', icon: faDumbbell, text: 'Pla d\'Entrenament', active: false },
     { id: 'profile', icon: faUser, text: 'Perfil', active: false, onClick: () => setIsProfileModalOpen(true) },
   ];
 
