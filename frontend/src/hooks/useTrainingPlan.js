@@ -11,7 +11,9 @@ export default function useTrainingPlan(isOpen = false) {
       const r = await fetch("http://localhost:8000/training-plan");
       const j = await r.json();
       if (!r.ok) throw new Error(j.detail || r.statusText);
-      setData(j.text);
+      // Normalitza salts de línia per mostrar la taula correctament
+      const clean = j.text ? j.text.replace(/\r\n/g, "\n") : null;
+      setData(clean);
       setError(null);
     } catch (e) {
       setError(e);
@@ -30,7 +32,8 @@ export default function useTrainingPlan(isOpen = false) {
       });
       const j = await r.json();
       if (!r.ok) throw new Error(j.detail || r.statusText);
-      setData(j.text);
+      const clean = j.text ? j.text.replace(/\r\n/g, "\n") : null;
+      setData(clean);
       setError(null);
     } catch (e) {
       setError(e);
