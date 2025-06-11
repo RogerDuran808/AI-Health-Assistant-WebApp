@@ -140,7 +140,7 @@ def training_plan(payload: dict):
     """Genera i desa el pla d'entrenament estructurat."""
     try:
         text = get_pla_estructurat(
-            payload.get("fitbit", {}), payload.get("recommendation", "")
+            payload.get("fitbit", {}), payload.get("recommendation", ""), payload.get("profile", {})
         )
         update_latest_training_plan(text, user_id=payload.get("user_id", "default"))
         return {"text": text}
@@ -150,7 +150,7 @@ def training_plan(payload: dict):
 
 
 @app.get("/training-plan")
-def get_training_plan(user_id: str = "default"):
+def get_training_plan(user_id: str = "CJK8XS"): # Aqui poso el meu user ID, en un futur user id seria un parametre que s'extreuris de la taula de user profile
     """Recupera l'últim pla d'entrenament de la BD."""
     try:
         text = fetch_latest_training_plan(user_id=user_id)
