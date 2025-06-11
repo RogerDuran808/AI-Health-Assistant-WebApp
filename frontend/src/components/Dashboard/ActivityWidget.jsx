@@ -122,7 +122,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
 
         // Intensity Chart Data
         const intensityChartData = {
-            labels: ['Sedentari', 'Lleu', 'Moderat', 'Intens'],
+            labels: ['Sedentari', 'Lleu', 'Moderada', 'Intensa'],
             datasets: [
                 {
                     label: 'Minuts',

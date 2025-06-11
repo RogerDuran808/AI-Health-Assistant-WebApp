@@ -24,10 +24,10 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
     // Use a default structure if G_STAGES_DATA is empty to prevent errors
     const sleepData = {
         stages: G_STAGES_DATA.length > 0 ? G_STAGES_DATA : [
-            { name: 'Profund', minutes: 0, color: '#D4FF58', cssClass: 'deep' },
-            { name: 'Lleuger', minutes: 0, color: '#A5C9FF', cssClass: 'light' },
-            { name: 'REM', minutes: 0, color: '#F5F5F5', cssClass: 'rem' },
-            { name: 'Despert', minutes: 0, color: '#758680', cssClass: 'awake' }
+            { name: 'Profund', minutes: 0, color: 'var(--accent-color)', cssClass: 'deep' },
+            { name: 'Lleuger', minutes: 0, color: 'var(--text-secondary)', cssClass: 'light' },
+            { name: 'REM', minutes: 0, color: 'var(--text-primary)', cssClass: 'rem' },
+            { name: 'Despert', minutes: 0, color: 'var(--border-color)', cssClass: 'awake' }
         ]
     };
 

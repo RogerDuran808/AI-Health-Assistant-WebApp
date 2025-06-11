@@ -4,7 +4,7 @@ import useUserProfile from '../../hooks/useUserProfile';
 import './Dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTachometerAlt, faRobot, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare, faLungs, faWind, faHeartbeat, faThermometerHalf
+  faTachometerAlt, faRobot, faFileAlt, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare, faLungs, faWind, faHeartbeat, faThermometerHalf
 } from '@fortawesome/free-solid-svg-icons';
 import ProfileModal from '../ProfileModal';
 import FatigueWidget from './FatigueWidget';
@@ -82,10 +82,10 @@ export default function Dashboard() {
   };
 
   const sleepStagesForWidget = [
-    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * (minutesAsleep)), color: '#D4FF58', cssClass: 'deep' },
-    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * (minutesAsleep)), color: '#A5C9FF', cssClass: 'light' },
-    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * (minutesAsleep)), color: '#F5F5F5', cssClass: 'rem' },
-    { name: 'Despert', minutes: Math.round(minutesAwake), color: '#758680', cssClass: 'awake' }
+    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * (minutesAsleep)), color: 'var(--accent-color)', cssClass: 'deep' },
+    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * (minutesAsleep)), color: 'var(--text-secondary)', cssClass: 'light' },
+    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * (minutesAsleep)), color: 'var(--text-primary)', cssClass: 'rem' },
+    { name: 'Despert', minutes: Math.round(minutesAwake), color: 'var(--border-color)', cssClass: 'awake' }
   ];
 
   const intensityDataForChart = {
@@ -104,7 +104,7 @@ export default function Dashboard() {
 
   const navItems = [
     { id: 'dashboard', icon: faTachometerAlt, text: 'Tauler de Control', active: true },
-    { id: 'assistant', icon: faRobot, text: 'Assistent IA', active: false },
+    { id: 'assistant', icon: faFileAlt, text: 'Informes IA', active: false },
     { id: 'profile', icon: faUser, text: 'Perfil', active: false, onClick: () => setIsProfileModalOpen(true) },
   ];
 

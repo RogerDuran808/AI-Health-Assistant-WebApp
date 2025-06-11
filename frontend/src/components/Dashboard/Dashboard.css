@@ -495,13 +495,26 @@
 }
 
 .btn-secondary {
-    background-color: var(--tertiary-bg);
-    color: var(--text-primary);
+    background-color: transparent;
+    color: var(--text-secondary);
     border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background-color: var(--border-color);
+    background-color: var(--accent-color);
+    color: var(--primary-bg);
+    border-color: var(--accent-color);
+}
+
+.btn-icon {
+    margin-right: 8px;
+    font-size: 0.9em;
+    transition: color 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) .btn-icon {
+    color: var(--primary-bg);
 }
 
 .widget {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRobot } from '@fortawesome/free-solid-svg-icons';
+import { faRobot, faLightbulb, faDumbbell } from '@fortawesome/free-solid-svg-icons';
 import useRecommendation from '../../hooks/useRecomendation';
 
 export default function AIAssistantWidget({ fitbitData }) {
@@ -26,12 +26,18 @@ export default function AIAssistantWidget({ fitbitData }) {
             <p>Vols generar / modificar el teu pla d'entrenament?</p>
             <div className="widget-actions">
               {/* Botó deshabilitat temporalment */}
-              <button className="btn btn-secondary" disabled>Pla d'Entrenament (Pròximament...)</button>
+              <button className="btn btn-secondary" disabled>
+                <FontAwesomeIcon icon={faDumbbell} className="btn-icon" />
+                Pla d'Entrenament (Pròximament...)
+              </button>
             </div>
           </>
         ) : (
           <div className="widget-actions">
-            <button className="btn btn-primary" onClick={handleRecommend} disabled={loading}>Recomanació</button>
+            <button className="btn btn-secondary" onClick={handleRecommend} disabled={loading}>
+              <FontAwesomeIcon icon={faLightbulb} className="btn-icon" />
+              Recomanació
+            </button>
           </div>
         )}
       </div>
