@@ -132,6 +132,7 @@ export default function Dashboard() {
             <p>Preparat per planificar?</p>
           </div>
         </div>
+        {/* Navegació amb desplaçament propi */}
         <nav className="navigation">
           <ul className="nav-list">
             {navItems.map(item => (
@@ -165,6 +166,7 @@ export default function Dashboard() {
         </div>
       </aside>
 
+      {/* Contingut principal amb barra de desplaçament personalitzada */}
       <div className="dashboard-main-content">
         <header className="dashboard-header">
           <div className="header-title">

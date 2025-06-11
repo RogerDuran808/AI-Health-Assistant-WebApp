@@ -13,6 +13,29 @@
   margin-top: 1rem;
   color: var(--text-main);
   animation: fadeIn 0.5s ease-in-out;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Barra de desplaçament integrat al widget */
+.ai-assistant-widget .recommendation-area::-webkit-scrollbar {
+  width: 8px;
+}
+.ai-assistant-widget .recommendation-area::-webkit-scrollbar-track {
+  background: #0d0d0d;
+  border-radius: 4px;
+}
+.ai-assistant-widget .recommendation-area::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+.ai-assistant-widget .recommendation-area::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+.ai-assistant-widget .recommendation-area {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) #0d0d0d;
 }
 
 @keyframes fadeIn {

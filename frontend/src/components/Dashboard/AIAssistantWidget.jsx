@@ -34,22 +34,25 @@ export default function AIAssistantWidget({ fitbitData }) {
             </div>
           </>
         ) : (
-          <div className="recommendation-area">
-            {loading && <p>Generant recomanació...</p>}
-            {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
-            {rec && (
-              <>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{rec}</ReactMarkdown>
-                <p>Vols generar / modificar el teu pla d'entrenament?</p>
-                <div className="widget-actions">
-                  <button className="btn btn-secondary" disabled>
-                    <FontAwesomeIcon icon={faDumbbell} className="btn-icon" />
-                    Pla d'Entrenament (Pròximament...)
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+          <>
+            {/* Àrea amb desplaçament vertical propi per a les recomanacions */}
+            <div className="recommendation-area">
+              {loading && <p>Generant recomanació...</p>}
+              {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
+              {rec && (
+                <>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{rec}</ReactMarkdown>
+                  <p>Vols generar / modificar el teu pla d'entrenament?</p>
+                  <div className="widget-actions">
+                    <button className="btn btn-secondary" disabled>
+                      <FontAwesomeIcon icon={faDumbbell} className="btn-icon" />
+                      Pla d'Entrenament (Pròximament...)
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

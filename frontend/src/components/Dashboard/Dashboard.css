@@ -136,6 +136,27 @@
     padding-top: 5px; /* Add some top padding to the navigation area */
 }
 
+/* Scrollbar per a la navegació lateral */
+.navigation::-webkit-scrollbar {
+    width: 8px;
+}
+.navigation::-webkit-scrollbar-track {
+    background: var(--primary-bg);
+    border-radius: 4px;
+}
+.navigation::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+.navigation::-webkit-scrollbar-thumb:hover {
+    background: #444444;
+}
+
+.navigation {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--primary-bg);
+}
+
 .nav-list {
     list-style: none;
     padding: 0 15px;
@@ -265,6 +286,27 @@
     transition: margin-left 0.3s ease-in-out;
     overflow-y: auto;
     width: calc(100% - var(--sidebar-width-collapsed));
+}
+
+/* Barra de desplaçament personalitzada per al contingut principal */
+.dashboard-main-content::-webkit-scrollbar {
+    width: 8px;
+}
+.dashboard-main-content::-webkit-scrollbar-track {
+    background: var(--primary-bg);
+    border-radius: 4px;
+}
+.dashboard-main-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+.dashboard-main-content::-webkit-scrollbar-thumb:hover {
+    background: #444444;
+}
+
+.dashboard-main-content {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--primary-bg);
 }
 
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) + .dashboard-main-content {

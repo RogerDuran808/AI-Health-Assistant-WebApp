@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './IaReportsModal.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faRobot, faFileAlt } from '@fortawesome/free-solid-svg-icons';
@@ -8,6 +8,12 @@ import remarkGfm from 'remark-gfm';
 
 const IaReportsModal = ({ isOpen, onClose }) => {
   const { data: reports, loading, error } = useIaReports(isOpen);
+  // Estat per expandir o contraure cada informe
+  const [expanded, setExpanded] = useState({});
+
+  const toggleExpanded = (idx) => {
+    setExpanded(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
 
   if (!isOpen) return null;
 
@@ -33,9 +39,12 @@ const IaReportsModal = ({ isOpen, onClose }) => {
                   <div className="report-date">
                     {new Date(r.date).toLocaleString('ca-ES')}
                   </div>
-                  <div className="report-text">
+                  <div className={`report-text ${expanded[idx] ? 'expanded' : 'collapsed'}`}> 
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{r.text}</ReactMarkdown>
                   </div>
+                  <button className="toggle-report" onClick={() => toggleExpanded(idx)}>
+                    {expanded[idx] ? 'Mostra menys' : 'Mostra més'}
+                  </button>
                 </li>
               ))}
             </ul>
