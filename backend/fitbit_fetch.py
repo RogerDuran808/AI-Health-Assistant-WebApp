@@ -142,7 +142,8 @@ def _init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id TEXT,
             date TEXT,
-            text TEXT
+            text TEXT,
+            training_plan TEXT
         );
         """
         cursor.execute(create_reports_table_sql)
@@ -423,23 +424,78 @@ def save_user_profile(profile: dict, user_id: str = "default") -> bool:
             conn.close()
 
 
-def save_ia_report(text: str, user_id: str = "default") -> None:
-    """Guarda una recomanació a la taula informes_ia."""
+def save_ia_report(text: str, user_id: str = "default", training_plan: str | None = None) -> None:
+    """Guarda una recomanació i opcionalment un pla a la taula informes_ia."""
     _init_db()
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
+
+        # Si no es passa cap pla, recupera l'últim emmagatzemat
+        if training_plan is None:
+            cursor.execute(
+                f"SELECT training_plan FROM {REPORTS_TABLE_NAME} WHERE user_id = ? ORDER BY date DESC LIMIT 1",
+                (user_id,),
+            )
+            row = cursor.fetchone()
+            training_plan = row[0] if row else None
+
         cursor.execute(
-            f"INSERT INTO {REPORTS_TABLE_NAME} (user_id, date, text) VALUES (?, ?, ?)",
+            f"INSERT INTO {REPORTS_TABLE_NAME} (user_id, date, text, training_plan) VALUES (?, ?, ?, ?)",
             (
                 user_id,
                 dt.datetime.now().isoformat(timespec="seconds"),
                 text,
+                training_plan,
             ),
         )
         conn.commit()
     except sqlite3.Error as e:
         print(f"[save_ia_report] Error: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def update_latest_training_plan(training_plan: str, user_id: str = "default") -> None:
+    """Actualitza la darrera fila d'informes_ia amb el pla generat."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            f"SELECT id FROM {REPORTS_TABLE_NAME} WHERE user_id = ? ORDER BY date DESC LIMIT 1",
+            (user_id,),
+        )
+        row = cursor.fetchone()
+        if row:
+            cursor.execute(
+                f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ? WHERE id = ?",
+                (training_plan, row[0]),
+            )
+            conn.commit()
+    except sqlite3.Error as e:
+        print(f"[update_latest_training_plan] Error: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def fetch_latest_training_plan(user_id: str = "default") -> str | None:
+    """Obté l'últim pla d'entrenament desat."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            f"SELECT training_plan FROM {REPORTS_TABLE_NAME} WHERE user_id = ? AND training_plan IS NOT NULL ORDER BY date DESC LIMIT 1",
+            (user_id,),
+        )
+        row = cursor.fetchone()
+        return row[0] if row else None
+    except sqlite3.Error as e:
+        print(f"[fetch_latest_training_plan] Error: {e}")
+        return None
     finally:
         if 'conn' in locals() and conn:
             conn.close()

@@ -4,10 +4,12 @@ import { faRobot, faLightbulb, faDumbbell } from '@fortawesome/free-solid-svg-ic
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import useRecommendation from '../../hooks/useRecomendation';
+import useTrainingPlan from '../../hooks/useTrainingPlan';
 import './AIAssistantWidget.css'; // Importa el nou CSS
 
-export default function AIAssistantWidget({ fitbitData }) {
+export default function AIAssistantWidget({ fitbitData, onPlanReady }) {
   const { rec, loading, error, generate } = useRecommendation();
+  const { generate: generatePlan, loading: planLoading } = useTrainingPlan();
   const [showRecommendation, setShowRecommendation] = useState(false);
 
   const handleRecommend = () => {
@@ -44,9 +46,19 @@ export default function AIAssistantWidget({ fitbitData }) {
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{rec}</ReactMarkdown>
                   <p>Vols generar / modificar el teu pla d'entrenament?</p>
                   <div className="widget-actions">
-                    <button className="btn btn-secondary" disabled>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={async () => {
+                        await generatePlan({
+                          fitbit: fitbitData || {},
+                          recommendation: rec,
+                        });
+                        if (onPlanReady) onPlanReady();
+                      }}
+                      disabled={planLoading}
+                    >
                       <FontAwesomeIcon icon={faDumbbell} className="btn-icon" />
-                      Pla d'Entrenament (Pròximament...)
+                      Pla d'Entrenament
                     </button>
                   </div>
                 </>
