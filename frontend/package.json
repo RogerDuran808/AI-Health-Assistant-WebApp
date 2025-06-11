@@ -2,7 +2,7 @@
     "name": "fitbit-dashboard-ui",
     "version": "1.0.0",
     "private": true,
-  "type": "module",
+    "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
@@ -19,7 +19,8 @@
         "react-chartjs-2": "^5.3.0",
         "react-dom": "^18.2.0",
         "react-markdown": "^10.1.0",
-        "recharts": "latest"
+        "recharts": "latest",
+        "remark-gfm": "^4.0.1"
     },
     "devDependencies": {
         "@vitejs/plugin-react": "latest",
