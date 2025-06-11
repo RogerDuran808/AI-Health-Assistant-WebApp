@@ -139,10 +139,22 @@ def recommend(payload: dict):
 def training_plan(payload: dict):
     """Genera i desa el pla d'entrenament estructurat."""
     try:
+        # Obté l'user_id preferentment de les dades Fitbit
+        fitbit = payload.get("fitbit", {})
+        user_id = fitbit.get("user_id", payload.get("user_id", "default"))
+
+        # Recupera el perfil guardat (si no existeix, usa el perfil per defecte)
+        profile = fetch_user_profile(user_id)
+        if not profile:
+            profile = fetch_user_profile("default")
+
         text = get_pla_estructurat(
-            payload.get("fitbit", {}), payload.get("recommendation", ""), payload.get("profile", {})
+            fitbit,
+            payload.get("recommendation", ""),
+            profile,
         )
-        update_latest_training_plan(text, user_id=payload.get("user_id", "default"))
+
+        update_latest_training_plan(text, user_id=user_id)
         return {"text": text}
     except Exception as exc:
         log.exception("/training-plan failed")
