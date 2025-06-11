@@ -25,6 +25,27 @@
   flex-direction: column;
 }
 
+/* Barra de desplaçament per al contenidor principal */
+.ia-modal-container::-webkit-scrollbar {
+  width: 8px;
+}
+.ia-modal-container::-webkit-scrollbar-track {
+  background: #1A1A1A;
+  border-radius: 4px;
+}
+.ia-modal-container::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+.ia-modal-container::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+.ia-modal-container {
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #1A1A1A;
+}
+
 .ia-modal-header {
   display: flex;
   justify-content: space-between;
@@ -65,6 +86,27 @@
   line-height: 1.7;
 }
 
+/* Barra de desplaçament personalitzada del cos del modal */
+.ia-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+.ia-modal-body::-webkit-scrollbar-track {
+  background: #1A1A1A;
+  border-radius: 4px;
+}
+.ia-modal-body::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+.ia-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+.ia-modal-body {
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #1A1A1A;
+}
+
 .reports-list {
   list-style: none;
   padding: 1.5rem;
@@ -91,6 +133,42 @@
 
 .report-text {
   color: #F5F5F5; /* Texto principal */
+}
+
+/* Estat tancat i obert dels textos dels informes */
+.report-text.collapsed {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.report-text.expanded {
+  max-height: none;
+}
+
+/* Barra per a cada text d'informe */
+.report-text.collapsed::-webkit-scrollbar,
+.report-text.expanded::-webkit-scrollbar {
+  width: 8px;
+}
+.report-text.collapsed::-webkit-scrollbar-track,
+.report-text.expanded::-webkit-scrollbar-track {
+  background: #1A1A1A;
+  border-radius: 4px;
+}
+.report-text.collapsed::-webkit-scrollbar-thumb,
+.report-text.expanded::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+.report-text.collapsed::-webkit-scrollbar-thumb:hover,
+.report-text.expanded::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+.report-text.collapsed,
+.report-text.expanded {
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #1A1A1A;
 }
 
 /* Estils per al contingut Markdown dins de .report-text */
@@ -190,4 +268,19 @@
   font-weight: bold;
   text-align: center;
   padding: 2rem;
+}
+
+/* Botó per mostrar o amagar el text complet */
+.toggle-report {
+  margin-top: 0.5rem;
+  background: none;
+  border: none;
+  color: #D4FF58;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.toggle-report:hover {
+  text-decoration: underline;
 }
