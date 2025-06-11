@@ -134,7 +134,7 @@ def recommend(payload: dict):
 
 
 @app.get("/ia-reports")
-def ia_reports(limit: int = 10, user_id: str = "default"):
+def ia_reports(limit: int = 10, user_id: str = "CJK8XS"): # Aqui poso el meu user ID, en un futur user id seria un parametre que s'extreuris de la taula de user profile
     """Retorna els darrers informes de la IA desats a la base de dades."""
     try:
         reports = fetch_ia_reports(user_id=user_id, limit=limit)
