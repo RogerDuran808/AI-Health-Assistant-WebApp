@@ -13,10 +13,12 @@ import BiomarkersWidget from './BiomarkersWidget';
 import SleepStagesWidget from './SleepStagesWidget';
 import MedicalConditionsWidget from './MedicalConditionsWidget';
 import AIAssistantWidget from './AIAssistantWidget';
+import IaReportsModal from '../IaReportsModal';
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
   const { data: fitbitData, loading: isLoading, error } = useFitbitData();
   const { data: profileData, refetch: refetchProfile } = useUserProfile();
@@ -104,7 +106,7 @@ export default function Dashboard() {
 
   const navItems = [
     { id: 'dashboard', icon: faTachometerAlt, text: 'Tauler de Control', active: true },
-    { id: 'assistant', icon: faFileAlt, text: 'Informes IA', active: false },
+    { id: 'assistant', icon: faFileAlt, text: 'Informes IA', active: false, onClick: () => setIsReportsModalOpen(true) },
     { id: 'profile', icon: faUser, text: 'Perfil', active: false, onClick: () => setIsProfileModalOpen(true) },
   ];
 
@@ -213,6 +215,10 @@ export default function Dashboard() {
         onClose={() => setIsProfileModalOpen(false)}
         userData={profileData}
         onProfileUpdate={refetchProfile}
+      />
+      <IaReportsModal
+        isOpen={isReportsModalOpen}
+        onClose={() => setIsReportsModalOpen(false)}
       />
     </div>
   );
