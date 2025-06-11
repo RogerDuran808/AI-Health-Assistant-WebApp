@@ -23,6 +23,7 @@ DB_PATH = BASE_DIR / "db" / "fitbit_data.db"
 MODEL_PATH = BASE_DIR / 'models' / 'BalancedRandomForest_TIRED.joblib'
 TABLE_NAME = "fitbit_daily_data"
 PROFILE_TABLE_NAME = "user_profile"
+REPORTS_TABLE_NAME = "informes_ia"
 
 # --- Definició Completa de les Columnes de la Base de Dades ---
 # Inclou dades crues, de feature engineering i prediccions.
@@ -134,6 +135,17 @@ def _init_db():
         );
         """
         cursor.execute(create_user_profile_table_sql)
+
+        # Crea la taula per guardar les recomanacions de la IA
+        create_reports_table_sql = f"""
+        CREATE TABLE IF NOT EXISTS {REPORTS_TABLE_NAME} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT,
+            date TEXT,
+            text TEXT
+        );
+        """
+        cursor.execute(create_reports_table_sql)
 
         # Insereix un perfil per defecte si la taula és buida
         cursor.execute(f"SELECT COUNT(*) FROM {PROFILE_TABLE_NAME}")
@@ -406,6 +418,54 @@ def save_user_profile(profile: dict, user_id: str = "default") -> bool:
     except sqlite3.Error as e:
         print(f"[save_user_profile] Error: {e}")
         return False
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def save_ia_report(text: str, user_id: str = "default") -> None:
+    """Guarda una recomanació a la taula informes_ia."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            f"INSERT INTO {REPORTS_TABLE_NAME} (user_id, date, text) VALUES (?, ?, ?)",
+            (
+                user_id,
+                dt.datetime.now().isoformat(timespec="seconds"),
+                text,
+            ),
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"[save_ia_report] Error: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def fetch_ia_reports(user_id: str = "default", limit: int = 10) -> list[dict]:
+    """Recupera els darrers informes de la taula informes_ia."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            f"""
+            SELECT user_id, date, text FROM {REPORTS_TABLE_NAME}
+            WHERE user_id = ?
+            ORDER BY date DESC
+            LIMIT ?
+            """,
+            (user_id, limit),
+        )
+        rows = cursor.fetchall()
+        cols = [d[0] for d in cursor.description]
+        return [dict(zip(cols, row)) for row in rows]
+    except sqlite3.Error as e:
+        print(f"[fetch_ia_reports] Error: {e}")
+        return []
     finally:
         if 'conn' in locals() and conn:
             conn.close()

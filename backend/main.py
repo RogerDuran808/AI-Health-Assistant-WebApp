@@ -3,7 +3,13 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
-from fitbit_fetch import fetch_fitbit_data, fetch_user_profile, save_user_profile
+from fitbit_fetch import (
+    fetch_fitbit_data,
+    fetch_user_profile,
+    save_user_profile,
+    save_ia_report,
+    fetch_ia_reports,
+)
 from ai import get_recommendation
 
 import numpy as np
@@ -120,9 +126,21 @@ def recommend(payload: dict):
     """Genera una recomanació personalitzada a partir de les dades Fitbit."""
     try:
         text = get_recommendation(payload)
+        save_ia_report(text, user_id=payload.get("user_id", "default"))
         return {"text": text}
     except Exception as exc:
         log.exception("/recommend failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/ia-reports")
+def ia_reports(limit: int = 10, user_id: str = "default"):
+    """Retorna els darrers informes de la IA desats a la base de dades."""
+    try:
+        reports = fetch_ia_reports(user_id=user_id, limit=limit)
+        return JSONResponse(content=reports)
+    except Exception as exc:
+        log.exception("/ia-reports failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 if __name__ == "__main__":
