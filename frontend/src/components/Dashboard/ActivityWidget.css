@@ -57,24 +57,27 @@
 }
 
 /* Chart Tabs Styling */
+
+/* Pestanyes per als gràfics */
 .chart-tabs {
     display: flex;
-    justify-content: center; /* Center tabs if there are few, or use flex-start if many */
-    margin-bottom: 15px; /* Space below tabs */
-    border-bottom: 1px solid var(--border-color); /* Optional: a subtle line under the tabs container */
+    justify-content: center; /* Centrem les pestanyes */
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .tab-button {
-    padding: 10px 20px;
-    font-size: 0.9rem;
+    padding: 8px 16px;
+    font-size: 0.85rem;
     font-weight: 500;
     color: var(--text-secondary);
     background-color: transparent;
     border: none;
-    border-bottom: 3px solid transparent; /* For active indicator */
+    border-bottom: 2px solid transparent; /* Indicador actiu */
     cursor: pointer;
     transition: color 0.3s ease, border-bottom-color 0.3s ease;
-    margin: 0 5px; /* Space between tab buttons */
+    margin: 0 4px;
     text-transform: uppercase;
 }
 
