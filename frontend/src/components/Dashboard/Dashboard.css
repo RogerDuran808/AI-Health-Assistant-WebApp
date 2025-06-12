@@ -33,7 +33,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding-top: 10px; /* Espai addicional si el títol és extern */
+    padding-top: 2px; /* Espai addicional si el títol és extern */
 }
 
 .rmssd-value-display {

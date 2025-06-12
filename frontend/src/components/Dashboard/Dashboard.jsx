@@ -216,7 +216,6 @@ export default function Dashboard() {
                 <div className="widget-content">
                   <div className="rmssd-value-display">{displayRmssdValue}</div>
                   <div className="rmssd-status-display" style={rmssdStatusStyle}>{rmssdStatusText}</div>
-                  <div className="rmssd-subtitle">Variabilitat de freqüència cardíaca</div>
                 </div>
               </div>
               <div className="widget activity-charts-widget">
