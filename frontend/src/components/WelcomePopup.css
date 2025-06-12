@@ -8,7 +8,7 @@
     --border-color: #333333;
 
     /* WelcomePopup specific variables using the main palette */
-    --popup-bg: var(--main-bg); 
+    --popup-bg: rgba(0, 0, 0, 0.7); 
     --popup-card-bg: var(--card-bg);
     --popup-border: var(--border-color);
     --popup-text-primary: var(--text-primary);
@@ -24,7 +24,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(--popup-bg);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,7 +33,7 @@
 }
 
 .welcome-popup-content {
-    background-color: var(--card-bg); /* Use card-bg for the popup content itself for contrast */
+    background-color: var(--popup-card-bg); /* Use card-bg for the popup content itself for contrast */
     padding: 2.5rem 3rem;
     border-radius: var(--popup-radius);
     border: 1px solid var(--popup-border);
