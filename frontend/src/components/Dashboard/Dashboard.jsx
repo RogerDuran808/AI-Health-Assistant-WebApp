@@ -15,12 +15,14 @@ import MedicalConditionsWidget from './MedicalConditionsWidget';
 import AIAssistantWidget from './AIAssistantWidget';
 import IaReportsModal from '../IaReportsModal';
 import TrainingPlanModal from '../TrainingPlanModal';
+import InfoModal from '../InfoModal';
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
   const { data: fitbitData, loading: isLoading, error } = useFitbitData();
   const { data: profileData, refetch: refetchProfile } = useUserProfile();
@@ -156,8 +158,16 @@ export default function Dashboard() {
         <div className="sidebar-settings">
           <ul className="nav-list">
             <li className="nav-item">
-              <a href="#" className="nav-link">
-                <FontAwesomeIcon icon={settingsItem.icon} /><span className="nav-link-text logo-text">{settingsItem.text}</span>
+              <a
+                href="#"
+                className="nav-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsInfoModalOpen(true);
+                }}
+              >
+                <FontAwesomeIcon icon={settingsItem.icon} />
+                <span className="nav-link-text logo-text">{settingsItem.text}</span>
               </a>
             </li>
           </ul>
@@ -231,6 +241,10 @@ export default function Dashboard() {
       <TrainingPlanModal
         isOpen={isPlanModalOpen}
         onClose={() => setIsPlanModalOpen(false)}
+      />
+      <InfoModal
+        isOpen={isInfoModalOpen}
+        onClose={() => setIsInfoModalOpen(false)}
       />
     </div>
   );
