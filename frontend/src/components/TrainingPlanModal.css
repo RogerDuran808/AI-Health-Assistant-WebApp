@@ -80,7 +80,7 @@
 }
 
 .plan-modal-body {
-  padding: 0;
+  padding: 1.5rem;
   overflow-y: auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.7;
@@ -133,6 +133,8 @@
 
 .plan-text {
   color: #F5F5F5; /* Texto principal */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 /* Estat tancat i obert dels textos dels informes */

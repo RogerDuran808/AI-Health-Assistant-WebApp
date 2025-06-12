@@ -1,0 +1,69 @@
+/* Estils del pop up d'informació */
+.info-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  backdrop-filter: blur(4px);
+}
+
+.info-modal-container {
+  background: #1A1A1A;
+  border: 1px solid #333333;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  color: #F5F5F5;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.info-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #333333;
+  padding-bottom: 0.5rem;
+}
+
+.info-modal-header h2 {
+  color: #F5F5F5;
+}
+
+.info-close-button {
+  background: none;
+  border: 1px solid #333333;
+  font-size: 1.1rem;
+  color: #758680;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-close-button:hover {
+  background-color: #333333;
+  color: #D4FF58;
+  border-color: #D4FF58;
+}
+
+.info-section {
+  margin-bottom: 1.5rem;
+}
+
+.info-section h3 {
+  color: #D4FF58;
+  margin-bottom: 0.5rem;
+}
