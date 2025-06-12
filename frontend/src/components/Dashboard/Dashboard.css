@@ -281,7 +281,7 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Evitem desplaçament vertical */
+    height: calc(100vh - 8px); /* L'alçada lleugerament reduïda evita la barra vertical */
     margin-left: var(--sidebar-width-collapsed);
     transition: margin-left 0.3s ease-in-out;
     overflow: hidden;
@@ -341,11 +341,12 @@
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Columnes adaptatives */
     gap: 20px;
     padding: 25px;
     flex-grow: 1;
-    overflow-y: auto; /* If grid itself needs to scroll, though sections handle it */
+    height: 100%; /* Permet que les columnes ocupin tota l'alçada disponible */
+    overflow-y: auto;
 }
 
 .dashboard-section {
@@ -360,10 +361,20 @@
 
 .dashboard-main-content > .dashboard-section:nth-child(2) {
     flex-basis: 20%;
+    height: 100%; /* Assegurem que la columna central aprofiti l'alçada */
+    min-height: 0;
 }
 
 .dashboard-main-content > .dashboard-section:nth-child(3) {
     flex-basis: 40%;
+}
+
+/* El widget de gràfics ocupa l'espai restant de la columna central */
+.dashboard-main-content > .dashboard-section:nth-child(2) .activity-charts-widget {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 /* Misplaced comments and orphaned closing brace removed to fix syntax error */
 
