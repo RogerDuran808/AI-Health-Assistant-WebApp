@@ -59,6 +59,12 @@
     color: #F5F5F5;
 }
 
+.ia-modal-subtitle {
+  font-size: 0.8rem;
+  color: #758680;
+  margin-top: 4px;
+}
+
 .ia-close-button {
   background: none;
   border: 1px solid #333333;

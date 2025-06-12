@@ -172,10 +172,12 @@
 .sleep-metrics-content {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* 2 columnes fixes */
+    grid-template-rows: repeat(2, 1fr); /* 2 files per omplir tot l'espai */
     gap: 10px; /* Reduïm l'espai entre targetes */
     padding: 8px;
     align-items: stretch;
     justify-items: stretch;
+    height: 100%;
     flex-grow: 1;
     width: 100%;
     box-sizing: border-box;
@@ -189,6 +191,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    height: 100%;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow */
     transition: transform 0.2s ease-in-out;

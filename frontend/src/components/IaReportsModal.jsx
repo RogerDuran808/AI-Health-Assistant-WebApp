@@ -22,6 +22,7 @@ const IaReportsModal = ({ isOpen, onClose }) => {
       <div className="ia-modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="ia-modal-header">
           <h2><FontAwesomeIcon icon={faFileAlt} /> Informes IA</h2>
+          <p className="ia-modal-subtitle">Últims 10 informes registrats</p>
           <button onClick={onClose} className="ia-close-button" aria-label="Tancar">
             <FontAwesomeIcon icon={faTimes} />
           </button>

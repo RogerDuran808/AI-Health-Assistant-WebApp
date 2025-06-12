@@ -16,6 +16,9 @@ import AIAssistantWidget from './AIAssistantWidget';
 import IaReportsModal from '../IaReportsModal';
 import TrainingPlanModal from '../TrainingPlanModal';
 
+// Versió de l'aplicació definida a l'entorn
+const APP_VERSION = import.meta.env.VITE_APP_VERSION || 'v0.5.1';
+
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -25,10 +28,13 @@ export default function Dashboard() {
   const { data: fitbitData, loading: isLoading, error } = useFitbitData();
   const { data: profileData, refetch: refetchProfile } = useUserProfile();
 
+  // Mostrem la data d'ahir amb la primera lletra en majúscula
   useEffect(() => {
-    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    setCurrentDate(today.toLocaleDateString('ca-ES', options));
+    const formatted = yesterday.toLocaleDateString('ca-ES', options);
+    setCurrentDate(formatted.charAt(0).toUpperCase() + formatted.slice(1));
   }, []);
 
   const toggleSidebar = () => {
@@ -162,9 +168,9 @@ export default function Dashboard() {
             </li>
           </ul>
         </div>
-        <div className="sidebar-footer">
-          <p><span className="nav-link-text logo-text">Fit Dashboard</span></p>
-          <p><span className="nav-version nav-link-text logo-text">v0.5.1</span></p>
+          <div className="sidebar-footer">
+          <p><span className="nav-link-text logo-text">FitBoard</span></p>
+          <p><span className="nav-version nav-link-text logo-text">{APP_VERSION}</span></p>
         </div>
       </aside>
 
@@ -172,7 +178,7 @@ export default function Dashboard() {
       <div className="dashboard-main-content">
         <header className="dashboard-header">
           <div className="header-title">
-            <h2>Dashboard Interactiu</h2>
+            <h2>FitBoard</h2>
             <p id="currentDateSubtitle">{currentDate}</p>
           </div>
         </header>
