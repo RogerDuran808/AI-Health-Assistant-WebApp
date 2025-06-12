@@ -6,14 +6,14 @@
 }
 
 .ai-assistant-widget .recommendation-area {
-  background-color: #0d0d0d; /* Slightly lighter than pure black for depth */
+  background-color: #0d0d0d; /* Fons lleugerament més clar */
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 1.2rem;
   margin-top: 1rem;
   color: var(--text-main);
   animation: fadeIn 0.5s ease-in-out;
-  max-height: 200px;
+  flex-grow: 1; /* Emplenem l'alçada disponible del widget */
   overflow-y: auto;
 }
 

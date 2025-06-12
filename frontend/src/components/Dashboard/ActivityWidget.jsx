@@ -22,12 +22,11 @@ ChartJS.register(
   Legend
 );
 
-// Helper function to format minutes into a more readable string (e.g., "1h 30m" or "45m")
-const formatMinutesToHoursAndMinutes = (totalMinutes) => {
-    if (totalMinutes === undefined || totalMinutes === null || totalMinutes < 0) return "0m";
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.round(totalMinutes % 60);
-    return `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
+// Conversió de minuts a hores arrodonides per mostrar a l'eix Y
+const formatMinutesToHours = (totalMinutes) => {
+    if (totalMinutes === undefined || totalMinutes === null || totalMinutes < 0) return "0h";
+    const hours = Math.round(totalMinutes / 60);
+    return `${hours}h`;
 };
 
 const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
@@ -80,7 +79,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
                         color: '#758680', // --text-secondary
                         padding: 10,
                         callback: function(value) {
-                            return formatMinutesToHoursAndMinutes(value);
+                            return formatMinutesToHours(value);
                         }
                     },
                 },
@@ -110,7 +109,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
                         label: function (context) {
                             let label = context.dataset.label || '';
                             if (context.parsed.y !== null) {
-                                label = `${context.label}: ${formatMinutesToHoursAndMinutes(context.parsed.y)}`;
+                                label = `${context.label}: ${formatMinutesToHours(context.parsed.y)}`;
                             }
                             return label;
                         },
