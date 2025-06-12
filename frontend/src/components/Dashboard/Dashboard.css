@@ -230,7 +230,7 @@
 
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link .fa-icon,
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link svg {
-    margin: 0 auto;
+    margin: -2px auto 0;
     transform: none;
     flex-shrink: 0;
     width: 20px;

@@ -57,8 +57,12 @@ export default function AIAssistantWidget({ fitbitData, onPlanReady }) {
                       }}
                       disabled={planLoading}
                     >
-                      <FontAwesomeIcon icon={faDumbbell} className="btn-icon" />
-                      Pla d'Entrenament
+                      {planLoading ? (
+                        <span className="plan-loading-spinner" />
+                      ) : (
+                        <FontAwesomeIcon icon={faDumbbell} className="btn-icon" />
+                      )}
+                      {planLoading ? 'Generant...' : "Pla d'Entrenament"}
                     </button>
                   </div>
                 </>
