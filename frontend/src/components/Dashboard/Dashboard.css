@@ -25,7 +25,7 @@
 
 /* --- COLUMNA CENTRAL --- */
 .rmssd-widget {
-    flex: 0 0 170px; /* Ajustat per alçada del contingut */
+    flex: 0 0 130px; /* Reduïm alçada per guanyar espai als gràfics */
     /* min-height: 160px; No cal si flex-basis controla l'alçada */
 }
 
@@ -281,10 +281,10 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh; /* Evitem desplaçament vertical */
     margin-left: var(--sidebar-width-collapsed);
     transition: margin-left 0.3s ease-in-out;
-    overflow-y: auto;
+    overflow: hidden;
     width: calc(100% - var(--sidebar-width-collapsed));
 }
 
@@ -388,9 +388,9 @@
 .fatigue-indicator-container {
     position: relative;
     width: 100%;
-    max-width: 300px; /* Slightly reduced max-width */
-    height: 300px; /* Reduced height */
-    margin: 0 auto 5px; /* Reduced bottom margin */
+    max-width: 250px; /* Indicador més petit */
+    height: 250px; /* Alçada reduïda */
+    margin: 0 auto 5px; /* Mantenim un petit marge inferior */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -462,7 +462,10 @@
     margin-top: 4px; /* Pequeño ajuste para espaciado */
 }
 
-/* Styles for AI Assistant Widget */
+/* Estils per al widget d'assistent IA */
+.ai-assistant-widget {
+    flex-grow: 1; /* Ocupa l'espai restant de la columna */
+}
 .ai-assistant-widget .widget-content {
     display: flex;
     flex-direction: column;

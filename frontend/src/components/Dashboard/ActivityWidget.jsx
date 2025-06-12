@@ -42,7 +42,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
             typeof intensityData.intense === 'undefined')) {
             return (
                 <div className="widget activity-widget chart-widget">
-                    <div className="widget-content" style={{padding: '15px', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '250px' }}>
+                {/* Contenidor amb alçada major per donar espai al gràfic */}
+                <div className="widget-content" style={{padding: '15px', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
                         <p>Carregant dades d'intensitat...</p>
                     </div>
                 </div>
@@ -56,7 +57,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
             typeof hrZonesData.inZone3 === 'undefined')) {
             return (
                 <div className="widget activity-widget chart-widget">
-                     <div className="widget-content" style={{padding: '15px', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '250px' }}>
+                     {/* Contenidor amb alçada major per donar espai al gràfic */}
+                     <div className="widget-content" style={{padding: '15px', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
                         <p>Carregant dades de zones FC...</p>
                     </div>
                 </div>
@@ -162,8 +164,9 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
             ],
         };
         
+        // Més espai vertical perquè el gràfic es vegi millor
         return (
-            <div className="widget-content" style={{padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1, minHeight: '250px' }}>
+            <div className="widget-content" style={{padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1, minHeight: '300px' }}>
                 <div className="chart-tabs">
                     <button 
                         className={`tab-button ${activeTab === 'activity' ? 'active' : ''}`} 
