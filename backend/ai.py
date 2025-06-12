@@ -11,6 +11,7 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY") # Per possibles proves
 
 openai.api_key = OPENAI_API_KEY
 MODEL = "gpt-4o-mini"
+MODEL_PLAN = "gpt-4.1-mini"
 
 
 def _key(data: dict) -> str:
@@ -103,19 +104,10 @@ Important respectar l'objectiu i disponibilitat del usuari:
 <!--
   Omple totes les claus {{…}} amb la millor informació disponible.
   Recorda:
-  – Prioritza la seguretat i una progressió lògica de càrrega.
-  – Respecta dies/horaris disponibles i equipament seleccionat.
-  – Ajusta el volum segons la predicció de cansament diari (🟢 DESCANSAT / 🟡 CANSAT).
+  - Prioritza la seguretat (recorda les medical_conditions) i una progressió lògica de càrrega.
+  - Respecta dies/horaris disponibles i equipament seleccionat.
+  - Ajusta el volum del dia d'avui segons la predicció de cansament diari (🟢 DESCANSAT / 🟡 CANSAT).
 -->
-
-
-<!-- ═════════════════════ 2. MONITORATGE & ADAPTACIÓ ════════════════════ -->
-## 📊 Monitoratge diari (wearable + IA)
-| 💤 **Cansament** | ❤️ **FC repòs** | 📈 **HRV** | ⚡ **Recomanació** |
-|---|---|---|---|
-| {{Fatiga10}} /10 | {{FC}} bpm | {{HRV}} ms | {{Adaptació}} <!-- 🟢 / 🟡  --> |
-
-> **Llegenda** 🟢 = Sessió completa / 🟡 = Reduir volum 20-30 % /
 
 <!-- ═════════════════════ 3. MACROCICLE & PROGRÉS ════════════════════════ -->
 ## 🗓️ Exemple de Resum de Macrocicle (modificar segons l'objectiu de l'usuari)
@@ -129,15 +121,15 @@ Important respectar l'objectiu i disponibilitat del usuari:
 
 <!-- ═════════════════════ 4. MICRO-CICLE (SETMANA X) ════════════════════ -->
 ## 📅 Setmana {{Nº}} ({{DataInici}} – {{DataFi}})
-| **Dia** | **Objectiu** | **Durada estimada** | **Nota IA (fatiga)** |
-|---|---|---|---|
-| Dilluns | {{ObjDilluns}} | {{Minuts}} min | {{IconaFatigaDl}} |
-| Dimarts | {{ObjDimarts}} | {{Minuts}} min | {{IconaFatigaDt}} |
-| Dimecres | {{ObjDimecres}} | {{Minuts}} min | {{IconaFatigaDm}} |
-| Dijous | {{ObjDijous}} | {{Minuts}} min | {{IconaFatigaDj}} |
-| Divendres | {{ObjDivendres}} | {{Minuts}} min | {{IconaFatigaDv}} |
-| Dissabte | {{ObjDissabte}} | {{Minuts}} min | {{IconaFatigaDs}} |
-| Diumenge | {{ObjDiumenge}} | {{Minuts}} min | {{IconaFatigaDg}} |
+| **Dia** | **Objectiu** | **Durada estimada** |
+|---|---|---|
+| Dilluns | {{ObjDilluns}} | {{Minuts}} min |
+| Dimarts | {{ObjDimarts}} | {{Minuts}} min |
+| Dimecres | {{ObjDimecres}} | {{Minuts}} min |
+| Dijous | {{ObjDijous}} | {{Minuts}} min |
+| Divendres | {{ObjDivendres}} | {{Minuts}} min |
+| Dissabte | {{ObjDissabte}} | {{Minuts}} min |
+| Diumenge | {{ObjDiumenge}} | {{Minuts}} min |
 
 <!-- ═════════════════════ 5. DETALL DE SESSIONS ═════════════════════════ -->
 ### 🏋️ Sessió – {{Dia}}, {{ObjectiuSessió}}
@@ -152,7 +144,7 @@ Important respectar l'objectiu i disponibilitat del usuari:
 > **Refredament:** x  
 
 <!-- ═════════════════════ 6. MINI TRACKER DE PROGRÉS ════════════════════ -->
-## 📈 Mini Tracker d’Exercicis Clau (modificar els exercicis per a l'usuari)
+## 📈 Mini Tracker d'Exercicis Clau (modificar els exercicis per a l'usuari)
 | **Exercici** | **W1** | **W2** | **W3** | **W4** | **W5** | **W6** | **W7** | **W8** |
 |---|---|---|---|---|---|---|---|---|
 | Squat 1RM (kg) | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{Test}} |
@@ -162,11 +154,11 @@ Important respectar l'objectiu i disponibilitat del usuari:
 """
 
     resposta = openai.chat.completions.create(
-        model=MODEL,
+        model=MODEL_PLAN,
         messages=[
             {"role": "system",
              "content": """Ets un entrenador personal expert en ciència de l'esport i recuperació.
-             Genera rutines setmanals adaptades a l'usuari, integrant dades de wearables i recomanacions prèvies."""},
+             Genera rutines setmanals adaptades a les condicions mèdiques i objectius de l'usuari, i recomanacions prèvies."""},
             {"role": "user", "content": prompt}
         ],
         max_tokens=1200,

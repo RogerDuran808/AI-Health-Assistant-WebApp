@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import './SleepStagesWidget.css';
@@ -35,13 +35,22 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
     const safeStages = sleepData.stages.map(stage => ({ ...stage, minutes: stage.minutes ?? 0 }));
     const totalSleepMinutes = safeStages.reduce((sum, stage) => sum + stage.minutes, 0);
 
+    const rootStyles = getComputedStyle(document.documentElement);
+    const resolvedColors = safeStages.map(s => {
+        const col = s.color;
+        if (col.startsWith('var(')) {
+            const varName = col.match(/var\((--[^)]+)\)/)[1];
+            return rootStyles.getPropertyValue(varName).trim();
+        }
+        return col;
+    });
 
     const chartData = {
         labels: safeStages.map(s => s.name),
         datasets: [{
             data: safeStages.map(s => s.minutes),
-            backgroundColor: safeStages.map(s => s.color),
-            borderColor: '#1A1A1A', // Card Background for contrast
+            backgroundColor: resolvedColors,
+            borderColor: rootStyles.getPropertyValue('--secondary-bg').trim(), // Card Background for contrast
             borderWidth: 2,
             hoverOffset: 8
         }]
