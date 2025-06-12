@@ -18,10 +18,10 @@ const InfoModal = ({ isOpen, onClose }) => {
         </div>
         <div className="info-modal-body">
           <section className="info-section">
-            <h3>Benvingut a Fit Dashboard</h3>
+            <h3>Benvingut a FitBoard</h3>
             <p>
-              El nostre assistent analitza dades de salut i activitat per crear recomanacions
-              personalitzades, sempre tenint en compte la teva situació mèdica.
+              El nostre assistent analitza dades de salut i activitat del teu dia anterior per tal de predir la teva fatiga i crear recomanacions
+              personalitzades de salut i crear un pla d'entrenament totalment adaptat i personalitzat, sempre tenint en compte la teva situació mèdica.
             </p>
           </section>
           <section className="info-section">

@@ -18,7 +18,7 @@ import TrainingPlanModal from '../TrainingPlanModal';
 import InfoModal from '../InfoModal';
 
 // Versió de l'aplicació definida a l'entorn
-const APP_VERSION = import.meta.env.VITE_APP_VERSION || 'v0.5.1';
+const APP_VERSION = 'v0.5.1';
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

@@ -17,7 +17,7 @@ from ai import get_recommendation, get_pla_estructurat
 import numpy as np
 import logging
 
-app = FastAPI(title="Fit Dashboard")
+app = FastAPI(title="FitBoard")
 
 
 
