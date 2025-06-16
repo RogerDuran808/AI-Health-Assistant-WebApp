@@ -388,31 +388,34 @@
 
 .dashboard-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    height: var(--header-height);
-    background-color: var(--primary-bg);
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0 20px; /* Reduced horizontal padding */
+    height: auto;
+    margin: 8px 0 4px; /* Reduced margins (top: 8px, bottom: 4px) */
+    background-color: transparent;
     flex-shrink: 0;
     position: relative;
     z-index: 1;
 }
 
 .header-title {
-    padding-top: 40px; /* Asegura espacio en la parte superior */
-    line-height: 1.2; /* Mejor control de la altura de línea */
-}
-
-.header-title h2 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin: 0;
-    padding: 0;
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove default margins */
     line-height: 1.2;
 }
 
+.header-title h2 {
+    font-size: 1.4rem; /* Slightly smaller font */
+    font-weight: 600;
+    margin: 0 0 2px 0; /* Reduced bottom margin */
+    padding: 0;
+    line-height: 1.1; /* Tighter line height */
+    color: var(--text-primary);
+}
+
 #currentDateSubtitle {
-    font-size: 0.8rem;
+    font-size: 0.75rem; /* Slightly smaller date */
     color: var(--text-secondary);
     margin: 0;
     padding: 0;
@@ -423,8 +426,8 @@
     display: flex;
     flex-wrap: wrap;
     flex: 1;
-    gap: 20px;
-    padding: 25px;
+    gap: 20px; /* Horizontal gap between sections */
+    padding: 20px; /* Consistent padding on all sides */
     overflow: auto;
     height: 100%;
     min-height: 0;
@@ -433,7 +436,7 @@
 .dashboard-section {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px; /* Match horizontal gap */
     min-height: 0;
     flex: 1;
     min-width: 300px;

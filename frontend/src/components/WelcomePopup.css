@@ -33,17 +33,18 @@
 }
 
 .welcome-popup-content {
-    background-color: var(--popup-card-bg); /* Use card-bg for the popup content itself for contrast */
-    padding: 2.5rem 3rem;
+    background-color: var(--popup-card-bg);
+    padding: 2rem 2.5rem; /* Increased padding for better spacing */
     border-radius: var(--popup-radius);
     border: 1px solid var(--popup-border);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     width: 90%;
-    max-width: 900px; /* Max width for the popup */
+    max-width: 900px;
     color: var(--popup-text-primary);
     position: relative;
     font-family: 'Inter', sans-serif;
     animation: fadeInScale 0.3s ease-out;
+    margin: 2rem 0; /* Added vertical margin */
 }
 
 @keyframes fadeInScale {
@@ -58,38 +59,42 @@
 }
 
 .welcome-popup-content h2 {
-    font-size: 2.25rem; /* Larger title */
+    font-size: 2rem; /* Increased font size for better hierarchy */
     font-weight: 700;
     color: var(--popup-accent);
     text-align: center;
-    margin-bottom: 1rem;
+    margin: 0 0 1rem 0; /* Increased bottom margin */
+    letter-spacing: -0.5px; /* Slightly tighter letter spacing */
 }
 
 .welcome-popup-content .intro-text {
-    font-size: 1rem;
+    font-size: 1.05rem; /* Slightly larger for better readability */
     color: var(--popup-text-secondary);
     text-align: center;
-    margin-bottom: 2.5rem;
-    line-height: 1.6;
+    margin: 0 auto 2rem auto; /* Increased bottom margin */
+    line-height: 1.6; /* Better line height for readability */
     max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 0 1rem; /* Added horizontal padding */
 }
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; /* Increased gap between cards */
+    margin: 0 0 2.5rem 0; /* Improved vertical margins */
+    padding: 0 0.5rem; /* Added horizontal padding */
 }
 
 .feature-card {
     background-color: var(--popup-card-bg);
-    padding: 1.75rem;
+    padding: 2rem; /* Increased padding */
     border-radius: var(--popup-radius);
     border: 1px solid var(--popup-border);
     text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .feature-card:hover {
@@ -137,16 +142,17 @@
 
 .understand-button {
     display: block;
-    margin: 2rem auto 0 auto;
-    padding: 0.75rem 2rem;
+    margin: 1.5rem auto 0 auto;
+    padding: 0.9rem 2.5rem;
     background-color: var(--popup-accent);
-    color: var(--main-bg); /* Changed to dark color for contrast */
+    color: var(--main-bg);
     border: none;
     border-radius: var(--popup-radius);
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.05rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 255, 88, 0.2);
 }
 
 .understand-button:hover {
