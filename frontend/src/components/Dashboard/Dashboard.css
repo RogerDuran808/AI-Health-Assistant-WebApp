@@ -194,6 +194,7 @@
     text-align: center;
     font-size: 1.1em;
     margin: 0 10px 0 0; /* Right margin only when expanded */
+    vertical-align: middle; /* Alineem l'element amb el text */
     transition: all 0.3s ease-in-out;
     flex-shrink: 0; /* Prevent icon from shrinking */
     display: flex;
@@ -230,7 +231,8 @@
 
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link .fa-icon,
 .dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link svg {
-    margin: -2px auto 0;
+    /* Ajust per mantenir els icones alineats verticalment */
+    margin: 0 auto;
     transform: none;
     flex-shrink: 0;
     width: 20px;
