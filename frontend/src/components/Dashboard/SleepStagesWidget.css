@@ -168,7 +168,7 @@
     text-align: right;
 }
 
-/* Metrics Tab Styling */
+/* Estils de la pestanya de mètriques */
 .sleep-metrics-content {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* 2 columnes fixes */
@@ -181,6 +181,11 @@
     flex-grow: 1;
     width: 100%;
     box-sizing: border-box;
+}
+
+/* Forcem la graella 2x2 quan la pestanya està activa */
+.sleep-tab-content.active.sleep-metrics-content {
+    display: grid;
 }
 
 .metric-card {
