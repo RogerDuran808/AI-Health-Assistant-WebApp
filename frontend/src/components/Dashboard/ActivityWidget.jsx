@@ -169,7 +169,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
         
         // Més espai vertical perquè el gràfic es vegi millor
         return (
-            <div className="widget-content" style={{padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1, minHeight: '300px' }}>
+            <div className="widget-content" style={{padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1, minHeight: '300px', height: '100%' }}>
                 <div className="chart-tabs">
                     <button 
                         className={`tab-button ${activeTab === 'activity' ? 'active' : ''}`} 

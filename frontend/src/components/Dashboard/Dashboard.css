@@ -363,6 +363,8 @@
     flex-basis: 20%;
     height: 100%; /* Assegurem que la columna central aprofiti l'alçada */
     min-height: 0;
+    display: flex; /* Permet distribuir l'espai intern */
+    flex-direction: column;
 }
 
 .dashboard-main-content > .dashboard-section:nth-child(3) {
@@ -371,6 +373,13 @@
 
 /* El widget de gràfics ocupa l'espai restant de la columna central */
 .dashboard-main-content > .dashboard-section:nth-child(2) .activity-charts-widget {
+    flex-grow: 1; /* Omple l'espai buit disponible */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+/* Contingut del widget adaptat per créixer amb l'espai */
+.dashboard-main-content > .dashboard-section:nth-child(2) .activity-charts-widget .widget-content {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
