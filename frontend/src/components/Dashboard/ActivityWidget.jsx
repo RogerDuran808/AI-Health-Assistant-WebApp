@@ -74,15 +74,22 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
             scales: {
                 y: {
                     beginAtZero: true,
+                    display: true,
+                    max: 1440, // 24 hours in minutes
                     grid: {
-                        color: 'rgba(51, 51, 51, 0.4)', // --border-color with alpha
+                        color: 'rgba(117, 134, 128, 0.2)', // Lighter grid lines
                         drawBorder: false,
                     },
                     ticks: {
-                        color: '#758680', // --text-secondary
-                        padding: 10,
+                        color: '#758680',
+                        padding: 5,
+                        stepSize: 60, // Show tick every hour
                         callback: function(value) {
-                            return formatMinutesToHoursAndMinutes(value);
+                            // Only show whole hours (0, 1, 2, ..., 24)
+                            if (value % 60 === 0) {
+                                return `${value / 60}h`;
+                            }
+                            return '';
                         }
                     },
                 },
@@ -109,13 +116,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
                     padding: 10,
                     displayColors: false, // Hide color box in tooltip
                     callbacks: {
-                        label: function (context) {
-                            let label = context.dataset.label || '';
-                            if (context.parsed.y !== null) {
-                                let minutes = Math.max(0, Math.min(context.parsed.y, 24 * 60));
-                                label = `${context.label}: ${formatMinutesToHoursAndMinutes(minutes)}`;
-                            }
-                            return label;
+                        label: function(context) {
+                            return `${context.dataset.label}: ${formatMinutesToHoursAndMinutes(context.raw)}`;
                         },
                         title: function() {
                             return null; // Hide title in tooltip if not needed
@@ -184,7 +186,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
                     <button 
                         className={`tab-button ${activeTab === 'tendencia' ? 'active' : ''}`} 
                         onClick={() => setActiveTab('tendencia')}>
-                        Tendencia
+                        Tendències
                     </button>
                 </div>
                 <div style={{ flexGrow: 1, position: 'relative', height: '100%', width: '100%', marginTop: '10px' }}>

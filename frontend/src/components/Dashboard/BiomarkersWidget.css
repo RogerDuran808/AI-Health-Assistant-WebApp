@@ -14,7 +14,7 @@
 .widget.biomarkers-widget {
     background-color: var(--secondary-bg);
     border-radius: var(--card-border-radius);
-    padding: 20px;
+    padding: 12px 15px;
     display: flex;
     flex-direction: column;
     border: 1px solid var(--border-color);
@@ -22,9 +22,9 @@
 }
 
 .biomarkers-widget .widget-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     color: var(--text-primary);
@@ -47,25 +47,25 @@
 .biomarkers-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    align-content: flex-start; /* Changed from center to align cards to the top */
+    gap: 10px;
+    align-content: flex-start;
     width: 100%;
 }
 
 .biomarker-card {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background-color: var(--tertiary-bg); /* Added a slightly different background for cards */
-    padding: 10px;
-    border-radius: 8px;
+    gap: 8px;
+    background-color: var(--tertiary-bg);
+    padding: 8px;
+    border-radius: 6px;
     border: 1px solid var(--border-color);
 }
 
 .biomarker-icon i {
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     color: var(--accent-color);
-    width: 30px;
+    width: 24px;
     text-align: center;
 }
 
@@ -76,22 +76,23 @@
 }
 
 .biomarker-value {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-primary);
-    line-height: 1.2;
+    line-height: 1.1;
 }
 
 .biomarker-label {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: var(--text-secondary);
     text-transform: uppercase;
-    line-height: 1.2;
+    line-height: 1.1;
 }
 
 .biomarker-sublabel {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-secondary);
     opacity: 0.8;
-    line-height: 1.2;
+    line-height: 1.1;
+    margin-top: 1px;
 }
