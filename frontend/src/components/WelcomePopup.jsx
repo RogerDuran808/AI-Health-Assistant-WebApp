@@ -33,10 +33,10 @@ const WelcomePopup = ({ isOpen, onClose }) => {
             <div className="feature-icon">
               <i className="fas fa-brain"></i>
             </div>
-            <h3>Anàlisi Intel·ligent</h3>
+            <h3>Predicció de la fatiga</h3>
             <p>
-              Mitjançant algoritmes avançats, l'IA identifica patrons, correlacions i possibles àrees 
-              de millora o risc, considerant les teves condicions mèdiques preexistents i objectius.
+              Mitjançant l'aplicació de machine learning d'un dataset extens amb dades d'usuaris fitbit, 
+              s'identifica la probabilitat de tenir fatiga segons les mètriques proporcionades pel wearable. 
             </p>
           </div>
           <div className="feature-card">
@@ -45,13 +45,13 @@ const WelcomePopup = ({ isOpen, onClose }) => {
             </div>
             <h3>Recomanacions Personalitzades</h3>
             <p>
-              Rep un pla d'entrenament adaptat, consells nutricionals i estratègies de recuperació 
-              dissenyades específicament per optimitzar el teu rendiment físic de manera segura i efectiva.
+            A traves d'un LLM fine-tunejat és generen les recomanacions personalitzades.
+            Tot seguit podem generar un pla d'entrenament adaptat amb estratègies dissenyades específicament per optimitzar el teu rendiment físic considerant les condicions mèdiques i objectius.
             </p>
           </div>
         </div>
         <button className="understand-button" onClick={onClose}>
-          Entès!
+          Començem!
         </button>
       </div>
     </div>

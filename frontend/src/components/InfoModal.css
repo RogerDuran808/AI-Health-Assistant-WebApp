@@ -25,6 +25,28 @@
   animation: fadeInScale 0.3s ease-out;
   max-height: 90vh;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #1A1A1A;
+}
+
+/* Estil de la barra de desplaçament per a Chrome, Edge i Safari */
+.info-modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.info-modal-content::-webkit-scrollbar-track {
+  background: #1A1A1A;
+  border-radius: 5px;
+}
+
+.info-modal-content::-webkit-scrollbar-thumb {
+  background-color: #333333;
+  border-radius: 5px;
+  border: 2px solid #1A1A1A;
+}
+
+.info-modal-content::-webkit-scrollbar-thumb:hover {
+  background-color: #444444;
 }
 
 @keyframes fadeInScale {

@@ -8,6 +8,7 @@ import {
   faBed,
   faRobot,
   faFileAlt,
+  faBrain
 } from '@fortawesome/free-solid-svg-icons';
 
 // Modal d'informació general sobre l'assistent i la web
@@ -26,7 +27,7 @@ const InfoModal = ({ isOpen, onClose }) => {
           <FontAwesomeIcon icon={faInfoCircle} /> Informació
         </h2>
         <p className="intro-text">
-          Benvingut a Fit Dashboard. Analitzem les teves dades per oferir-te plans
+          Benvingut al teu FitBoard. Analitzem les teves dades per oferir-te plans
           personalitzats i segurs, sempre tenint en compte el teu estat de salut.
         </p>
 
@@ -48,17 +49,29 @@ const InfoModal = ({ isOpen, onClose }) => {
           </div>
           <div className="feature-card">
             <div className="feature-icon">
+              <FontAwesomeIcon icon={faBrain} />
+            </div>
+            <h3>Predicció de la fatiga</h3>
+            <p>Model <strong>RandomForest</strong> per predir la fatiga.</p>
+            <p>Sensibilitat: 85%</p>
+            <p>Especificitat: 45%</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">
               <FontAwesomeIcon icon={faRobot} />
             </div>
-            <h3>Assistència amb IA</h3>
-            <p>L'algoritme proposa rutines i consells adaptats al teu perfil.</p>
+            
+            <h3>Recomanacions i plans amb IA</h3>
+            <p>El LLM fine-tunejat et dona consells adaptats al teu perfil.</p>
+            <p>Posteriorment, pots aplicar els consells al teu pla d'entrenament personalitzat segons els objectius i condicions.</p>
           </div>
           <div className="feature-card">
             <div className="feature-icon">
               <FontAwesomeIcon icon={faFileAlt} />
             </div>
-            <h3>Informes i prediccions</h3>
-            <p>Model <strong>BalancedRandomForest</strong> per anticipar la fatiga.</p>
+            <h3>Informes i plans</h3>
+            <p>Els 10 darrers informes es guarden a la secció d'Informes IA</p>
+            <p>El pla d'entrenament actualitzat es guarda a la secció de Pla d'entrenament</p>
           </div>
         </div>
 
