@@ -103,17 +103,85 @@
 }
 
 .greeting {
-    padding: 10px 20px;
-    margin-bottom: 20px;
-    text-align: left;
-    overflow: hidden; /* Crucial for hiding text smoothly */
+    padding: 0;
+    margin: 0;
+    height: 64px; /* Altura fija que coincide con el espacio del icono */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .greeting-icon {
+    display: none; /* Oculto por defecto */
     font-size: 1.8rem;
     color: var(--accent-color);
-    margin-bottom: 10px;
-    display: none; /* Initially hidden, shown when sidebar is collapsed and text is hidden */
+    width: 40px; /* Ancho fijo para el icono */
+    height: 40px; /* Altura fija para el icono */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+/* Estilos cuando la barra está contraída */
+.sidebar-collapsed-hoverable:not(:hover) .greeting {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    justify-content: center;
+}
+
+.sidebar-collapsed-hoverable:not(:hover) .greeting-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilos cuando la barra está expandida */
+.sidebar-open .greeting,
+.sidebar-collapsed-hoverable:hover .greeting {
+    justify-content: flex-start;
+    padding-left: 15px;
+}
+
+.greeting-text {
+    display: none;
+    padding: 10px 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Mostrar/ocultar según el estado de la barra */
+.sidebar-collapsed-hoverable:not(:hover) .greeting-icon {
+    display: flex;
+}
+
+.sidebar-open .greeting-text,
+.sidebar-collapsed-hoverable:hover .greeting-text {
+    display: block;
+}
+
+/* Asegurar que no haya espacio adicional */
+.sidebar-collapsed-hoverable .greeting {
+    padding: 0;
+    margin: 0;
+}
+
+/* Ajustes para el texto cuando está visible */
+.greeting-text h2 {
+    margin: 0 0 2px 0;
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+.greeting-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
 }
 
 .greeting-text h2 {

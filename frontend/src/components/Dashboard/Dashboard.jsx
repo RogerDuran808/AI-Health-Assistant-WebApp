@@ -136,8 +136,10 @@ export default function Dashboard() {
           </button>
         </div>
         <div className="greeting">
-          <div className="greeting-icon"><FontAwesomeIcon icon={faHand} /></div>
-          <div className="greeting-text logo-text">
+          <div className={`greeting-icon ${isSidebarOpen ? 'hidden' : ''}`}>
+            <FontAwesomeIcon icon={faRobot} />
+          </div>
+          <div className={`greeting-text logo-text ${isSidebarOpen ? '' : 'hidden'}`}>
             <h2>Hola {userName}!</h2>
             <p>Preparat per planificar?</p>
           </div>
