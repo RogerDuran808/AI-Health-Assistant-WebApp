@@ -12,7 +12,7 @@
     --card-border-radius: 16px;
     --sidebar-width-expanded: 260px;
     --sidebar-width-collapsed: 70px; /* Adjusted for icon-only */
-    --header-height: 70px;
+    --header-height: 20px; /* Reduced from 70px */
 }
 
 .dashboard-container {
@@ -322,21 +322,33 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 25px;
+    padding: 0 20px;
     height: var(--header-height);
-    background-color: var(--primary-bg); /* Or secondary-bg if preferred */
+    background-color: var(--primary-bg);
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.header-title {
+    padding-top: 40px; /* Asegura espacio en la parte superior */
+    line-height: 1.2; /* Mejor control de la altura de línea */
 }
 
 .header-title h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 2px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
 }
 
 #currentDateSubtitle {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
 }
 
 .dashboard-grid {
@@ -379,6 +391,11 @@
 /* Misplaced comments and orphaned closing brace removed to fix syntax error */
 
 /* --- WIDGETS --- */
+
+/* Add margin to AI Assistant widget */
+.ai-assistant-widget {
+    margin-top: 24px;
+}
 
 /* Styles for FatigueWidget based on docs/style.css */
 .fatigue-widget {

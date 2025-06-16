@@ -75,7 +75,7 @@ export default function Dashboard() {
   const minutesAsleep = fitbitData?.minutesAsleep || 0;
   const minutesAwake = fitbitData?.minutesAwake || 0;
   const sleepEfficiency = fitbitData?.sleep_efficiency;
-  const timeInBed = minutesAsleep;
+  const timeInBed = minutesAsleep + minutesAwake;
 
   const sleepMetricsForWidget = {
     totalTimeAsleep: minutesAsleep,
@@ -94,9 +94,9 @@ export default function Dashboard() {
   };
 
   const sleepStagesForWidget = [
-    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * (minutesAsleep)), color: 'var(--accent-color)', cssClass: 'deep' },
-    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * (minutesAsleep)), color: 'var(--text-secondary)', cssClass: 'light' },
-    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * (minutesAsleep)), color: 'var(--text-primary)', cssClass: 'rem' },
+    { name: 'Profund', minutes: Math.round((fitbitData?.sleep_deep_ratio || 0) * (timeInBed)), color: 'var(--accent-color)', cssClass: 'deep' },
+    { name: 'Lleuger', minutes: Math.round((fitbitData?.sleep_light_ratio || 0) * (timeInBed)), color: 'var(--text-secondary)', cssClass: 'light' },
+    { name: 'REM', minutes: Math.round((fitbitData?.sleep_rem_ratio || 0) * (timeInBed)), color: 'var(--text-primary)', cssClass: 'rem' },
     { name: 'Despert', minutes: Math.round(minutesAwake), color: 'var(--border-color)', cssClass: 'awake' }
   ];
 

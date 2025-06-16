@@ -140,7 +140,7 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
                     <div className="sleep-tab-content active sleep-metrics-content">
                         <div className="metric-card">
                             <FontAwesomeIcon icon={faClock} className="metric-icon" />
-                            <span className="metric-value">{formatMinutesToHoursAndMinutes(currentMetrics.totalTimeAsleep - currentMetrics.totalTimeAwake)}</span>
+                            <span className="metric-value">{formatMinutesToHoursAndMinutes(currentMetrics.totalTimeAsleep)}</span>
                             <p className="metric-label">Temps total dormit</p>
                         </div>
                         <div className="metric-card">
@@ -151,7 +151,7 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
                         <div className="metric-card">
                             <FontAwesomeIcon icon={faPercent} className="metric-icon" />
                             <span className="metric-value">{currentMetrics.efficiency !== null && currentMetrics.efficiency !== undefined ? `${currentMetrics.efficiency}%` : 'N/A'}</span>
-                            <p className="metric-label">Eficiència {currentMetrics.efficiency === null || currentMetrics.efficiency === undefined ? "(Pròx. imp.)" : ""}</p>
+                            <p className="metric-label">Eficiència {currentMetrics.efficiency === null || currentMetrics.efficiency === undefined ? "" : ""}</p>
                         </div>
                         <div className="metric-card">
                             <FontAwesomeIcon icon={faEye} className="metric-icon" />
