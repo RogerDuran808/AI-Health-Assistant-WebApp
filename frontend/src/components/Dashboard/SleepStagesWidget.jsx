@@ -137,6 +137,7 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
                 )}
 
                 {activeTab === 'metriques' && (
+                    // Les mètriques es mostren en una graella 2x2
                     <div className="sleep-tab-content active sleep-metrics-content">
                         <div className="metric-card">
                             <FontAwesomeIcon icon={faClock} className="metric-icon" />
