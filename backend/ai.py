@@ -79,9 +79,15 @@ def get_recommendation(fitbit_dict: dict) -> str:
 
 
 
-def _pla_key(fitbit_dict: dict, recomanacions: str, profile: dict) -> str:
+def _pla_key(fitbit_dict: dict, recomanacions: str, profile: dict, macrocycle: str, week: int) -> str:
     """Serialitza els arguments per a la memòria."""
-    return json.dumps({"fitbit": fitbit_dict, "rec": recomanacions, "profile": profile}, sort_keys=True)
+    return json.dumps({
+        "fitbit": fitbit_dict,
+        "rec": recomanacions,
+        "profile": profile,
+        "macro": macrocycle,
+        "week": week,
+    }, sort_keys=True)
 
 
 @lru_cache(maxsize=32)
@@ -91,7 +97,9 @@ def _cached_pla(payload_key: str) -> str:
     fitbit_dict = data["fitbit"]
     recomanacions = data["rec"]
     profile = data["profile"]
-    prompt = f""" 
+    macrocycle = data["macro"]
+    week = data["week"]
+    prompt = f"""
 Disposes de la informació següent de l'usuari:
 
 ────────────────────────────────────────────────────────  
@@ -102,12 +110,12 @@ Disposes de la informació següent de l'usuari:
 {profile}  
 ────────────────────────────────────────────────────────  
 
-## Objectiu  
-Crear la programació *òptima* per a la **setmana <setmana_actual>** del macrocicle,  
+ ## Objectiu
+Crear la programació *òptima* per a la **setmana {week}** del macrocicle,
 respectant condicions mèdiques i disponibilitat.
 
 ## Context del macrocicle
-<taula_macrocicle>
+{macrocycle}
 
 * **Idioma:** català
 * **Unitats:** sistema mètric · intensitat en %1RM o RPE (cardio en zones FC o RPE)
@@ -190,9 +198,15 @@ respectant condicions mèdiques i disponibilitat.
     return resposta.choices[0].message.content.strip()
 
 
-def get_pla_estructurat(fitbit_dict: dict, recomanacions: str, profile: dict):
-    """Genera un pla d'entrenament setmanal estructurat i personalitzat segons el macrocicle generat."""
-    return _cached_pla(_pla_key(fitbit_dict, recomanacions, profile))
+def get_pla_estructurat(
+    fitbit_dict: dict,
+    recomanacions: str,
+    profile: dict,
+    macrocycle: str,
+    week: int,
+) -> str:
+    """Genera un pla setmanal personalitzat utilitzant el macrocicle."""
+    return _cached_pla(_pla_key(fitbit_dict, recomanacions, profile, macrocycle, week))
 
 
 def _get_macros_prompt(profile: dict) -> str:
@@ -300,21 +314,26 @@ Respon amb:
     prompt_template = macros_prompts.get(objective, macros_prompts['maintenance'])
     
     # Prepare template variables
+    profile_json = json.dumps(profile, ensure_ascii=False, indent=2)
     template_vars = {
-        'injury': profile.get('medical_conditions', 'la seva condició actual')
+        'injury': profile.get('medical_conditions', 'la seva condició actual'),
+        'medical_conditions': profile.get('medical_conditions', 'cap'),
+        'profile': profile_json,
     }
-    
+
     return prompt_template.format(**template_vars)
 
 
 def generate_macros(profile: dict) -> str:
-    """
-    Genera un macrocicle de 9 mesos basat en l'objectiu de l'usuari i tinguent en compte les dades de perfil.
-    
-    Args:
-        profile: Diccionari amb la informació de l'usuari, incloent 'objective' i altres dades.
-        
-    Returns:
-        str: El prompt formatat per a generar el macrocicle.
-    """
-    return _get_macros_prompt(profile)
+    """Genera un macrocicle complet segons el perfil de l'usuari."""
+    prompt = _get_macros_prompt(profile)
+
+    resposta = openai.chat.completions.create(
+        model=MODEL_PLAN,
+        messages=[
+            {"role": "system", "content": "Ets un/una entrenador/a expert/a en planificació esportiva."},
+            {"role": "user", "content": prompt},
+        ],
+        max_tokens=800,
+    )
+    return resposta.choices[0].message.content.strip()

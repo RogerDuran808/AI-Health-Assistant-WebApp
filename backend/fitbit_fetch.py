@@ -136,17 +136,31 @@ def _init_db():
         """
         cursor.execute(create_user_profile_table_sql)
 
-        # Crea la taula per guardar les recomanacions de la IA
+        # Crea la taula per guardar les recomanacions i els plans
         create_reports_table_sql = f"""
         CREATE TABLE IF NOT EXISTS {REPORTS_TABLE_NAME} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id TEXT,
             date TEXT,
             text TEXT,
-            training_plan TEXT
+            training_plan TEXT,
+            macrocycle TEXT,
+            macrocycle_week INTEGER
         );
         """
         cursor.execute(create_reports_table_sql)
+
+        # Comprova columnes noves i les afegeix si cal
+        cursor.execute(f"PRAGMA table_info({REPORTS_TABLE_NAME})")
+        existing_report_cols = {row[1] for row in cursor.fetchall()}
+        if "macrocycle" not in existing_report_cols:
+            cursor.execute(
+                f"ALTER TABLE {REPORTS_TABLE_NAME} ADD COLUMN macrocycle TEXT"
+            )
+        if "macrocycle_week" not in existing_report_cols:
+            cursor.execute(
+                f"ALTER TABLE {REPORTS_TABLE_NAME} ADD COLUMN macrocycle_week INTEGER"
+            )
 
         # Insereix un perfil per defecte si la taula és buida
         cursor.execute(f"SELECT COUNT(*) FROM {PROFILE_TABLE_NAME}")
@@ -457,8 +471,8 @@ def save_ia_report(text: str, user_id: str = "default", training_plan: str | Non
             conn.close()
 
 
-def update_latest_training_plan(training_plan: str, user_id: str = "default") -> None:
-    """Actualitza la darrera fila d'informes_ia amb el pla generat."""
+def update_latest_training_plan(training_plan: str, user_id: str = "default", week: int | None = None) -> None:
+    """Actualitza la darrera fila d'informes_ia amb el pla i la setmana del macrocicle."""
     _init_db()
     try:
         conn = sqlite3.connect(DB_PATH)
@@ -469,10 +483,16 @@ def update_latest_training_plan(training_plan: str, user_id: str = "default") ->
         )
         row = cursor.fetchone()
         if row:
-            cursor.execute(
-                f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ? WHERE id = ?",
-                (training_plan, row[0]),
-            )
+            if week is None:
+                cursor.execute(
+                    f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ? WHERE id = ?",
+                    (training_plan, row[0]),
+                )
+            else:
+                cursor.execute(
+                    f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ?, macrocycle_week = ? WHERE id = ?",
+                    (training_plan, week, row[0]),
+                )
             conn.commit()
     except sqlite3.Error as e:
         print(f"[update_latest_training_plan] Error: {e}")
@@ -522,6 +542,49 @@ def fetch_ia_reports(user_id: str = "default", limit: int = 10) -> list[dict]:
     except sqlite3.Error as e:
         print(f"[fetch_ia_reports] Error: {e}")
         return []
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def save_macrocycle(macrocycle: str, user_id: str = "default") -> None:
+    """Guarda un macrocicle i reinicia el comptador de setmanes."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            f"INSERT INTO {REPORTS_TABLE_NAME} (user_id, date, macrocycle, macrocycle_week) VALUES (?, ?, ?, ?)",
+            (
+                user_id,
+                dt.datetime.now().isoformat(timespec="seconds"),
+                macrocycle,
+                1,
+            ),
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"[save_macrocycle] Error: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def fetch_latest_macrocycle(user_id: str = "default") -> tuple[str | None, str | None]:
+    """Retorna l'últim macrocicle i la seva data de creació."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            f"SELECT macrocycle, date FROM {REPORTS_TABLE_NAME} WHERE user_id = ? AND macrocycle IS NOT NULL ORDER BY date DESC LIMIT 1",
+            (user_id,),
+        )
+        row = cursor.fetchone()
+        return (row[0], row[1]) if row else (None, None)
+    except sqlite3.Error as e:
+        print(f"[fetch_latest_macrocycle] Error: {e}")
+        return (None, None)
     finally:
         if 'conn' in locals() and conn:
             conn.close()
