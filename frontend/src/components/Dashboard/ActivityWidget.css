@@ -91,3 +91,9 @@
     border-bottom-color: var(--accent-color);
 }
 
+.trend-chart-container {
+    position: relative;
+    width: 100%;
+    height: 220px;
+}
+

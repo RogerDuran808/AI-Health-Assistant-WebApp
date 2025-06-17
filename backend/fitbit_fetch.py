@@ -24,6 +24,7 @@ MODEL_PATH = BASE_DIR / 'models' / 'BalancedRandomForest_TIRED.joblib'
 TABLE_NAME = "fitbit_daily_data"
 PROFILE_TABLE_NAME = "user_profile"
 REPORTS_TABLE_NAME = "informes_ia"
+WEEKLY_TABLE_NAME = "fitbit_last_week"
 
 # --- Definició Completa de les Columnes de la Base de Dades ---
 # Inclou dades crues, de feature engineering i prediccions.
@@ -69,6 +70,24 @@ COLUMN_DEFINITIONS = {
     "tired_prob": "REAL"
 }
 RAW_COLUMN_NAMES = list(pd.read_csv(BASE_DIR / 'models' / 'raw_features.csv')['feature']) # Noms de les columnes originals
+
+# Columnes utilitzades per a la taula setmanal
+WEEKLY_COLUMN_DEFINITIONS = {
+    "date": "TEXT PRIMARY KEY",
+    "sedentary_minutes": "INTEGER",
+    "lightly_active_minutes": "INTEGER",
+    "moderately_active_minutes": "INTEGER",
+    "very_active_minutes": "INTEGER",
+    "minutes_below_default_zone_1": "INTEGER",
+    "minutes_in_default_zone_1": "INTEGER",
+    "minutes_in_default_zone_2": "INTEGER",
+    "minutes_in_default_zone_3": "INTEGER",
+    "minutesAwake": "INTEGER",
+    "minutesAsleep": "INTEGER",
+    "sleep_deep_ratio": "REAL",
+    "sleep_light_ratio": "REAL",
+    "sleep_rem_ratio": "REAL"
+}
 
 # --- Funcions de Gestió de la Base de Dades ---
 
@@ -167,6 +186,27 @@ def _init_db():
         );
         """
         cursor.execute(create_reports_table_sql)
+
+        # Taula per a les dades dels darrers 7 dies
+        create_weekly_table_sql = f"""
+        CREATE TABLE IF NOT EXISTS {WEEKLY_TABLE_NAME} (
+            date TEXT PRIMARY KEY,
+            sedentary_minutes INTEGER,
+            lightly_active_minutes INTEGER,
+            moderately_active_minutes INTEGER,
+            very_active_minutes INTEGER,
+            minutes_below_default_zone_1 INTEGER,
+            minutes_in_default_zone_1 INTEGER,
+            minutes_in_default_zone_2 INTEGER,
+            minutes_in_default_zone_3 INTEGER,
+            minutesAwake INTEGER,
+            minutesAsleep INTEGER,
+            sleep_deep_ratio REAL,
+            sleep_light_ratio REAL,
+            sleep_rem_ratio REAL
+        );
+        """
+        cursor.execute(create_weekly_table_sql)
 
         # Comprova columnes noves i les afegeix si cal
         cursor.execute(f"PRAGMA table_info({REPORTS_TABLE_NAME})")
@@ -313,6 +353,25 @@ def _update_features_in_db(df: pd.DataFrame):
             conn.close()
 
 
+def _update_weekly_table(df: pd.DataFrame):
+    """Actualitza la taula amb les dades dels darrers 7 dies."""
+    if df.empty:
+        return
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        last_week = df.sort_values('date').tail(7)
+        cols = list(WEEKLY_COLUMN_DEFINITIONS.keys())
+        last_week = last_week[cols]
+        last_week.to_sql(WEEKLY_TABLE_NAME, conn, if_exists='replace', index=False)
+        conn.commit()
+        print("[_update_weekly_table] Taula setmanal actualitzada.")
+    except Exception as e:
+        print(f"[_update_weekly_table] Error: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
 # --- Funcions de Processament i Predicció ---
 
 def _process_data_and_predict(df: pd.DataFrame) -> pd.DataFrame:
@@ -389,6 +448,7 @@ def fetch_fitbit_data() -> list[dict]:
 
         # 5. Actualitzar la BD amb les noves features i prediccions
         _update_features_in_db(df_processed)
+        _update_weekly_table(df_processed)
 
         # 6. Seleccionar i retornar només les dades d'ahir
         yesterday_data = df_processed[df_processed['date'] == yesterday_str]
@@ -613,6 +673,24 @@ def save_macrocycle(macrocycle: str, user_id: str = "CJK8XS") -> None:
         conn.commit()
     except sqlite3.Error as e:
         print(f"[save_macrocycle] Error: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def fetch_weekly_data() -> list[dict]:
+    """Retorna les dades guardades per als darrers 7 dies."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        df = pd.read_sql_query(
+            f"SELECT * FROM {WEEKLY_TABLE_NAME} ORDER BY date ASC",
+            conn,
+        )
+        return df.to_dict(orient="records")
+    except sqlite3.Error as e:
+        print(f"[fetch_weekly_data] Error: {e}")
+        return []
     finally:
         if 'conn' in locals() and conn:
             conn.close()

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
@@ -17,6 +19,8 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
@@ -32,7 +36,7 @@ const formatMinutesToHoursAndMinutes = (totalMinutes) => {
 
 };
 
-const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
+const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = [], trendIntensity = [], trendHr = [] }) => {
     const [activeTab, setActiveTab] = useState('activity'); // 'activity', 'hrZones', or 'tendencia'
 
     if (type === 'chartTabs') {
@@ -197,8 +201,37 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
                         <Bar options={commonChartOptions} data={hrZonesChartData} />
                     )}
                     {activeTab === 'tendencia' && (
-                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                            <p>Pròximament...</p>
+                        <div className="trend-chart-container">
+                        <Line
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: { beginAtZero: true, grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false } },
+                                    x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
+                                },
+                                plugins: { legend: { display: false } }
+                            }}
+                            data={{
+                                labels: trendLabels,
+                                datasets: [
+                                    {
+                                        label: 'Minuts actius',
+                                        data: trendIntensity,
+                                        borderColor: '#D4FF58',
+                                        backgroundColor: 'rgba(212,255,88,0.3)',
+                                        tension: 0.3,
+                                    },
+                                    {
+                                        label: 'Zones 2-3',
+                                        data: trendHr,
+                                        borderColor: '#A5A5A5',
+                                        backgroundColor: 'rgba(165,165,165,0.3)',
+                                        tension: 0.3,
+                                    }
+                                ]
+                            }}
+                        />
                         </div>
                     )}
                 </div>

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut, Line } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js';
 import './SleepStagesWidget.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faClock, faBed, faPercent, faEye } from '@fortawesome/free-solid-svg-icons';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
 
 // Format numeric
 function formatMinutesToHoursAndMinutes(totalMinutes) {
@@ -15,7 +15,7 @@ function formatMinutesToHoursAndMinutes(totalMinutes) {
     return `${hours > 0 ? hours + 'h ' : ''}${minutes}m`;
 }
 
-const SleepStagesWidget = ({ stagesData, metricsData }) => {
+const SleepStagesWidget = ({ stagesData, metricsData, trendData = [], trendLabels = [] }) => {
     const [activeTab, setActiveTab] = useState('fases'); // 'fases', 'metriques', 'tendencies'
 
     // Default to an empty array if stagesData is not provided or not an array
@@ -163,8 +163,29 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
                 )}
 
                 {activeTab === 'tendencies' && (
-                    <div className="sleep-tab-content active" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
-                        <p>Pròximament...</p>
+                    <div className="sleep-tab-content active">
+                        <div className="sleep-trend-chart">
+                            <Line
+                                options={{
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: { beginAtZero: true, grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false } },
+                                        x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
+                                    },
+                                    plugins: { legend: { display: false } }
+                                }}
+                                data={{
+                                    labels: trendLabels,
+                                    datasets: [
+                                        { label: 'Profund', data: trendData.map(d => d.deep), borderColor: 'var(--accent-color)', backgroundColor: 'rgba(212,255,88,0.3)', tension: 0.3 },
+                                        { label: 'Lleuger', data: trendData.map(d => d.light), borderColor: 'var(--text-secondary)', backgroundColor: 'rgba(117,134,128,0.3)', tension: 0.3 },
+                                        { label: 'REM', data: trendData.map(d => d.rem), borderColor: 'var(--text-primary)', backgroundColor: 'rgba(245,245,245,0.3)', tension: 0.3 },
+                                        { label: 'Despert', data: trendData.map(d => d.awake), borderColor: 'var(--border-color)', backgroundColor: 'rgba(51,51,51,0.3)', tension: 0.3 }
+                                    ]
+                                }}
+                            />
+                        </div>
                     </div>
                 )}
             </div>

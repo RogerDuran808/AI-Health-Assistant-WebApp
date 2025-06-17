@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useFitbitData from '../../hooks/useFitbitData';
+import useWeeklyData from '../../hooks/useWeeklyData';
 import useUserProfile from '../../hooks/useUserProfile';
 import './Dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,6 +30,7 @@ export default function Dashboard() {
   const [currentDate, setCurrentDate] = useState('');
   const { data: fitbitData, loading: isLoading, error } = useFitbitData();
   const { data: profileData, refetch: refetchProfile } = useUserProfile();
+  const { data: weeklyData } = useWeeklyData();
 
   // Mostrem la data d'ahir amb la primera lletra en majúscula
   useEffect(() => {
@@ -113,6 +115,21 @@ export default function Dashboard() {
     inZone2: fitbitData?.minutes_in_default_zone_2 || 0,
     inZone3: fitbitData?.minutes_in_default_zone_3 || 0,
   };
+
+  // Dades de tendència setmanal
+  const trendLabels = weeklyData?.map(d => d.date.slice(5)) || [];
+  const trendIntensity = weeklyData?.map(d => d.moderately_active_minutes + d.very_active_minutes) || [];
+  const trendHrZones = weeklyData?.map(d => d.minutes_in_default_zone_2 + d.minutes_in_default_zone_3) || [];
+  const trendSleep = weeklyData?.map(d => {
+    const total = (d.minutesAsleep || 0) + (d.minutesAwake || 0);
+    return {
+      date: d.date.slice(5),
+      deep: Math.round((d.sleep_deep_ratio || 0) * total),
+      light: Math.round((d.sleep_light_ratio || 0) * total),
+      rem: Math.round((d.sleep_rem_ratio || 0) * total),
+      awake: d.minutesAwake || 0,
+    };
+  }) || [];
 
   const navItems = [
     { id: 'dashboard', icon: faTachometerAlt, text: 'Tauler de Control', active: true },
@@ -221,14 +238,26 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="widget activity-charts-widget">
-                <ActivityWidget type="chartTabs" intensityData={intensityDataForChart} hrZonesData={hrZonesDataForChart} />
+                <ActivityWidget
+                  type="chartTabs"
+                  intensityData={intensityDataForChart}
+                  hrZonesData={hrZonesDataForChart}
+                  trendLabels={trendLabels}
+                  trendIntensity={trendIntensity}
+                  trendHr={trendHrZones}
+                />
               </div>
               <BiomarkersWidget biomarkersData={biomarkersForWidget} />
             </div>
 
             {/* Column 3: Sleep Analysis i Condicions Mèdiques */}
             <div className="dashboard-section">
-              <SleepStagesWidget metricsData={sleepMetricsForWidget} stagesData={sleepStagesForWidget} />
+              <SleepStagesWidget
+                metricsData={sleepMetricsForWidget}
+                stagesData={sleepStagesForWidget}
+                trendData={trendSleep}
+                trendLabels={trendLabels}
+              />
               <MedicalConditionsWidget conditions={medicalConditions} />
             </div>
           </main>

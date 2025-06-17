@@ -13,6 +13,7 @@ from fitbit_fetch import (
     fetch_latest_training_plan,
     save_macrocycle,
     fetch_latest_macrocycle,
+    fetch_weekly_data,
 )
 from ai import get_recommendation, get_pla_estructurat, generate_macros
 
@@ -100,6 +101,16 @@ def fitbit_data():
         return JSONResponse(content=payload)
     except Exception as exc:
         log.exception("/fitbit-data failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/fitbit-weekly")
+def fitbit_weekly():
+    try:
+        data = fetch_weekly_data()
+        return JSONResponse(content=jsonable_encoder(data))
+    except Exception as exc:
+        log.exception("/fitbit-weekly failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 @app.get("/user-profile")
