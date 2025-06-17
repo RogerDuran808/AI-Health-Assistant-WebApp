@@ -80,7 +80,7 @@ def get_recommendation(fitbit_dict: dict) -> str:
 
 
 def _pla_key(fitbit_dict: dict, recomanacions: str, profile: dict) -> str:
-    """Serialitza els arguments per a la memòria cau."""
+    """Serialitza els arguments per a la memòria."""
     return json.dumps({"fitbit": fitbit_dict, "rec": recomanacions, "profile": profile}, sort_keys=True)
 
 
@@ -91,65 +91,90 @@ def _cached_pla(payload_key: str) -> str:
     fitbit_dict = data["fitbit"]
     recomanacions = data["rec"]
     profile = data["profile"]
-    prompt = f"""
-Tens la següent informació i recomanacions de salut de l'usuari, basades en dades de Fitbit:
-{fitbit_dict}
-Recomanacions de l'assistent basat en les dades :
+    prompt = f""" 
+Disposes de la informació següent de l'usuari:
+
+────────────────────────────────────────────────────────  
+**Recomanacions i restriccions de salut**  
 {recomanacions}
-Important respectar l'objectiu i disponibilitat del usuari:
-{profile}
 
+**Perfil complet de l'usuari**  
+{profile}  
+────────────────────────────────────────────────────────  
 
-<!-- ═════════════════════ INSTRUCCIONS ════════════════════ -->
-<!--
-  Omple totes les claus {{…}} amb la millor informació disponible.
-  Recorda:
-  - Prioritza la seguretat (recorda les medical_conditions) i una progressió lògica de càrrega.
-  - Respecta dies/horaris disponibles i equipament seleccionat.
-  - Ajusta el volum del dia d'avui segons la predicció de cansament diari (🟢 DESCANSAT / 🟡 CANSAT).
--->
+## Objectiu  
+Crear la programació *òptima* per a la **setmana <setmana_actual>** del macrocicle,  
+respectant condicions mèdiques i disponibilitat.
 
-<!-- ═════════════════════ 3. MACROCICLE & PROGRÉS ════════════════════════ -->
-## 🗓️ Exemple de Resum de Macrocicle (modificar segons l'objectiu de l'usuari)
-| **Fase** | **Setmanes** | **Focus** | **Volum** | **Intensitat** |
-|---|---|---|---|---|
-| Adaptació | 1-2 | Tècnica + Base | Mitjà | Baixa-Mitjana |
-| Hipertròfia | 3-6 | Volum | Alt | Mitjana |
-| Força | 7-10 | Intensitat | Mitjà | Alta |
-| Descàrrega | 11 | Recuperació | Baix | Baixa |
-| Test & Avaluació | 12 | 1RM / VO₂ | Baix | Variable |
+## Context del macrocicle
+<taula_macrocicle>
 
-<!-- ═════════════════════ 4. MICRO-CICLE (SETMANA X) ════════════════════ -->
-## 📅 Setmana {{Nº}} ({{DataInici}} – {{DataFi}})
-| **Dia** | **Objectiu** | **Durada estimada** |
-|---|---|---|
-| Dilluns | {{ObjDilluns}} | {{Minuts}} min |
-| Dimarts | {{ObjDimarts}} | {{Minuts}} min |
-| Dimecres | {{ObjDimecres}} | {{Minuts}} min |
-| Dijous | {{ObjDijous}} | {{Minuts}} min |
-| Divendres | {{ObjDivendres}} | {{Minuts}} min |
-| Dissabte | {{ObjDissabte}} | {{Minuts}} min |
-| Diumenge | {{ObjDiumenge}} | {{Minuts}} min |
+* **Idioma:** català
+* **Unitats:** sistema mètric · intensitat en %1RM o RPE (cardio en zones FC o RPE)
+* No superis la disponibilitat horària setmanal de l'usuari.
+* Utilitza només el material disponible.
+* Inclou **≥1 dia de descans complet** si l'usuari entrena 4+ dies/setmana.
 
-<!-- ═════════════════════ 5. DETALL DE SESSIONS ═════════════════════════ -->
-### 🏋️ Sessió – {{Dia}}, {{ObjectiuSessió}}
-| # | **Exercici** | **Sèries × Reps** | **%1RM / RPE** | **Tempo** | **Descans** | **Indicacions tècniques** |
-|---|---|---|---|---|---|---|
-| 1 | {{Ex1}} | {{4 × 8}} | {{70 % / RPE 7}} | {{3010}} | {{90’’}} | {{Postura, rang complet}} |
-| 2 | {{Ex2}} | {{3 × 10}} | {{—}} | {{2020}} | {{60’’}} | {{Contracció voluntària}} |
-| 3 | {{Ex3}} | {{AMRAP 8’}} | {{Zona 3}} | — | — | {{Mantén cadència}} |
-| 4 | … | … | … | … | … | … |
+---
 
-> **Escalfament:** x 
-> **Refredament:** x  
+## Tasques
 
-<!-- ═════════════════════ 6. MINI TRACKER DE PROGRÉS ════════════════════ -->
-## 📈 Mini Tracker d'Exercicis Clau (modificar els exercicis per a l'usuari)
-| **Exercici** | **W1** | **W2** | **W3** | **W4** | **W5** | **W6** | **W7** | **W8** |
-|---|---|---|---|---|---|---|---|---|
-| Squat 1RM (kg) | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{Test}} |
-| Bench 1RM (kg) | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{Test}} |
-| Pull-ups (reps) | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{-}} | {{Test}} | 
+1. Identifica la fase del macrocicle i el mesocicle corresponent.
+2. Defineix el microcicle (objectius, distribució de càrrega, KPIs).
+3. Dona un **resum setmanal** (volum, intensitat, focus, KPIs).
+4. Detalla **cada dia d'entrenament en la seva pròpia taula** seguint el format de sota.
+5. Cap text fora de les taules.
+
+---
+
+# Format de resposta (només Markdown)
+
+## 1 Identificació de fase
+
+| Setmana actual | Fase macrocicle | Mesocicle | Objectiu principal |
+| -------------- | --------------- | --------- | ------------------ |
+| <número>     | <fase>        | <nom>   | <resum>          |
+
+## 2 Microcicle
+
+| Microcicle | Durada    | Focus de càrrega | KPIs setmanals |
+| ---------- | --------- | ---------------- | -------------- |
+| <nom>    | 1 setmana | <breu text>    | <llista>     |
+
+## 3 Resum setmanal (overview)
+
+| Dia      | Volum total (sèries) | Intensitat mitjana (%1RM/RPE) | Durada estimada (min) | Focus primari | KPI clau del dia |
+| -------- | -------------------- | ----------------------------- | --------------------- | ------------- | ---------------- |
+| Dilluns  | …                    | …                             | …                     | …             | …                |
+| …        | …                    | …                             | …                     | …             | …                |
+| Diumenge | …                    | …                             | …                     | …             | …                |
+
+---
+
+## 4 Rutina diària (una taula per cada dia entrenat)
+
+### Dilluns
+
+| Exercici | Sèries x Reps | %1RM / RPE | Descans (s) | Notes |
+| -------- | ------------- | ---------- | ----------- | ----- |
+| …        | …             | …          | …           | …     |
+| …        | …             | …          | …           | …     |
+
+### Dimarts
+
+| Exercici | Sèries x Reps | %1RM / RPE | Descans (s) | Notes |
+| -------- | ------------- | ---------- | ----------- | ----- |
+| …        | …             | …          | …           | …     |
+| …        | …             | …          | …           | …     |
+
+### Dimecres
+
+| Exercici | Sèries x Reps | %1RM / RPE | Descans (s) | Notes |
+| -------- | ------------- | ---------- | ----------- | ----- |
+| …        | …             | …          | …           | …     |
+| …        | …             | …          | …           | …     |
+
+*(Repeteix la mateixa estructura per Dijous, Divendres, Dissabte, Diumenge segons correspongui.)*
 
 """
 
@@ -157,8 +182,7 @@ Important respectar l'objectiu i disponibilitat del usuari:
         model=MODEL_PLAN,
         messages=[
             {"role": "system",
-             "content": """Ets un entrenador personal expert en ciència de l'esport i recuperació.
-             Genera rutines setmanals adaptades a les condicions mèdiques i objectius de l'usuari, i recomanacions prèvies."""},
+             "content": """Ets un/una **entrenador/a personal certificat/ada** especialitzat/ada en periodització i salut."""},
             {"role": "user", "content": prompt}
         ],
         max_tokens=1200,
@@ -167,5 +191,130 @@ Important respectar l'objectiu i disponibilitat del usuari:
 
 
 def get_pla_estructurat(fitbit_dict: dict, recomanacions: str, profile: dict):
-    """Genera un pla d'entrenament setmanal estructurat i personalitzat."""
+    """Genera un pla d'entrenament setmanal estructurat i personalitzat segons el macrocicle generat."""
     return _cached_pla(_pla_key(fitbit_dict, recomanacions, profile))
+
+
+def _get_macros_prompt(profile: dict) -> str:
+    """Returns the appropriate macro prompt based on user's objective."""
+    objective = profile.get('main_training_goal', '').lower()
+    
+    macros_prompts = {
+        'maintenance': """
+Ets un entrenador/a especialista en condicionament físic general. Genera un macrocicle complet de manteniment d'un usuari amb aquest perfil:
+{profile}
+
+Durada total del macrocicle: 9 mesos
+
+Respon només amb la següent taula Markdown:
+
+| Fase                  | Durada (setmanes) | Volum (% del màx. setmanal) / Intensitat (%1RM o RPE) | Contingut principal d'entrenament | Notes · KPIs de salut/condició |
+| --------------------- | ----------------- | ----------------------------------------------------- | --------------------------------- | ------------------------------ |
+| Preparació general    |                   |                                                       |                                   |                                |
+| Preparació específica |                   |                                                       |                                   |                                |
+| Pic de salut          |                   |                                                       |                                   |                                |
+| Transició             |                   |                                                       |                                   |                                |
+""",
+        'muscle_gain': """
+Ets un entrenador/a de força i hipertrofia. Dissenya un macrocicle de guany de massa muscular.
+{profile}
+
+Durada total del macrocicle: 9 mesos
+
+Respon només amb la taula:
+
+| Fase              | Durada (setmanes) | Intensitat mitjana (%1RM o RPE) | Volum (sèries·set) | Exercicis clau | Comentaris sobre recuperació i dieta |
+| ----------------- | ----------------- | -------------------------------- | ------------------ | -------------- | ------------------------------------ |
+| Acumulació volum  |                   |                                  |                    |                |                                      |
+| Intensificació    |                   |                                  |                    |                |                                      |
+| Realització / Pic |                   |                                  |                    |                |                                      |
+| Deload            |                   |                                  |                    |                |                                      |
+""",
+        'strength_gain': """
+Ets un/una preparador/a especialitzat/ada en powerlifting i força absoluta. Dissenya un macrocicle de força màxima.
+{profile}
+
+Durada total del macrocicle: 9 mesos
+
+Respon amb:
+
+| Fase                   | Durada (setmanes) | Intensitat (%1RM o RPE) | Patró sèrie-reps | Objectius tècnics | Proves de seguiment |
+| ---------------------- | ----------------- | ----------------------- | ---------------- | ----------------- | ------------------- |
+| GPP (Base)             |                   |                         |                  |                   |                     |
+| Hipertrofia controlada |                   |                         |                  |                   |                     |
+| Força absoluta         |                   |                         |                  |                   |                     |
+| Pic / Test 1RM         |                   |                         |                  |                   |                     |
+| Transició              |                   |                         |                  |                   |                     |
+""",
+        'flexibility': """
+Ets un/una fisioterapeuta-trainer especialitzat/ada en mobilitat. Crea un programa progressiu de flexibilitat i mobilitat.
+{profile}
+
+Durada total del macrocicle: 9 mesos
+
+Respon amb la taula:
+
+| Bloc                   | Durada (setmanes) | Metodologia principal | Forma de registre de progressos | Notes pràctiques |
+| ---------------------- | ----------------- | --------------------- | ------------------------------- | ---------------- |
+| Mobilitat dinàmica     |                   |                       |                                 |                  |
+| PNF / Tensió-increment |                   |                       |                                 |                  |
+| Integració força       |                   |                       |                                 |                  |
+| Re-avaluació           |                   |                       |                                 |                  |
+""",
+        'rehab': """
+Ets un/una readaptador/a esportiu/iva. Dissenya un programa de recuperació funcional per a {medical_conditions}.
+{profile}
+
+Durada total del macrocicle: 9 mesos
+
+Respon només amb:
+
+| Estadi                | Durada (setmanes) | Objectiu principal | Exercicis/Activitats exemple | Criteris d'avanç / Alta |
+| --------------------- | ----------------- | ------------------ | --------------------------- | ----------------------- |
+| Protecció / Activació |                   |                    |                             |                         |
+| Mobilitat guiada      |                   |                    |                             |                         |
+| Força bàsica          |                   |                    |                             |                         |
+| Potenciació           |                   |                    |                             |                         |
+| Retorn esport         |                   |                    |                             |                         |
+""",
+        'fat_loss': """
+Ets un/una coach d'entrenament i nutrició per a definició corporal. Crea un macrocicle de pèrdua de greix.
+{profile}
+
+Durada total del macrocicle: 9 mesos
+
+Respon amb:
+
+| Fase                       | Durada (setmanes) | Dèficit calòric (% o kcal) | Entrenament de força (freq./volum) | Cardio / NEAT (tipus i temps) | Biofeedback & KPIs |
+| -------------------------- | ----------------- | -------------------------- | ---------------------------------- | ----------------------------- | ------------------ |
+| Preparació metabòlica      |                   |                            |                                    |                               |                    |
+| Dèficit progressiu (onada) |                   |                            |                                    |                               |                    |
+| Lipòlisi intensiva         |                   |                            |                                    |                               |                    |
+| Diet break / Deload        |                   |                            |                                    |                               |                    |
+| Estabilització / Recomp    |                   |                            |                                    |                               |                    |
+"""
+    }
+
+    
+    # Default to manteniment if objective not found
+    prompt_template = macros_prompts.get(objective, macros_prompts['maintenance'])
+    
+    # Prepare template variables
+    template_vars = {
+        'injury': profile.get('medical_conditions', 'la seva condició actual')
+    }
+    
+    return prompt_template.format(**template_vars)
+
+
+def generate_macros(profile: dict) -> str:
+    """
+    Genera un macrocicle de 9 mesos basat en l'objectiu de l'usuari i tinguent en compte les dades de perfil.
+    
+    Args:
+        profile: Diccionari amb la informació de l'usuari, incloent 'objective' i altres dades.
+        
+    Returns:
+        str: El prompt formatat per a generar el macrocicle.
+    """
+    return _get_macros_prompt(profile)

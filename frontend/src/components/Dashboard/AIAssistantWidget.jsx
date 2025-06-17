@@ -44,7 +44,7 @@ export default function AIAssistantWidget({ fitbitData, onPlanReady }) {
               {rec && (
                 <>
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{rec}</ReactMarkdown>
-                  <p>Vols generar / modificar el teu pla d'entrenament?</p>
+                  <p>Vols actualitzar el teu pla d'entrenament setmanal o microcicle?</p>
                   <div className="widget-actions">
                     <button
                       className="btn btn-secondary"
@@ -62,7 +62,7 @@ export default function AIAssistantWidget({ fitbitData, onPlanReady }) {
                       ) : (
                         <FontAwesomeIcon icon={faDumbbell} className="btn-icon" />
                       )}
-                      {planLoading ? 'Generant...' : "Pla d'Entrenament"}
+                      {planLoading ? 'Generant...' : "Pla d'Entrenament Setmanal / Microcicle"}
                     </button>
                   </div>
                 </>

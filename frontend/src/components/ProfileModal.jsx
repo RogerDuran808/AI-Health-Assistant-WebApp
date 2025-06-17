@@ -10,7 +10,6 @@ const mainGoalOptions = [
   { value: 'fat_loss', label: 'Pèrdua de greix' },
   { value: 'muscle_gain', label: 'Guanyar múscul (hipertròfia)' },
   { value: 'strength_gain', label: 'Guanyar força' },
-  { value: 'performance', label: 'Millora del rendiment esportiu específic' },
   { value: 'flexibility', label: 'Millora de la flexibilitat i mobilitat' },
   { value: 'rehab', label: 'Rehabilitació o readaptació funcional' },
 ];
