@@ -11,14 +11,21 @@ export default function useWeeklyData() {
 
     const fetchWeek = async () => {
       try {
+        console.log('Fetching data from /fitbit-weekly...');
         const r = await fetch("http://localhost:8000/fitbit-weekly");
         const j = await r.json();
-        if (!r.ok) throw new Error(j.detail || r.statusText);
+        console.log('API Response:', j);
+        if (!r.ok) {
+          console.error('API Error:', j.detail || r.statusText);
+          throw new Error(j.detail || r.statusText);
+        }
         if (mounted) {
+          console.log('Setting data in state');
           setData(j);
           setError(null);
         }
       } catch (e) {
+        console.error('Error in fetchWeek:', e);
         if (mounted) setError(e);
       } finally {
         if (mounted) setLoading(false);

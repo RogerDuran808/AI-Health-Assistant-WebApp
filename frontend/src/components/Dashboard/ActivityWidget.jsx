@@ -46,55 +46,85 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
     const [trendHrState, setTrendHr] = useState(trendHr);
 
     useEffect(() => {
-        if (weeklyData && weeklyData.length > 0) {
-            // Sort data by date to ensure correct order
-            const sortedData = [...weeklyData].sort((a, b) => new Date(a.date) - new Date(b.date));
+        if (weeklyData) {
+            console.log('Weekly data received:', weeklyData);
             
-            // Extract dates for labels (format as DD/MM)
-            const labels = sortedData.map(item => {
-                const date = new Date(item.date);
-                return `${date.getDate()}/${date.getMonth() + 1}`;
-            });
-            
-            // Extract intensity data
-            const sedentary = [];
-            const light = [];
-            const moderate = [];
-            const intense = [];
-            
-            // Extract HR zone data
-            const below = [];
-            const zone1 = [];
-            const zone2 = [];
-            const zone3 = [];
-            
-            sortedData.forEach(day => {
-                // Intensity data
-                sedentary.push(day.minutes_sedentary || 0);
-                light.push(day.minutes_light_activity || 0);
-                moderate.push(day.minutes_moderate_activity || 0);
-                intense.push(day.minutes_very_active || 0);
+            if (weeklyData.length === 0) {
+                console.warn('Weekly data is empty');
+                return;
+            }
+
+            try {
+                // Sort data by date to ensure correct order
+                const sortedData = [...weeklyData].sort((a, b) => new Date(a.date) - new Date(b.date));
+                console.log('Sorted weekly data:', sortedData);
                 
-                // HR zone data (assuming these fields exist in your API response)
-                below.push(day.hr_below_zone || 0);
-                zone1.push(day.hr_fat_burn || 0);
-                zone2.push(day.hr_cardio || 0);
-                zone3.push(day.hr_peak || 0);
-            });
-            
-            setTrendLabels(labels);
-            setTrendIntensity({
-                sedentary,
-                light,
-                moderate,
-                intense
-            });
-            setTrendHr({
-                below,
-                zone1,
-                zone2,
-                zone3
-            });
+                // Extract dates for labels (format as DD/MM)
+                const labels = sortedData.map(item => {
+                    const date = new Date(item.date);
+                    return `${date.getDate()}/${date.getMonth() + 1}`;
+                });
+                
+                // Extract intensity data
+                const sedentary = [];
+                const light = [];
+                const moderate = [];
+                const intense = [];
+                
+                // Extract HR zone data
+                const below = [];
+                const zone1 = [];
+                const zone2 = [];
+                const zone3 = [];
+                
+                console.log('Processing daily data...');
+                sortedData.forEach(day => {
+                    console.log('Processing day:', day.date, 'Data:', {
+                        sedentary: day.minutes_sedentary,
+                        light: day.minutes_light_activity,
+                        moderate: day.minutes_moderate_activity,
+                        intense: day.minutes_very_active,
+                        hr_below: day.hr_below_zone,
+                        hr_zone1: day.hr_fat_burn,
+                        hr_zone2: day.hr_cardio,
+                        hr_zone3: day.hr_peak
+                    });
+                    
+                    // Intensity data
+                    sedentary.push(day.minutes_sedentary || 0);
+                    light.push(day.minutes_light_activity || 0);
+                    moderate.push(day.minutes_moderate_activity || 0);
+                    intense.push(day.minutes_very_active || 0);
+                    
+                    // HR zone data
+                    below.push(day.hr_below_zone || 0);
+                    zone1.push(day.hr_fat_burn || 0);
+                    zone2.push(day.hr_cardio || 0);
+                    zone3.push(day.hr_peak || 0);
+                });
+                
+                console.log('Setting trend data:', {
+                    labels,
+                    intensity: { sedentary, light, moderate, intense },
+                    hr: { below, zone1, zone2, zone3 }
+                });
+                
+                setTrendLabels(labels);
+                setTrendIntensity({
+                    sedentary,
+                    light,
+                    moderate,
+                    intense
+                });
+                setTrendHr({
+                    below,
+                    zone1,
+                    zone2,
+                    zone3
+                });
+            } catch (error) {
+                console.error('Error processing weekly data:', error);
+            }
         }
     }, [weeklyData]);
 
