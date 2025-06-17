@@ -95,34 +95,18 @@ def _pla_key(fitbit_dict: dict, recomanacions: str, profile: dict, macrocycle: s
 def _cached_pla(payload_key: str) -> str:
     """Versió memòria clau del pla d'entrenament."""
     data = json.loads(payload_key)
-    fitbit_dict = data["fitbit"]
     recomanacions = data["rec"]
     profile = data["profile"]
     macrocycle = data["macro"]
     week = data["week"]
     prompt = f"""
-Disposes de la informació següent de l'usuari:
 
-────────────────────────────────────────────────────────  
-**Recomanacions i restriccions de salut**  
-{recomanacions}
-
-**Perfil complet de l'usuari**  
-{profile}  
-────────────────────────────────────────────────────────  
-
- ## Objectiu
+## Objectiu
 Crear la programació *òptima* per a la **setmana {week}** del macrocicle,
-respectant condicions mèdiques i disponibilitat, tenir en compte els dies de entrenament (training_days_per_week) i els minuts per sessió que vol fer l'usuari (training_minutes_per_session).
+respectant condicions mèdiques i disponibilitat.
 
 ## Context del macrocicle
 {macrocycle}
-
-* **Idioma:** català
-* **Unitats:** sistema mètric · intensitat en %1RM o RPE (cardio en zones FC o RPE)
-* No superis la disponibilitat horària setmanal de l'usuari.
-* Utilitza només el material disponible.
-* Inclou **≥1 dia de descans complet** si l'usuari entrena 4+ dies/setmana.
 
 ---
 
@@ -184,6 +168,25 @@ respectant condicions mèdiques i disponibilitat, tenir en compte els dies de en
 | …        | …             | …          | …           | …     |
 
 *(Repeteix la mateixa estructura per Dijous, Divendres, Dissabte, Diumenge segons correspongui.)* En el cas de ser un dia de descans no posar el dia en el punt 4 (Rutina diària)
+
+## Context d'Usuari
+Disposes de la informació següent de l'usuari:
+ 
+**Recomanacions i propostes a aplicar**  
+{recomanacions}
+
+**Perfil complet de l'usuari**  
+{profile}
+
+## Limitacions
+* **Idioma:** català
+* **Unitats:** sistema mètric · intensitat en %1RM o RPE (cardio en zones FC o RPE)
+* Utilitza només el material disponible.
+* Inclou **≥1 dia de descans complet** si l'usuari entrena 4+ dies/setmana.
+* MOLT IMPORTANT: No superar els dies de entrenament (training_days_per_week).
+* MOLT IMPORTANT: No superar els minuts per sessió que vol fer l'usuari (training_minutes_per_session).
+* Distribuir les sessions/dies de entrenament (training_days_per_week) de form òptima únicament pel dies marcats a weekly_schedule, tenir en compte que potser no tots seran dies de entrenament.
+* MOLT IMPORTANT: No proposar exercicis que puguin afectar a condicions mèdiques (medical_conditions).
 
 """
 
