@@ -182,7 +182,7 @@ respectant condicions mèdiques i disponibilitat.
 | …        | …             | …          | …           | …     |
 | …        | …             | …          | …           | …     |
 
-*(Repeteix la mateixa estructura per Dijous, Divendres, Dissabte, Diumenge segons correspongui.)*
+*(Repeteix la mateixa estructura per Dijous, Divendres, Dissabte, Diumenge segons correspongui.)* En el cas de ser un dia de descans no posar el dia en el punt 4 (Rutina diària)
 
 """
 

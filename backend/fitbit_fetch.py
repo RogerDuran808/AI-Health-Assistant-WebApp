@@ -119,11 +119,6 @@ def _init_db():
         create_user_profile_table_sql = f"""
         CREATE TABLE IF NOT EXISTS {PROFILE_TABLE_NAME} (
             user_id TEXT PRIMARY KEY,
-            name TEXT,
-            age INTEGER,
-            height INTEGER,
-            weight INTEGER,
-            bmi INTEGER,
             main_training_goal TEXT,
             experience_level TEXT,
             training_days_per_week INTEGER,
@@ -166,7 +161,7 @@ def _init_db():
         cursor.execute(f"SELECT COUNT(*) FROM {PROFILE_TABLE_NAME}")
         if cursor.fetchone()[0] == 0:
             default_profile = {
-                "user_id": "default",
+                "user_id": "CJK8XS",
                 "main_training_goal": "Mantenimient general",
                 "experience_level": "Principiant",
                 "training_days_per_week": 3,
@@ -382,7 +377,7 @@ def fetch_fitbit_data() -> list[dict]:
     return []
 
 
-def fetch_user_profile(user_id: str = "default") -> dict:
+def fetch_user_profile(user_id: str = "CJK8XS") -> dict:
     """Recupera el perfil d'usuari de la BD."""
     _init_db()
     try:
@@ -410,7 +405,7 @@ def fetch_user_profile(user_id: str = "default") -> dict:
             conn.close()
 
 
-def save_user_profile(profile: dict, user_id: str = "default") -> bool:
+def save_user_profile(profile: dict, user_id: str = "CJK8XS") -> bool:
     """Actualitza o insereix el perfil d'usuari a la BD."""
     _init_db()
     try:
@@ -438,7 +433,7 @@ def save_user_profile(profile: dict, user_id: str = "default") -> bool:
             conn.close()
 
 
-def save_ia_report(text: str, user_id: str = "default", training_plan: str | None = None) -> None:
+def save_ia_report(text: str, user_id: str = "CJK8XS", training_plan: str | None = None) -> None:
     """Guarda una recomanació i opcionalment un pla a la taula informes_ia."""
     _init_db()
     try:
@@ -471,7 +466,7 @@ def save_ia_report(text: str, user_id: str = "default", training_plan: str | Non
             conn.close()
 
 
-def update_latest_training_plan(training_plan: str, user_id: str = "default", week: int | None = None) -> None:
+def update_latest_training_plan(training_plan: str, user_id: str = "CJK8XS", week: int | None = None) -> None:
     """Actualitza la darrera fila d'informes_ia amb el pla i la setmana del macrocicle."""
     _init_db()
     try:
@@ -501,7 +496,7 @@ def update_latest_training_plan(training_plan: str, user_id: str = "default", we
             conn.close()
 
 
-def fetch_latest_training_plan(user_id: str = "default") -> str | None:
+def fetch_latest_training_plan(user_id: str = "CJK8XS") -> str | None:
     """Obté l'últim pla d'entrenament desat."""
     _init_db()
     try:
@@ -521,7 +516,7 @@ def fetch_latest_training_plan(user_id: str = "default") -> str | None:
             conn.close()
 
 
-def fetch_ia_reports(user_id: str = "default", limit: int = 10) -> list[dict]:
+def fetch_ia_reports(user_id: str = "CJK8XS", limit: int = 10) -> list[dict]:
     """Recupera els darrers informes de la taula informes_ia."""
     _init_db()
     try:
@@ -547,7 +542,7 @@ def fetch_ia_reports(user_id: str = "default", limit: int = 10) -> list[dict]:
             conn.close()
 
 
-def save_macrocycle(macrocycle: str, user_id: str = "default") -> None:
+def save_macrocycle(macrocycle: str, user_id: str = "CJK8XS") -> None:
     """Guarda un macrocicle i reinicia el comptador de setmanes."""
     _init_db()
     try:
@@ -570,7 +565,7 @@ def save_macrocycle(macrocycle: str, user_id: str = "default") -> None:
             conn.close()
 
 
-def fetch_latest_macrocycle(user_id: str = "default") -> tuple[str | None, str | None]:
+def fetch_latest_macrocycle(user_id: str = "CJK8XS") -> tuple[str | None, str | None]:
     """Retorna l'últim macrocicle i la seva data de creació."""
     _init_db()
     try:

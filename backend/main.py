@@ -130,7 +130,7 @@ def recommend(payload: dict):
     """Genera una recomanació personalitzada a partir de les dades Fitbit."""
     try:
         text = get_recommendation(payload)
-        save_ia_report(text, user_id=payload.get("user_id", "default"))
+        save_ia_report(text, user_id=payload.get("user_id", "CJK8XS"))
         return {"text": text}
     except Exception as exc:
         log.exception("/recommend failed")
@@ -141,7 +141,7 @@ def recommend(payload: dict):
 def generate_macrocycle_endpoint(payload: dict):
     """Genera i desa un nou macrocicle."""
     try:
-        user_id = payload.get("user_id", "default")
+        user_id = payload.get("user_id", "CJK8XS")
         profile = fetch_user_profile(user_id)
         if not profile:
             profile = fetch_user_profile("default")
@@ -170,7 +170,7 @@ def training_plan(payload: dict):
     try:
         # Obté l'user_id preferentment de les dades Fitbit
         fitbit = payload.get("fitbit", {})
-        user_id = fitbit.get("user_id", payload.get("user_id", "default"))
+        user_id = fitbit.get("user_id", payload.get("user_id", "CJK8XS"))
 
         # Recupera el perfil guardat (si no existeix, usa el perfil per defecte)
         profile = fetch_user_profile(user_id)
