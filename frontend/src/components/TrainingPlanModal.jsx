@@ -6,10 +6,14 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import useTrainingPlan from '../hooks/useTrainingPlan';
 import useMacrocycle from '../hooks/useMacrocycle';
+import useFitbitData from '../hooks/useFitbitData';
+import useRecommendation from '../hooks/useRecomendation';
 
 const TrainingPlanModal = ({ isOpen, onClose }) => {
-  const { data: plan, loading, error, refetch } = useTrainingPlan(isOpen);
+  const { data: plan, loading, error, refetch, generate: generatePlan } = useTrainingPlan(isOpen);
   const { data: macro, loading: macroLoading, error: macroError, generate } = useMacrocycle(isOpen);
+  const { data: fitbitData } = useFitbitData();
+  const { generate: generateRec } = useRecommendation();
   const [showConfirm, setShowConfirm] = useState(false);
   const [showMacrocycleTable, setShowMacrocycleTable] = useState(false);
   const [isNewMacrocycle, setIsNewMacrocycle] = useState(false);
@@ -26,8 +30,21 @@ const TrainingPlanModal = ({ isOpen, onClose }) => {
   };
 
   const confirmNewMacrocycle = async () => {
+    // Genera el nou macrocicle
     await generate();
+
+    // Obté la recomanació del dia a partir de les dades de Fitbit
+    const recText = await generateRec(fitbitData || {});
+
+    // Genera el pla setmanal utilitzant la recomanació anterior
+    await generatePlan({
+      fitbit: fitbitData || {},
+      recommendation: recText || "",
+    });
+
+    // Refresca el pla per mostrar l'actualització
     await refetch();
+
     setShowConfirm(false);
     setShowMacrocycleTable(true);
     setIsNewMacrocycle(true);
