@@ -113,7 +113,7 @@ Disposes de la informació següent de l'usuari:
 
  ## Objectiu
 Crear la programació *òptima* per a la **setmana {week}** del macrocicle,
-respectant condicions mèdiques i disponibilitat.
+respectant condicions mèdiques i disponibilitat, tenir en compte els dies de entrenament (training_days_per_week) i els minuts per sessió que vol fer l'usuari (training_minutes_per_session).
 
 ## Context del macrocicle
 {macrocycle}
