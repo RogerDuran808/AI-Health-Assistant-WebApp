@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -14,6 +14,7 @@ import {
 import './ActivityWidget.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPersonWalking, faFire } from '@fortawesome/free-solid-svg-icons';
+import useWeeklyData from '../../hooks/useWeeklyData';
 
 ChartJS.register(
   CategoryScale,
@@ -37,6 +38,66 @@ const formatMinutesToHoursAndMinutes = (totalMinutes) => {
 };
 
 const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = [], trendIntensity = {}, trendHr = {} }) => {
+    const { data: weeklyData, loading, error } = useWeeklyData();
+    
+    // Process weekly data for trends
+    const [trendLabelsState, setTrendLabels] = useState(trendLabels);
+    const [trendIntensityState, setTrendIntensity] = useState(trendIntensity);
+    const [trendHrState, setTrendHr] = useState(trendHr);
+
+    useEffect(() => {
+        if (weeklyData && weeklyData.length > 0) {
+            // Sort data by date to ensure correct order
+            const sortedData = [...weeklyData].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Extract dates for labels (format as DD/MM)
+            const labels = sortedData.map(item => {
+                const date = new Date(item.date);
+                return `${date.getDate()}/${date.getMonth() + 1}`;
+            });
+            
+            // Extract intensity data
+            const sedentary = [];
+            const light = [];
+            const moderate = [];
+            const intense = [];
+            
+            // Extract HR zone data
+            const below = [];
+            const zone1 = [];
+            const zone2 = [];
+            const zone3 = [];
+            
+            sortedData.forEach(day => {
+                // Intensity data
+                sedentary.push(day.minutes_sedentary || 0);
+                light.push(day.minutes_light_activity || 0);
+                moderate.push(day.minutes_moderate_activity || 0);
+                intense.push(day.minutes_very_active || 0);
+                
+                // HR zone data (assuming these fields exist in your API response)
+                below.push(day.hr_below_zone || 0);
+                zone1.push(day.hr_fat_burn || 0);
+                zone2.push(day.hr_cardio || 0);
+                zone3.push(day.hr_peak || 0);
+            });
+            
+            setTrendLabels(labels);
+            setTrendIntensity({
+                sedentary,
+                light,
+                moderate,
+                intense
+            });
+            setTrendHr({
+                below,
+                zone1,
+                zone2,
+                zone3
+            });
+        }
+    }, [weeklyData]);
+
     const [activeTab, setActiveTab] = useState('activity'); // 'activity', 'hrZones', or 'tendencia'
 
     if (type === 'chartTabs') {
@@ -202,51 +263,196 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                     )}
                     {activeTab === 'tendencia' && (
                         <>
-                        {/* Gràfiques de tendència setmanal */}
-                        <div className="trend-chart-container">
-                            <Line
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    scales: {
-                                        y: { beginAtZero: true, grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false } },
-                                        x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
-                                    },
-                                    plugins: { legend: { display: false } }
-                                }}
-                                data={{
-                                    labels: trendLabels,
-                                    datasets: [
-                                        { label: 'Sedentari', data: trendIntensity.sedentary, borderColor: '#758680', backgroundColor: 'rgba(117,134,128,0.3)', tension: 0.3, pointRadius: 3 },
-                                        { label: 'Lleu', data: trendIntensity.light, borderColor: '#A5A5A5', backgroundColor: 'rgba(165,165,165,0.3)', tension: 0.3, pointRadius: 3 },
-                                        { label: 'Moderat', data: trendIntensity.moderate, borderColor: '#D4FF58', backgroundColor: 'rgba(212,255,88,0.3)', tension: 0.3, pointRadius: 3 },
-                                        { label: 'Intens', data: trendIntensity.intense, borderColor: '#F5F5F5', backgroundColor: 'rgba(245,245,245,0.3)', tension: 0.3, pointRadius: 3 }
-                                    ]
-                                }}
-                            />
-                        </div>
-                        <div className="trend-chart-container">
-                            <Line
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    scales: {
-                                        y: { beginAtZero: true, grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false } },
-                                        x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
-                                    },
-                                    plugins: { legend: { display: false } }
-                                }}
-                                data={{
-                                    labels: trendLabels,
-                                    datasets: [
-                                        { label: 'Repòs', data: trendHr.below, borderColor: '#758680', backgroundColor: 'rgba(117,134,128,0.3)', tension: 0.3, pointRadius: 3 },
-                                        { label: 'Suau', data: trendHr.zone1, borderColor: '#A5A5A5', backgroundColor: 'rgba(165,165,165,0.3)', tension: 0.3, pointRadius: 3 },
-                                        { label: 'Moderat', data: trendHr.zone2, borderColor: '#D4FF58', backgroundColor: 'rgba(212,255,88,0.3)', tension: 0.3, pointRadius: 3 },
-                                        { label: 'Pic', data: trendHr.zone3, borderColor: '#F5F5F5', backgroundColor: 'rgba(245,245,245,0.3)', tension: 0.3, pointRadius: 3 }
-                                    ]
-                                }}
-                            />
-                        </div>
+                        {loading ? (
+                            <div className="loading-message">Carregant dades de tendències...</div>
+                        ) : error ? (
+                            <div className="error-message">Error en carregar les dades de tendències</div>
+                        ) : trendLabels.length > 0 ? (
+                            <>
+                            <div className="trend-chart-container">
+                                <h4>Activitat Diària (minuts)</h4>
+                                <Line
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        scales: {
+                                            y: { 
+                                                beginAtZero: true, 
+                                                grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
+                                                ticks: { color: '#F5F5F5' }
+                                            },
+                                            x: { 
+                                                grid: { display: false }, 
+                                                ticks: { color: '#F5F5F5' } 
+                                            }
+                                        },
+                                        plugins: { 
+                                            legend: { 
+                                                display: true,
+                                                position: 'top',
+                                                labels: {
+                                                    color: '#F5F5F5',
+                                                    usePointStyle: true,
+                                                    pointStyle: 'circle',
+                                                    padding: 20
+                                                }
+                                            },
+                                            tooltip: {
+                                                backgroundColor: '#1A1A1A',
+                                                titleColor: '#D4FF58',
+                                                bodyColor: '#F5F5F5',
+                                                borderColor: '#333333',
+                                                borderWidth: 1,
+                                                padding: 10,
+                                                callbacks: {
+                                                    label: function(context) {
+                                                        return `${context.dataset.label}: ${context.raw} min`;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }}
+                                    data={{
+                                        labels: trendLabels,
+                                        datasets: [
+                                            { 
+                                                label: 'Sedentari', 
+                                                data: trendIntensity.sedentary, 
+                                                borderColor: '#758680', 
+                                                backgroundColor: 'rgba(117,134,128,0.3)', 
+                                                borderWidth: 2,
+                                                tension: 0.3, 
+                                                pointRadius: 3,
+                                                pointHoverRadius: 5
+                                            },
+                                            { 
+                                                label: 'Lleu', 
+                                                data: trendIntensity.light, 
+                                                borderColor: '#A5A5A5', 
+                                                backgroundColor: 'rgba(165,165,165,0.3)', 
+                                                borderWidth: 2,
+                                                tension: 0.3, 
+                                                pointRadius: 3,
+                                                pointHoverRadius: 5
+                                            },
+                                            { 
+                                                label: 'Moderat', 
+                                                data: trendIntensity.moderate, 
+                                                borderColor: '#D4FF58', 
+                                                backgroundColor: 'rgba(212,255,88,0.3)', 
+                                                borderWidth: 2,
+                                                tension: 0.3, 
+                                                pointRadius: 3,
+                                                pointHoverRadius: 5
+                                            },
+                                            { 
+                                                label: 'Intens', 
+                                                data: trendIntensity.intense, 
+                                                borderColor: '#F5F5F5', 
+                                                backgroundColor: 'rgba(245,245,245,0.3)', 
+                                                borderWidth: 2,
+                                                tension: 0.3, 
+                                                pointRadius: 3,
+                                                pointHoverRadius: 5
+                                            }
+                                        ]
+                                    }}
+                                />
+                            </div>
+                            <div className="trend-chart-container">
+                                <h4>Zones de Freqüència Cardíaca (minuts)</h4>
+                                <Line
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        scales: {
+                                            y: { 
+                                                beginAtZero: true, 
+                                                grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
+                                                ticks: { color: '#F5F5F5' }
+                                            },
+                                            x: { 
+                                                grid: { display: false }, 
+                                                ticks: { color: '#F5F5F5' } 
+                                            }
+                                        },
+                                        plugins: { 
+                                            legend: { 
+                                                display: true,
+                                                position: 'top',
+                                                labels: {
+                                                    color: '#F5F5F5',
+                                                    usePointStyle: true,
+                                                    pointStyle: 'circle',
+                                                    padding: 20
+                                                }
+                                            },
+                                            tooltip: {
+                                                backgroundColor: '#1A1A1A',
+                                                titleColor: '#D4FF58',
+                                                bodyColor: '#F5F5F5',
+                                                borderColor: '#333333',
+                                                borderWidth: 1,
+                                                padding: 10,
+                                                callbacks: {
+                                                    label: function(context) {
+                                                        return `${context.dataset.label}: ${context.raw} min`;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }}
+                                    data={{
+                                        labels: trendLabels,
+                                        datasets: [
+                                            { 
+                                                label: 'Repòs', 
+                                                data: trendHr.below, 
+                                                borderColor: '#758680', 
+                                                backgroundColor: 'rgba(117,134,128,0.3)', 
+                                                borderWidth: 2,
+                                                tension: 0.3, 
+                                                pointRadius: 3,
+                                                pointHoverRadius: 5
+                                            },
+                                            { 
+                                                label: 'Suau', 
+                                                data: trendHr.zone1, 
+                                                borderColor: '#A5A5A5', 
+                                                backgroundColor: 'rgba(165,165,165,0.3)', 
+                                                borderWidth: 2,
+                                                tension: 0.3, 
+                                                pointRadius: 3,
+                                                pointHoverRadius: 5
+                                            },
+                                            { 
+                                                label: 'Moderat', 
+                                                data: trendHr.zone2, 
+                                                borderColor: '#D4FF58', 
+                                                backgroundColor: 'rgba(212,255,88,0.3)', 
+                                                borderWidth: 2,
+                                                tension: 0.3, 
+                                                pointRadius: 3,
+                                                pointHoverRadius: 5
+                                            },
+                                            { 
+                                                label: 'Pic', 
+                                                data: trendHr.zone3, 
+                                                borderColor: '#F5F5F5', 
+                                                backgroundColor: 'rgba(245,245,245,0.3)', 
+                                                borderWidth: 2,
+                                                tension: 0.3, 
+                                                pointRadius: 3,
+                                                pointHoverRadius: 5
+                                            }
+                                        ]
+                                    }}
+                                />
+                            </div>
+                            </>
+                        ) : (
+                            <div className="no-data-message">No hi ha dades de tendències disponibles</div>
+                        )}
                         </>
                     )}
                 </div>
