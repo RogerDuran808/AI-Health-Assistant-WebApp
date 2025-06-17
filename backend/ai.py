@@ -1,6 +1,7 @@
 import os
 import json
 from functools import lru_cache
+from datetime import datetime
 import openai
 
 # --------------------------------------------------------------
@@ -218,7 +219,9 @@ def _get_macros_prompt(profile: dict) -> str:
 Ets un entrenador/a especialista en condicionament físic general. Genera un macrocicle complet de manteniment d'un usuari amb aquest perfil:
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon només amb la següent taula Markdown:
 
@@ -233,7 +236,9 @@ Respon només amb la següent taula Markdown:
 Ets un entrenador/a de força i hipertrofia. Dissenya un macrocicle de guany de massa muscular.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon només amb la taula:
 
@@ -248,7 +253,9 @@ Respon només amb la taula:
 Ets un/una preparador/a especialitzat/ada en powerlifting i força absoluta. Dissenya un macrocicle de força màxima.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon amb:
 
@@ -264,7 +271,9 @@ Respon amb:
 Ets un/una fisioterapeuta-trainer especialitzat/ada en mobilitat. Crea un programa progressiu de flexibilitat i mobilitat.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon amb la taula:
 
@@ -279,7 +288,9 @@ Respon amb la taula:
 Ets un/una readaptador/a esportiu/iva. Dissenya un programa de recuperació funcional per a {medical_conditions}.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon només amb:
 
@@ -295,7 +306,9 @@ Respon només amb:
 Ets un/una coach d'entrenament i nutrició per a definició corporal. Crea un macrocicle de pèrdua de greix.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon amb:
 
@@ -318,6 +331,7 @@ Respon amb:
     template_vars = {
         'injury': profile.get('medical_conditions', 'la seva condició actual'),
         'medical_conditions': profile.get('medical_conditions', 'cap'),
+        'current_date': profile.get('current_date', datetime.now().strftime("%A %d de %B del %Y").lower()),
         'profile': profile_json,
     }
 
@@ -326,13 +340,21 @@ Respon amb:
 
 def generate_macros(profile: dict) -> str:
     """Genera un macrocicle complet segons el perfil de l'usuari."""
-    prompt = _get_macros_prompt(profile)
+    # Get current date in the format "dilluns 17 de juny del 2025"
+    current_date = datetime.now()
+    formatted_date = current_date.strftime("%A %d de %B del %Y").lower()
+    
+    # Add current date to the profile for the prompt
+    profile_with_date = profile.copy()
+    profile_with_date['current_date'] = formatted_date
+    
+    prompt = _get_macros_prompt(profile_with_date)
 
     resposta = openai.chat.completions.create(
         model=MODEL_PLAN,
         messages=[
-            {"role": "system", "content": "Ets un/una entrenador/a expert/a en planificació esportiva."},
-            {"role": "user", "content": prompt},
+            {"role": "system", "content": "Ets un/una entrenador/a expert/a en planificació esportiva. Has de tenir en compte la data actual per adaptar el macrocicle."},
+            {"role": "user", "content": f"Data actual: {formatted_date}\n\n{prompt}"},
         ],
         max_tokens=800,
     )

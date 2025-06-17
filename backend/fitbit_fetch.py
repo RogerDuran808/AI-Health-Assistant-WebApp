@@ -94,6 +94,29 @@ def _init_db():
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         
+        # Crea la taula informes_ia si no existeix
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {REPORTS_TABLE_NAME} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            date TEXT NOT NULL,
+            text TEXT,
+            training_plan TEXT,
+            macrocycle TEXT,
+            macrocycle_week INTEGER,
+            macro_date TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+        
+        # Afegeix la columna macro_date si no existeix
+        cursor.execute(f"PRAGMA table_info({REPORTS_TABLE_NAME})")
+        columns = [column[1] for column in cursor.fetchall()]
+        if 'macro_date' not in columns:
+            cursor.execute(f"ALTER TABLE {REPORTS_TABLE_NAME} ADD COLUMN macro_date TEXT")
+        
+        conn.commit()
+        
         # Crea la taula amb les columnes RAW inicials si no existeix, definint 'date' com PRIMARY KEY
         cols_for_create = []
         if 'date' in COLUMN_DEFINITIONS: # Utilitza la definició de COLUMN_DEFINITIONS per a 'date'
@@ -467,27 +490,56 @@ def save_ia_report(text: str, user_id: str = "CJK8XS", training_plan: str | None
 
 
 def update_latest_training_plan(training_plan: str, user_id: str = "CJK8XS", week: int | None = None) -> None:
-    """Actualitza la darrera fila d'informes_ia amb el pla i la setmana del macrocicle."""
+    """Actualitza la darrera fila d'informes_ia amb el pla i la setmana del macrocicle.
+    Si no hi ha macrocycle definit, copia l'últim macrocycle disponible.
+    """
     _init_db()
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
+        
+        # Obté l'últim macrocycle si existeix
+        cursor.execute(
+            f"SELECT macrocycle FROM {REPORTS_TABLE_NAME} "
+            f"WHERE user_id = ? AND macrocycle IS NOT NULL "
+            f"ORDER BY date DESC LIMIT 1",
+            (user_id,),
+        )
+        last_macrocycle = cursor.fetchone()
+        
+        # Obté l'ID de l'últim informe per actualitzar-lo
         cursor.execute(
             f"SELECT id FROM {REPORTS_TABLE_NAME} WHERE user_id = ? ORDER BY date DESC LIMIT 1",
             (user_id,),
         )
         row = cursor.fetchone()
+        
         if row:
             if week is None:
-                cursor.execute(
-                    f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ? WHERE id = ?",
-                    (training_plan, row[0]),
-                )
+                if last_macrocycle:
+                    # Actualitza el pla d'entrenament i copia l'últim macrocycle
+                    cursor.execute(
+                        f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ?, macrocycle = ? WHERE id = ?",
+                        (training_plan, last_macrocycle[0], row[0]),
+                    )
+                else:
+                    # No hi ha macrocycle previ, actualitza només el training_plan
+                    cursor.execute(
+                        f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ? WHERE id = ?",
+                        (training_plan, row[0]),
+                    )
             else:
-                cursor.execute(
-                    f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ?, macrocycle_week = ? WHERE id = ?",
-                    (training_plan, week, row[0]),
-                )
+                # Actualitza el training_plan i la setmana del macrocycle
+                if last_macrocycle:
+                    cursor.execute(
+                        f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ?, macrocycle_week = ?, macrocycle = ? WHERE id = ?",
+                        (training_plan, week, last_macrocycle[0], row[0]),
+                    )
+                else:
+                    cursor.execute(
+                        f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ?, macrocycle_week = ? WHERE id = ?",
+                        (training_plan, week, row[0]),
+                    )
             conn.commit()
     except sqlite3.Error as e:
         print(f"[update_latest_training_plan] Error: {e}")
@@ -549,12 +601,13 @@ def save_macrocycle(macrocycle: str, user_id: str = "CJK8XS") -> None:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute(
-            f"INSERT INTO {REPORTS_TABLE_NAME} (user_id, date, macrocycle, macrocycle_week) VALUES (?, ?, ?, ?)",
+            f"INSERT INTO {REPORTS_TABLE_NAME} (user_id, date, macrocycle, macrocycle_week, macro_date) VALUES (?, ?, ?, ?, ?)",
             (
                 user_id,
                 dt.datetime.now().isoformat(timespec="seconds"),
                 macrocycle,
                 1,
+                dt.datetime.now().isoformat(timespec="seconds"),
             ),
         )
         conn.commit()

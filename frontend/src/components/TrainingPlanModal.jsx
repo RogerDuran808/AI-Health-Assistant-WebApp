@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './TrainingPlanModal.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faDumbbell, faPlus, faExclamationTriangle, faChevronDown, faChevronUp, faTable } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faDumbbell, faPlus, faExclamationTriangle, faChevronDown, faChevronUp, faTable, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import useTrainingPlan from '../hooks/useTrainingPlan';
@@ -17,6 +17,8 @@ const TrainingPlanModal = ({ isOpen, onClose }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showMacrocycleTable, setShowMacrocycleTable] = useState(false);
   const [isNewMacrocycle, setIsNewMacrocycle] = useState(false);
+  const [currentStep, setCurrentStep] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
   
   // Reset new macrocycle flag when modal is closed
   useEffect(() => {
@@ -30,24 +32,49 @@ const TrainingPlanModal = ({ isOpen, onClose }) => {
   };
 
   const confirmNewMacrocycle = async () => {
-    // Genera el nou macrocicle
-    await generate();
+    try {
+      // Fase 1: Generació del Macrocicle
+      setCurrentStep('🔍 Analitzant dades i generant estructura del macrocicle...');
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate processing time
+      
+      setCurrentStep('📊 Generant fases i càrregues d\'entrenament...');
+      await generate();
 
-    // Obté la recomanació del dia a partir de les dades de Fitbit
-    const recText = await generateRec(fitbitData || {});
+      // Fase 2: Generació de la Recomanació
+      setCurrentStep('📈 Analitzant dades de salut i activitat...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setCurrentStep('💡 Creant recomanació personalitzada...');
+      const recText = await generateRec(fitbitData || {});
 
-    // Genera el pla setmanal utilitzant la recomanació anterior
-    await generatePlan({
-      fitbit: fitbitData || {},
-      recommendation: recText || "",
-    });
+      // Fase 3: Generació del Pla Setmanal
+      setCurrentStep('📅 Planificant sessions d\'entrenament...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setCurrentStep('🎯 Optimitzant càrregues i recuperació...');
+      await generatePlan({
+        fitbit: fitbitData || {},
+        recommendation: recText || "",
+      });
 
-    // Refresca el pla per mostrar l'actualització
-    await refetch();
-
-    setShowConfirm(false);
-    setShowMacrocycleTable(true);
-    setIsNewMacrocycle(true);
+      // Finalització
+      setCurrentStep('✅ Acabant els darrers detalls...');
+      await refetch();
+      
+      setShowConfirm(false);
+      setShowMacrocycleTable(true);
+      setIsNewMacrocycle(true);
+      
+      // Mostrar missatge d'èxit breument
+      setCurrentStep('🎉 Macrocicle generat amb èxit!');
+      await new Promise(resolve => setTimeout(resolve, 1500));
+    } catch (error) {
+      console.error('Error generating macrocycle:', error);
+      setCurrentStep('❌ S\'ha produït un error. Si us plau, torna-ho a provar.');
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    } finally {
+      setCurrentStep('');
+    }
   };
 
   if (!isOpen) return null;
@@ -147,7 +174,12 @@ const TrainingPlanModal = ({ isOpen, onClose }) => {
                 onClick={confirmNewMacrocycle}
                 disabled={macroLoading}
               >
-                {macroLoading ? 'Generant...' : 'Confirmar'}
+                {macroLoading ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} spin className="btn-icon" />
+                    {currentStep || 'Processant...'}
+                  </>
+                ) : 'Confirmar'}
               </button>
             </div>
           </div>

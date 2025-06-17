@@ -35,19 +35,27 @@ const IaReportsModal = ({ isOpen, onClose }) => {
           )}
           {!loading && !error && reports.length > 0 && (
             <ul className="reports-list">
-              {reports.map((r, idx) => (
-                <li key={idx} className="report-item">
-                  <div className="report-date">
-                    {new Date(r.date).toLocaleString('ca-ES')}
-                  </div>
-                  <div className={`report-text ${expanded[idx] ? 'expanded' : 'collapsed'}`}> 
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{r.text}</ReactMarkdown>
-                  </div>
-                  <button className="toggle-report" onClick={() => toggleExpanded(idx)}>
-                    {expanded[idx] ? 'Mostra menys' : 'Mostra més'}
-                  </button>
-                </li>
-              ))}
+              {reports
+                .filter(r => r.text && r.text.trim() !== '') // Only show reports with content
+                .map((r, idx) => (
+                  <li key={idx} className="report-item">
+                    <div className="report-date">
+                      {new Date(r.date).toLocaleDateString('ca-ES', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </div>
+                    <div className={`report-text ${expanded[idx] ? 'expanded' : 'collapsed'}`}> 
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{r.text}</ReactMarkdown>
+                    </div>
+                    <button className="toggle-report" onClick={() => toggleExpanded(idx)}>
+                      {expanded[idx] ? 'Mostra menys' : 'Mostra més'}
+                    </button>
+                  </li>
+                ))}
             </ul>
           )}
         </div>
