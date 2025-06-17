@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut, Line } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
 import './SleepStagesWidget.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faClock, faBed, faPercent, faEye } from '@fortawesome/free-solid-svg-icons';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 
 // Format numeric
 function formatMinutesToHoursAndMinutes(totalMinutes) {
@@ -15,7 +15,7 @@ function formatMinutesToHoursAndMinutes(totalMinutes) {
     return `${hours > 0 ? hours + 'h ' : ''}${minutes}m`;
 }
 
-const SleepStagesWidget = ({ stagesData, metricsData }) => {
+const SleepStagesWidget = ({ stagesData, metricsData, trendData }) => {
     const [activeTab, setActiveTab] = useState('fases'); // 'fases', 'metriques', 'tendencies'
 
     // Default to an empty array if stagesData is not provided or not an array
@@ -83,6 +83,36 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
 
     const defaultMetrics = { totalTimeAsleep: 0, timeInBed: 0, efficiency: null, totalTimeAwake: 0 };
     const currentMetrics = (metricsData && Object.keys(metricsData).length > 0) ? metricsData : defaultMetrics;
+
+    // Dades de tendència per a les fases del son
+    const trendLabels = trendData ? trendData.map(d => d.date.slice(5)) : [];
+    const trendDeep = trendData ? trendData.map(d => (d.sleep_deep_ratio || 0) * (d.minutesAsleep + d.minutesAwake)) : [];
+    const trendLight = trendData ? trendData.map(d => (d.sleep_light_ratio || 0) * (d.minutesAsleep + d.minutesAwake)) : [];
+    const trendRem = trendData ? trendData.map(d => (d.sleep_rem_ratio || 0) * (d.minutesAsleep + d.minutesAwake)) : [];
+    const trendAwake = trendData ? trendData.map(d => d.minutesAwake || 0) : [];
+    const trendChartData = {
+        labels: trendLabels,
+        datasets: [
+            { label: 'Profund', data: trendDeep, borderColor: '#D4FF58', tension: 0.3 },
+            { label: 'Lleuger', data: trendLight, borderColor: '#758680', tension: 0.3 },
+            { label: 'REM', data: trendRem, borderColor: '#F5F5F5', tension: 0.3 },
+            { label: 'Despert', data: trendAwake, borderColor: '#A5A5A5', tension: 0.3 },
+        ],
+    };
+
+    const trendChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
+                ticks: { color: '#758680' },
+            },
+            x: { grid: { display: false }, ticks: { color: '#F5F5F5' } },
+        },
+        plugins: { legend: { display: false } },
+    };
 
     return (
         <div className="widget sleep-widget">
@@ -163,8 +193,8 @@ const SleepStagesWidget = ({ stagesData, metricsData }) => {
                 )}
 
                 {activeTab === 'tendencies' && (
-                    <div className="sleep-tab-content active" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
-                        <p>Pròximament...</p>
+                    <div className="sleep-tab-content active" style={{ position: 'relative', minHeight: '200px' }}>
+                        <Line options={trendChartOptions} data={trendChartData} />
                     </div>
                 )}
             </div>

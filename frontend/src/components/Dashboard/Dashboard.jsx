@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useFitbitData from '../../hooks/useFitbitData';
+import useFitbitTrends from '../../hooks/useFitbitTrends';
 import useUserProfile from '../../hooks/useUserProfile';
 import './Dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,6 +29,7 @@ export default function Dashboard() {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
   const { data: fitbitData, loading: isLoading, error } = useFitbitData();
+  const { data: trendData } = useFitbitTrends();
   const { data: profileData, refetch: refetchProfile } = useUserProfile();
 
   // Mostrem la data d'ahir amb la primera lletra en majúscula
@@ -221,14 +223,14 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="widget activity-charts-widget">
-                <ActivityWidget type="chartTabs" intensityData={intensityDataForChart} hrZonesData={hrZonesDataForChart} />
+                <ActivityWidget type="chartTabs" intensityData={intensityDataForChart} hrZonesData={hrZonesDataForChart} trendData={trendData} />
               </div>
               <BiomarkersWidget biomarkersData={biomarkersForWidget} />
             </div>
 
             {/* Column 3: Sleep Analysis i Condicions Mèdiques */}
             <div className="dashboard-section">
-              <SleepStagesWidget metricsData={sleepMetricsForWidget} stagesData={sleepStagesForWidget} />
+              <SleepStagesWidget metricsData={sleepMetricsForWidget} stagesData={sleepStagesForWidget} trendData={trendData} />
               <MedicalConditionsWidget conditions={medicalConditions} />
             </div>
           </main>

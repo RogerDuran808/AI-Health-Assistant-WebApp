@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
   BarElement,
   Title,
   Tooltip,
@@ -17,6 +19,8 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend
@@ -32,7 +36,7 @@ const formatMinutesToHoursAndMinutes = (totalMinutes) => {
 
 };
 
-const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
+const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendData }) => {
     const [activeTab, setActiveTab] = useState('activity'); // 'activity', 'hrZones', or 'tendencia'
 
     if (type === 'chartTabs') {
@@ -168,6 +172,95 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
                 },
             ],
         };
+
+        // Dades de tendència per a les intensitats
+        const trendLabels = trendData ? trendData.map(d => d.date.slice(5)) : [];
+        const trendIntensityData = {
+            labels: trendLabels,
+            datasets: [
+                {
+                    label: 'Intensa',
+                    data: trendData ? trendData.map(d => d.very_active_minutes) : [],
+                    borderColor: '#F5F5F5',
+                    tension: 0.3
+                },
+                {
+                    label: 'Moderada',
+                    data: trendData ? trendData.map(d => d.moderately_active_minutes) : [],
+                    borderColor: '#D4FF58',
+                    tension: 0.3
+                },
+                {
+                    label: 'Lleu',
+                    data: trendData ? trendData.map(d => d.lightly_active_minutes) : [],
+                    borderColor: '#A5A5A5',
+                    tension: 0.3
+                },
+                {
+                    label: 'Sedentari',
+                    data: trendData ? trendData.map(d => d.sedentary_minutes) : [],
+                    borderColor: '#758680',
+                    tension: 0.3
+                },
+            ],
+        };
+
+        // Dades de tendència per a les zones de FC
+        const trendHrData = {
+            labels: trendLabels,
+            datasets: [
+                {
+                    label: 'Repòs',
+                    data: trendData ? trendData.map(d => d.minutes_below_default_zone_1) : [],
+                    borderColor: '#758680',
+                    tension: 0.3
+                },
+                {
+                    label: 'Zona 1',
+                    data: trendData ? trendData.map(d => d.minutes_in_default_zone_1) : [],
+                    borderColor: '#A5A5A5',
+                    tension: 0.3
+                },
+                {
+                    label: 'Zona 2',
+                    data: trendData ? trendData.map(d => d.minutes_in_default_zone_2) : [],
+                    borderColor: '#D4FF58',
+                    tension: 0.3
+                },
+                {
+                    label: 'Zona 3',
+                    data: trendData ? trendData.map(d => d.minutes_in_default_zone_3) : [],
+                    borderColor: '#F5F5F5',
+                    tension: 0.3
+                },
+            ],
+        };
+
+        const trendChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(117, 134, 128, 0.2)',
+                        drawBorder: false,
+                    },
+                    ticks: {
+                        color: '#758680',
+                    },
+                },
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        color: '#F5F5F5',
+                    },
+                },
+            },
+            plugins: { legend: { display: false } },
+        };
         
         // Més espai vertical perquè el gràfic es vegi millor
         return (
@@ -196,9 +289,19 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData }) => {
                     {activeTab === 'hrZones' && hrZonesData && (
                         <Bar options={commonChartOptions} data={hrZonesChartData} />
                     )}
-                    {activeTab === 'tendencia' && (
+                    {activeTab === 'tendencia' && trendData && (
+                        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+                            <div style={{ position: 'relative', flex: 1 }}>
+                                <Line options={trendChartOptions} data={trendIntensityData} />
+                            </div>
+                            <div style={{ position: 'relative', flex: 1 }}>
+                                <Line options={trendChartOptions} data={trendHrData} />
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'tendencia' && !trendData && (
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                            <p>Pròximament...</p>
+                            <p>Carregant tendències...</p>
                         </div>
                     )}
                 </div>

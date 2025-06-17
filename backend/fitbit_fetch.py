@@ -24,6 +24,7 @@ MODEL_PATH = BASE_DIR / 'models' / 'BalancedRandomForest_TIRED.joblib'
 TABLE_NAME = "fitbit_daily_data"
 PROFILE_TABLE_NAME = "user_profile"
 REPORTS_TABLE_NAME = "informes_ia"
+TREND_TABLE_NAME = "fitbit_last_7_days"
 
 # --- Definició Completa de les Columnes de la Base de Dades ---
 # Inclou dades crues, de feature engineering i prediccions.
@@ -136,6 +137,11 @@ def _init_db():
         final_cols_sql = ", ".join(cols_for_create)
         create_table_sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} ({final_cols_sql})"
         cursor.execute(create_table_sql)
+
+        # Taula per a les dades dels darrers 7 dies
+        cursor.execute(
+            f"CREATE TABLE IF NOT EXISTS {TREND_TABLE_NAME} AS SELECT * FROM {TABLE_NAME} WHERE 1=0"
+        )
         # conn.commit() # Commit later after all table creations
 
         # Create user_profile table
@@ -313,6 +319,21 @@ def _update_features_in_db(df: pd.DataFrame):
             conn.close()
 
 
+def _update_trend_table(df: pd.DataFrame):
+    """Actualitza la taula amb les dades dels darrers 7 dies."""
+    if df.empty:
+        return
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        last7 = df.sort_values("date").tail(7)
+        last7.to_sql(TREND_TABLE_NAME, conn, if_exists="replace", index=False)
+    except Exception as e:
+        print(f"[_update_trend_table] Error actualitzant la taula de tendències: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
 # --- Funcions de Processament i Predicció ---
 
 def _process_data_and_predict(df: pd.DataFrame) -> pd.DataFrame:
@@ -389,6 +410,7 @@ def fetch_fitbit_data() -> list[dict]:
 
         # 5. Actualitzar la BD amb les noves features i prediccions
         _update_features_in_db(df_processed)
+        _update_trend_table(df_processed)
 
         # 6. Seleccionar i retornar només les dades d'ahir
         yesterday_data = df_processed[df_processed['date'] == yesterday_str]
@@ -423,6 +445,24 @@ def fetch_user_profile(user_id: str = "CJK8XS") -> dict:
     except sqlite3.Error as e:
         print(f"[fetch_user_profile] Error: {e}")
         return {}
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def fetch_last_seven_days() -> list[dict]:
+    """Recupera les dades processades dels darrers 7 dies."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        df = pd.read_sql_query(
+            f"SELECT * FROM {TREND_TABLE_NAME} ORDER BY date ASC",
+            conn,
+        )
+        return df.to_dict(orient="records") if not df.empty else []
+    except sqlite3.Error as e:
+        print(f"[fetch_last_seven_days] Error: {e}")
+        return []
     finally:
         if 'conn' in locals() and conn:
             conn.close()

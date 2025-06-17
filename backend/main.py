@@ -9,6 +9,7 @@ from fitbit_fetch import (
     save_user_profile,
     save_ia_report,
     fetch_ia_reports,
+    fetch_last_seven_days,
     update_latest_training_plan,
     fetch_latest_training_plan,
     save_macrocycle,
@@ -100,6 +101,16 @@ def fitbit_data():
         return JSONResponse(content=payload)
     except Exception as exc:
         log.exception("/fitbit-data failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/fitbit-trends")
+def fitbit_trends():
+    try:
+        payload = fetch_last_seven_days()
+        return JSONResponse(content=payload)
+    except Exception as exc:
+        log.exception("/fitbit-trends failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 @app.get("/user-profile")
