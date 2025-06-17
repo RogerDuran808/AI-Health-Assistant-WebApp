@@ -45,6 +45,12 @@ const SleepStagesWidget = ({ stagesData, metricsData, trendData = [], trendLabel
         return col;
     });
 
+    // Map per associar cada fase amb el seu color resolt
+    const colorMap = safeStages.reduce((acc, stage, idx) => {
+        acc[stage.name] = resolvedColors[idx];
+        return acc;
+    }, {});
+
     const chartData = {
         labels: safeStages.map(s => s.name),
         datasets: [{
@@ -170,18 +176,25 @@ const SleepStagesWidget = ({ stagesData, metricsData, trendData = [], trendLabel
                                     responsive: true,
                                     maintainAspectRatio: false,
                                     scales: {
-                                        y: { beginAtZero: true, grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false } },
-                                        x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
+                                        y: {
+                                            beginAtZero: true,
+                                            grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
+                                            ticks: { color: '#F5F5F5', font: { size: 10 } }
+                                        },
+                                        x: {
+                                            grid: { display: false },
+                                            ticks: { color: '#F5F5F5', font: { size: 10 } }
+                                        }
                                     },
                                     plugins: { legend: { display: false } }
                                 }}
                                 data={{
                                     labels: trendLabels,
                                     datasets: [
-                                        { label: 'Profund', data: trendData.map(d => d.deep), borderColor: 'var(--accent-color)', backgroundColor: 'rgba(212,255,88,0.3)', tension: 0.3 },
-                                        { label: 'Lleuger', data: trendData.map(d => d.light), borderColor: 'var(--text-secondary)', backgroundColor: 'rgba(117,134,128,0.3)', tension: 0.3 },
-                                        { label: 'REM', data: trendData.map(d => d.rem), borderColor: 'var(--text-primary)', backgroundColor: 'rgba(245,245,245,0.3)', tension: 0.3 },
-                                        { label: 'Despert', data: trendData.map(d => d.awake), borderColor: 'var(--border-color)', backgroundColor: 'rgba(51,51,51,0.3)', tension: 0.3 }
+                                        { label: 'Profund', data: trendData.map(d => d.deep), borderColor: colorMap['Profund'], backgroundColor: `${colorMap['Profund']}33`, tension: 0.3 },
+                                        { label: 'Lleuger', data: trendData.map(d => d.light), borderColor: colorMap['Lleuger'], backgroundColor: `${colorMap['Lleuger']}33`, tension: 0.3 },
+                                        { label: 'REM', data: trendData.map(d => d.rem), borderColor: colorMap['REM'], backgroundColor: `${colorMap['REM']}33`, tension: 0.3 },
+                                        { label: 'Despert', data: trendData.map(d => d.awake), borderColor: colorMap['Despert'], backgroundColor: `${colorMap['Despert']}33`, tension: 0.3 }
                                     ]
                                 }}
                             />

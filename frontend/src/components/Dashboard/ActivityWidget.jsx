@@ -204,7 +204,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                         intensityData.moderate,
                         intensityData.intense,
                     ] : [],
-                    backgroundColor: ['#758680', '#A5A5A5', '#D4FF58', '#F5F5F5'],
+                    backgroundColor: ['#758680', '#333333', '#D4FF58', '#F5F5F5'],
                     borderRadius: 4,
                     borderWidth: 0,
                     barPercentage: 0.6,
@@ -225,7 +225,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                         hrZonesData.inZone2,
                         hrZonesData.inZone3,
                     ] : [],
-                    backgroundColor: ['#758680', '#A5A5A5', '#D4FF58', '#F5F5F5'], // Palette colors
+                    backgroundColor: ['#758680', '#333333', '#D4FF58', '#F5F5F5'], // Palette colors
                     borderRadius: 4,
                     borderWidth: 0,
                     barPercentage: 0.6,
@@ -267,7 +267,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                             <div className="loading-message">Carregant dades de tendències...</div>
                         ) : error ? (
                             <div className="error-message">Error en carregar les dades de tendències</div>
-                        ) : trendLabels.length > 0 ? (
+                        ) : trendLabelsState.length > 0 ? (
                             <>
                             <div className="trend-chart-container">
                                 <h4>Activitat Diària (minuts)</h4>
@@ -313,11 +313,11 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                         }
                                     }}
                                     data={{
-                                        labels: trendLabels,
+                                        labels: trendLabelsState,
                                         datasets: [
-                                            { 
-                                                label: 'Sedentari', 
-                                                data: trendIntensity.sedentary, 
+                                            {
+                                                label: 'Sedentari',
+                                                data: trendIntensityState.sedentary,
                                                 borderColor: '#758680', 
                                                 backgroundColor: 'rgba(117,134,128,0.3)', 
                                                 borderWidth: 2,
@@ -326,18 +326,18 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 pointHoverRadius: 5
                                             },
                                             { 
-                                                label: 'Lleu', 
-                                                data: trendIntensity.light, 
-                                                borderColor: '#A5A5A5', 
-                                                backgroundColor: 'rgba(165,165,165,0.3)', 
+                                                label: 'Lleu',
+                                                data: trendIntensityState.light,
+                                                borderColor: '#333333',
+                                                backgroundColor: 'rgba(51,51,51,0.3)',
                                                 borderWidth: 2,
                                                 tension: 0.3, 
                                                 pointRadius: 3,
                                                 pointHoverRadius: 5
                                             },
                                             { 
-                                                label: 'Moderat', 
-                                                data: trendIntensity.moderate, 
+                                                label: 'Moderat',
+                                                data: trendIntensityState.moderate,
                                                 borderColor: '#D4FF58', 
                                                 backgroundColor: 'rgba(212,255,88,0.3)', 
                                                 borderWidth: 2,
@@ -346,8 +346,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 pointHoverRadius: 5
                                             },
                                             { 
-                                                label: 'Intens', 
-                                                data: trendIntensity.intense, 
+                                                label: 'Intens',
+                                                data: trendIntensityState.intense,
                                                 borderColor: '#F5F5F5', 
                                                 backgroundColor: 'rgba(245,245,245,0.3)', 
                                                 borderWidth: 2,
@@ -403,11 +403,11 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                         }
                                     }}
                                     data={{
-                                        labels: trendLabels,
+                                        labels: trendLabelsState,
                                         datasets: [
-                                            { 
-                                                label: 'Repòs', 
-                                                data: trendHr.below, 
+                                            {
+                                                label: 'Repòs',
+                                                data: trendHrState.below,
                                                 borderColor: '#758680', 
                                                 backgroundColor: 'rgba(117,134,128,0.3)', 
                                                 borderWidth: 2,
@@ -416,18 +416,18 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 pointHoverRadius: 5
                                             },
                                             { 
-                                                label: 'Suau', 
-                                                data: trendHr.zone1, 
-                                                borderColor: '#A5A5A5', 
-                                                backgroundColor: 'rgba(165,165,165,0.3)', 
+                                                label: 'Suau',
+                                                data: trendHrState.zone1,
+                                                borderColor: '#333333',
+                                                backgroundColor: 'rgba(51,51,51,0.3)',
                                                 borderWidth: 2,
                                                 tension: 0.3, 
                                                 pointRadius: 3,
                                                 pointHoverRadius: 5
                                             },
                                             { 
-                                                label: 'Moderat', 
-                                                data: trendHr.zone2, 
+                                                label: 'Moderat',
+                                                data: trendHrState.zone2,
                                                 borderColor: '#D4FF58', 
                                                 backgroundColor: 'rgba(212,255,88,0.3)', 
                                                 borderWidth: 2,
@@ -436,8 +436,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 pointHoverRadius: 5
                                             },
                                             { 
-                                                label: 'Pic', 
-                                                data: trendHr.zone3, 
+                                                label: 'Pic',
+                                                data: trendHrState.zone3,
                                                 borderColor: '#F5F5F5', 
                                                 backgroundColor: 'rgba(245,245,245,0.3)', 
                                                 borderWidth: 2,
