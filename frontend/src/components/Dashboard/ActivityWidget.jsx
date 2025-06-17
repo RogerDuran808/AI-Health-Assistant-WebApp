@@ -36,7 +36,7 @@ const formatMinutesToHoursAndMinutes = (totalMinutes) => {
 
 };
 
-const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = [], trendIntensity = [], trendHr = [] }) => {
+const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = [], trendIntensity = {}, trendHr = {} }) => {
     const [activeTab, setActiveTab] = useState('activity'); // 'activity', 'hrZones', or 'tendencia'
 
     if (type === 'chartTabs') {
@@ -201,38 +201,53 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                         <Bar options={commonChartOptions} data={hrZonesChartData} />
                     )}
                     {activeTab === 'tendencia' && (
+                        <>
+                        {/* Gràfiques de tendència setmanal */}
                         <div className="trend-chart-container">
-                        <Line
-                            options={{
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    y: { beginAtZero: true, grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false } },
-                                    x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
-                                },
-                                plugins: { legend: { display: false } }
-                            }}
-                            data={{
-                                labels: trendLabels,
-                                datasets: [
-                                    {
-                                        label: 'Minuts actius',
-                                        data: trendIntensity,
-                                        borderColor: '#D4FF58',
-                                        backgroundColor: 'rgba(212,255,88,0.3)',
-                                        tension: 0.3,
+                            <Line
+                                options={{
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: { beginAtZero: true, grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false } },
+                                        x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
                                     },
-                                    {
-                                        label: 'Zones 2-3',
-                                        data: trendHr,
-                                        borderColor: '#A5A5A5',
-                                        backgroundColor: 'rgba(165,165,165,0.3)',
-                                        tension: 0.3,
-                                    }
-                                ]
-                            }}
-                        />
+                                    plugins: { legend: { display: false } }
+                                }}
+                                data={{
+                                    labels: trendLabels,
+                                    datasets: [
+                                        { label: 'Sedentari', data: trendIntensity.sedentary, borderColor: '#758680', backgroundColor: 'rgba(117,134,128,0.3)', tension: 0.3, pointRadius: 3 },
+                                        { label: 'Lleu', data: trendIntensity.light, borderColor: '#A5A5A5', backgroundColor: 'rgba(165,165,165,0.3)', tension: 0.3, pointRadius: 3 },
+                                        { label: 'Moderat', data: trendIntensity.moderate, borderColor: '#D4FF58', backgroundColor: 'rgba(212,255,88,0.3)', tension: 0.3, pointRadius: 3 },
+                                        { label: 'Intens', data: trendIntensity.intense, borderColor: '#F5F5F5', backgroundColor: 'rgba(245,245,245,0.3)', tension: 0.3, pointRadius: 3 }
+                                    ]
+                                }}
+                            />
                         </div>
+                        <div className="trend-chart-container">
+                            <Line
+                                options={{
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: { beginAtZero: true, grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false } },
+                                        x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
+                                    },
+                                    plugins: { legend: { display: false } }
+                                }}
+                                data={{
+                                    labels: trendLabels,
+                                    datasets: [
+                                        { label: 'Repòs', data: trendHr.below, borderColor: '#758680', backgroundColor: 'rgba(117,134,128,0.3)', tension: 0.3, pointRadius: 3 },
+                                        { label: 'Suau', data: trendHr.zone1, borderColor: '#A5A5A5', backgroundColor: 'rgba(165,165,165,0.3)', tension: 0.3, pointRadius: 3 },
+                                        { label: 'Moderat', data: trendHr.zone2, borderColor: '#D4FF58', backgroundColor: 'rgba(212,255,88,0.3)', tension: 0.3, pointRadius: 3 },
+                                        { label: 'Pic', data: trendHr.zone3, borderColor: '#F5F5F5', backgroundColor: 'rgba(245,245,245,0.3)', tension: 0.3, pointRadius: 3 }
+                                    ]
+                                }}
+                            />
+                        </div>
+                        </>
                     )}
                 </div>
             </div>
