@@ -11,8 +11,10 @@ from fitbit_fetch import (
     fetch_ia_reports,
     update_latest_training_plan,
     fetch_latest_training_plan,
+    save_macrocycle,
+    fetch_latest_macrocycle,
 )
-from ai import get_recommendation, get_pla_estructurat
+from ai import get_recommendation, get_pla_estructurat, generate_macros
 
 import numpy as np
 import logging
@@ -128,10 +130,37 @@ def recommend(payload: dict):
     """Genera una recomanació personalitzada a partir de les dades Fitbit."""
     try:
         text = get_recommendation(payload)
-        save_ia_report(text, user_id=payload.get("user_id", "default"))
+        save_ia_report(text, user_id=payload.get("user_id", "CJK8XS"))
         return {"text": text}
     except Exception as exc:
         log.exception("/recommend failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/macrocycle")
+def generate_macrocycle_endpoint(payload: dict):
+    """Genera i desa un nou macrocicle."""
+    try:
+        user_id = payload.get("user_id", "CJK8XS")
+        profile = fetch_user_profile(user_id)
+        if not profile:
+            profile = fetch_user_profile("default")
+        macro = generate_macros(profile)
+        save_macrocycle(macro, user_id=user_id)
+        return {"text": macro}
+    except Exception as exc:
+        log.exception("/macrocycle failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/macrocycle")
+def get_macrocycle(user_id: str = "CJK8XS"):
+    """Retorna l'últim macrocicle guardat."""
+    try:
+        macro, _ = fetch_latest_macrocycle(user_id)
+        return {"text": macro}
+    except Exception as exc:
+        log.exception("/macrocycle GET failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
@@ -141,20 +170,30 @@ def training_plan(payload: dict):
     try:
         # Obté l'user_id preferentment de les dades Fitbit
         fitbit = payload.get("fitbit", {})
-        user_id = fitbit.get("user_id", payload.get("user_id", "default"))
+        user_id = fitbit.get("user_id", payload.get("user_id", "CJK8XS"))
 
         # Recupera el perfil guardat (si no existeix, usa el perfil per defecte)
         profile = fetch_user_profile(user_id)
         if not profile:
             profile = fetch_user_profile("default")
 
+        macro, macro_date = fetch_latest_macrocycle(user_id)
+        if macro_date:
+            from datetime import datetime
+            start_dt = datetime.fromisoformat(macro_date)
+            week = (datetime.now() - start_dt).days // 7 + 1
+        else:
+            week = 1
+            macro = ""
+
         text = get_pla_estructurat(
             fitbit,
             payload.get("recommendation", ""),
             profile,
+            macro,
+            week,
         )
-
-        update_latest_training_plan(text, user_id=user_id)
+        update_latest_training_plan(text, user_id=user_id, week=week)
         return {"text": text}
     except Exception as exc:
         log.exception("/training-plan failed")

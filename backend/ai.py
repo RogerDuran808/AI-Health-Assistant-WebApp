@@ -1,6 +1,7 @@
 import os
 import json
 from functools import lru_cache
+from datetime import datetime
 import openai
 
 # --------------------------------------------------------------
@@ -79,9 +80,15 @@ def get_recommendation(fitbit_dict: dict) -> str:
 
 
 
-def _pla_key(fitbit_dict: dict, recomanacions: str, profile: dict) -> str:
+def _pla_key(fitbit_dict: dict, recomanacions: str, profile: dict, macrocycle: str, week: int) -> str:
     """Serialitza els arguments per a la memòria."""
-    return json.dumps({"fitbit": fitbit_dict, "rec": recomanacions, "profile": profile}, sort_keys=True)
+    return json.dumps({
+        "fitbit": fitbit_dict,
+        "rec": recomanacions,
+        "profile": profile,
+        "macro": macrocycle,
+        "week": week,
+    }, sort_keys=True)
 
 
 @lru_cache(maxsize=32)
@@ -91,7 +98,9 @@ def _cached_pla(payload_key: str) -> str:
     fitbit_dict = data["fitbit"]
     recomanacions = data["rec"]
     profile = data["profile"]
-    prompt = f""" 
+    macrocycle = data["macro"]
+    week = data["week"]
+    prompt = f"""
 Disposes de la informació següent de l'usuari:
 
 ────────────────────────────────────────────────────────  
@@ -102,12 +111,12 @@ Disposes de la informació següent de l'usuari:
 {profile}  
 ────────────────────────────────────────────────────────  
 
-## Objectiu  
-Crear la programació *òptima* per a la **setmana <setmana_actual>** del macrocicle,  
-respectant condicions mèdiques i disponibilitat.
+ ## Objectiu
+Crear la programació *òptima* per a la **setmana {week}** del macrocicle,
+respectant condicions mèdiques i disponibilitat, tenir en compte els dies de entrenament (training_days_per_week) i els minuts per sessió que vol fer l'usuari (training_minutes_per_session).
 
 ## Context del macrocicle
-<taula_macrocicle>
+{macrocycle}
 
 * **Idioma:** català
 * **Unitats:** sistema mètric · intensitat en %1RM o RPE (cardio en zones FC o RPE)
@@ -174,7 +183,7 @@ respectant condicions mèdiques i disponibilitat.
 | …        | …             | …          | …           | …     |
 | …        | …             | …          | …           | …     |
 
-*(Repeteix la mateixa estructura per Dijous, Divendres, Dissabte, Diumenge segons correspongui.)*
+*(Repeteix la mateixa estructura per Dijous, Divendres, Dissabte, Diumenge segons correspongui.)* En el cas de ser un dia de descans no posar el dia en el punt 4 (Rutina diària)
 
 """
 
@@ -190,9 +199,15 @@ respectant condicions mèdiques i disponibilitat.
     return resposta.choices[0].message.content.strip()
 
 
-def get_pla_estructurat(fitbit_dict: dict, recomanacions: str, profile: dict):
-    """Genera un pla d'entrenament setmanal estructurat i personalitzat segons el macrocicle generat."""
-    return _cached_pla(_pla_key(fitbit_dict, recomanacions, profile))
+def get_pla_estructurat(
+    fitbit_dict: dict,
+    recomanacions: str,
+    profile: dict,
+    macrocycle: str,
+    week: int,
+) -> str:
+    """Genera un pla setmanal personalitzat utilitzant el macrocicle."""
+    return _cached_pla(_pla_key(fitbit_dict, recomanacions, profile, macrocycle, week))
 
 
 def _get_macros_prompt(profile: dict) -> str:
@@ -204,7 +219,9 @@ def _get_macros_prompt(profile: dict) -> str:
 Ets un entrenador/a especialista en condicionament físic general. Genera un macrocicle complet de manteniment d'un usuari amb aquest perfil:
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon només amb la següent taula Markdown:
 
@@ -219,7 +236,9 @@ Respon només amb la següent taula Markdown:
 Ets un entrenador/a de força i hipertrofia. Dissenya un macrocicle de guany de massa muscular.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon només amb la taula:
 
@@ -234,7 +253,9 @@ Respon només amb la taula:
 Ets un/una preparador/a especialitzat/ada en powerlifting i força absoluta. Dissenya un macrocicle de força màxima.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon amb:
 
@@ -250,7 +271,9 @@ Respon amb:
 Ets un/una fisioterapeuta-trainer especialitzat/ada en mobilitat. Crea un programa progressiu de flexibilitat i mobilitat.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon amb la taula:
 
@@ -265,7 +288,9 @@ Respon amb la taula:
 Ets un/una readaptador/a esportiu/iva. Dissenya un programa de recuperació funcional per a {medical_conditions}.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon només amb:
 
@@ -281,7 +306,9 @@ Respon només amb:
 Ets un/una coach d'entrenament i nutrició per a definició corporal. Crea un macrocicle de pèrdua de greix.
 {profile}
 
-Durada total del macrocicle: 9 mesos
+Data actual: {current_date}
+
+Durada total del macrocicle: 9 mesos a partir de la data actual
 
 Respon amb:
 
@@ -300,21 +327,35 @@ Respon amb:
     prompt_template = macros_prompts.get(objective, macros_prompts['maintenance'])
     
     # Prepare template variables
+    profile_json = json.dumps(profile, ensure_ascii=False, indent=2)
     template_vars = {
-        'injury': profile.get('medical_conditions', 'la seva condició actual')
+        'injury': profile.get('medical_conditions', 'la seva condició actual'),
+        'medical_conditions': profile.get('medical_conditions', 'cap'),
+        'current_date': profile.get('current_date', datetime.now().strftime("%A %d de %B del %Y").lower()),
+        'profile': profile_json,
     }
-    
+
     return prompt_template.format(**template_vars)
 
 
 def generate_macros(profile: dict) -> str:
-    """
-    Genera un macrocicle de 9 mesos basat en l'objectiu de l'usuari i tinguent en compte les dades de perfil.
+    """Genera un macrocicle complet segons el perfil de l'usuari."""
+    # Get current date in the format "dilluns 17 de juny del 2025"
+    current_date = datetime.now()
+    formatted_date = current_date.strftime("%A %d de %B del %Y").lower()
     
-    Args:
-        profile: Diccionari amb la informació de l'usuari, incloent 'objective' i altres dades.
-        
-    Returns:
-        str: El prompt formatat per a generar el macrocicle.
-    """
-    return _get_macros_prompt(profile)
+    # Add current date to the profile for the prompt
+    profile_with_date = profile.copy()
+    profile_with_date['current_date'] = formatted_date
+    
+    prompt = _get_macros_prompt(profile_with_date)
+
+    resposta = openai.chat.completions.create(
+        model=MODEL_PLAN,
+        messages=[
+            {"role": "system", "content": "Ets un/una entrenador/a expert/a en planificació esportiva. Has de tenir en compte la data actual per adaptar el macrocicle."},
+            {"role": "user", "content": f"Data actual: {formatted_date}\n\n{prompt}"},
+        ],
+        max_tokens=800,
+    )
+    return resposta.choices[0].message.content.strip()

@@ -94,6 +94,29 @@ def _init_db():
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         
+        # Crea la taula informes_ia si no existeix
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {REPORTS_TABLE_NAME} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            date TEXT NOT NULL,
+            text TEXT,
+            training_plan TEXT,
+            macrocycle TEXT,
+            macrocycle_week INTEGER,
+            macro_date TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+        
+        # Afegeix la columna macro_date si no existeix
+        cursor.execute(f"PRAGMA table_info({REPORTS_TABLE_NAME})")
+        columns = [column[1] for column in cursor.fetchall()]
+        if 'macro_date' not in columns:
+            cursor.execute(f"ALTER TABLE {REPORTS_TABLE_NAME} ADD COLUMN macro_date TEXT")
+        
+        conn.commit()
+        
         # Crea la taula amb les columnes RAW inicials si no existeix, definint 'date' com PRIMARY KEY
         cols_for_create = []
         if 'date' in COLUMN_DEFINITIONS: # Utilitza la definició de COLUMN_DEFINITIONS per a 'date'
@@ -119,11 +142,6 @@ def _init_db():
         create_user_profile_table_sql = f"""
         CREATE TABLE IF NOT EXISTS {PROFILE_TABLE_NAME} (
             user_id TEXT PRIMARY KEY,
-            name TEXT,
-            age INTEGER,
-            height INTEGER,
-            weight INTEGER,
-            bmi INTEGER,
             main_training_goal TEXT,
             experience_level TEXT,
             training_days_per_week INTEGER,
@@ -136,23 +154,37 @@ def _init_db():
         """
         cursor.execute(create_user_profile_table_sql)
 
-        # Crea la taula per guardar les recomanacions de la IA
+        # Crea la taula per guardar les recomanacions i els plans
         create_reports_table_sql = f"""
         CREATE TABLE IF NOT EXISTS {REPORTS_TABLE_NAME} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id TEXT,
             date TEXT,
             text TEXT,
-            training_plan TEXT
+            training_plan TEXT,
+            macrocycle TEXT,
+            macrocycle_week INTEGER
         );
         """
         cursor.execute(create_reports_table_sql)
+
+        # Comprova columnes noves i les afegeix si cal
+        cursor.execute(f"PRAGMA table_info({REPORTS_TABLE_NAME})")
+        existing_report_cols = {row[1] for row in cursor.fetchall()}
+        if "macrocycle" not in existing_report_cols:
+            cursor.execute(
+                f"ALTER TABLE {REPORTS_TABLE_NAME} ADD COLUMN macrocycle TEXT"
+            )
+        if "macrocycle_week" not in existing_report_cols:
+            cursor.execute(
+                f"ALTER TABLE {REPORTS_TABLE_NAME} ADD COLUMN macrocycle_week INTEGER"
+            )
 
         # Insereix un perfil per defecte si la taula és buida
         cursor.execute(f"SELECT COUNT(*) FROM {PROFILE_TABLE_NAME}")
         if cursor.fetchone()[0] == 0:
             default_profile = {
-                "user_id": "default",
+                "user_id": "CJK8XS",
                 "main_training_goal": "Mantenimient general",
                 "experience_level": "Principiant",
                 "training_days_per_week": 3,
@@ -368,7 +400,7 @@ def fetch_fitbit_data() -> list[dict]:
     return []
 
 
-def fetch_user_profile(user_id: str = "default") -> dict:
+def fetch_user_profile(user_id: str = "CJK8XS") -> dict:
     """Recupera el perfil d'usuari de la BD."""
     _init_db()
     try:
@@ -396,7 +428,7 @@ def fetch_user_profile(user_id: str = "default") -> dict:
             conn.close()
 
 
-def save_user_profile(profile: dict, user_id: str = "default") -> bool:
+def save_user_profile(profile: dict, user_id: str = "CJK8XS") -> bool:
     """Actualitza o insereix el perfil d'usuari a la BD."""
     _init_db()
     try:
@@ -424,7 +456,7 @@ def save_user_profile(profile: dict, user_id: str = "default") -> bool:
             conn.close()
 
 
-def save_ia_report(text: str, user_id: str = "default", training_plan: str | None = None) -> None:
+def save_ia_report(text: str, user_id: str = "CJK8XS", training_plan: str | None = None) -> None:
     """Guarda una recomanació i opcionalment un pla a la taula informes_ia."""
     _init_db()
     try:
@@ -457,22 +489,57 @@ def save_ia_report(text: str, user_id: str = "default", training_plan: str | Non
             conn.close()
 
 
-def update_latest_training_plan(training_plan: str, user_id: str = "default") -> None:
-    """Actualitza la darrera fila d'informes_ia amb el pla generat."""
+def update_latest_training_plan(training_plan: str, user_id: str = "CJK8XS", week: int | None = None) -> None:
+    """Actualitza la darrera fila d'informes_ia amb el pla i la setmana del macrocicle.
+    Si no hi ha macrocycle definit, copia l'últim macrocycle disponible.
+    """
     _init_db()
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
+        
+        # Obté l'últim macrocycle si existeix
+        cursor.execute(
+            f"SELECT macrocycle FROM {REPORTS_TABLE_NAME} "
+            f"WHERE user_id = ? AND macrocycle IS NOT NULL "
+            f"ORDER BY date DESC LIMIT 1",
+            (user_id,),
+        )
+        last_macrocycle = cursor.fetchone()
+        
+        # Obté l'ID de l'últim informe per actualitzar-lo
         cursor.execute(
             f"SELECT id FROM {REPORTS_TABLE_NAME} WHERE user_id = ? ORDER BY date DESC LIMIT 1",
             (user_id,),
         )
         row = cursor.fetchone()
+        
         if row:
-            cursor.execute(
-                f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ? WHERE id = ?",
-                (training_plan, row[0]),
-            )
+            if week is None:
+                if last_macrocycle:
+                    # Actualitza el pla d'entrenament i copia l'últim macrocycle
+                    cursor.execute(
+                        f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ?, macrocycle = ? WHERE id = ?",
+                        (training_plan, last_macrocycle[0], row[0]),
+                    )
+                else:
+                    # No hi ha macrocycle previ, actualitza només el training_plan
+                    cursor.execute(
+                        f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ? WHERE id = ?",
+                        (training_plan, row[0]),
+                    )
+            else:
+                # Actualitza el training_plan i la setmana del macrocycle
+                if last_macrocycle:
+                    cursor.execute(
+                        f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ?, macrocycle_week = ?, macrocycle = ? WHERE id = ?",
+                        (training_plan, week, last_macrocycle[0], row[0]),
+                    )
+                else:
+                    cursor.execute(
+                        f"UPDATE {REPORTS_TABLE_NAME} SET training_plan = ?, macrocycle_week = ? WHERE id = ?",
+                        (training_plan, week, row[0]),
+                    )
             conn.commit()
     except sqlite3.Error as e:
         print(f"[update_latest_training_plan] Error: {e}")
@@ -481,7 +548,7 @@ def update_latest_training_plan(training_plan: str, user_id: str = "default") ->
             conn.close()
 
 
-def fetch_latest_training_plan(user_id: str = "default") -> str | None:
+def fetch_latest_training_plan(user_id: str = "CJK8XS") -> str | None:
     """Obté l'últim pla d'entrenament desat."""
     _init_db()
     try:
@@ -501,7 +568,7 @@ def fetch_latest_training_plan(user_id: str = "default") -> str | None:
             conn.close()
 
 
-def fetch_ia_reports(user_id: str = "default", limit: int = 10) -> list[dict]:
+def fetch_ia_reports(user_id: str = "CJK8XS", limit: int = 10) -> list[dict]:
     """Recupera els darrers informes de la taula informes_ia."""
     _init_db()
     try:
@@ -522,6 +589,50 @@ def fetch_ia_reports(user_id: str = "default", limit: int = 10) -> list[dict]:
     except sqlite3.Error as e:
         print(f"[fetch_ia_reports] Error: {e}")
         return []
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def save_macrocycle(macrocycle: str, user_id: str = "CJK8XS") -> None:
+    """Guarda un macrocicle i reinicia el comptador de setmanes."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            f"INSERT INTO {REPORTS_TABLE_NAME} (user_id, date, macrocycle, macrocycle_week, macro_date) VALUES (?, ?, ?, ?, ?)",
+            (
+                user_id,
+                dt.datetime.now().isoformat(timespec="seconds"),
+                macrocycle,
+                1,
+                dt.datetime.now().isoformat(timespec="seconds"),
+            ),
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"[save_macrocycle] Error: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+
+def fetch_latest_macrocycle(user_id: str = "CJK8XS") -> tuple[str | None, str | None]:
+    """Retorna l'últim macrocicle i la seva data de creació."""
+    _init_db()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            f"SELECT macrocycle, date FROM {REPORTS_TABLE_NAME} WHERE user_id = ? AND macrocycle IS NOT NULL ORDER BY date DESC LIMIT 1",
+            (user_id,),
+        )
+        row = cursor.fetchone()
+        return (row[0], row[1]) if row else (None, None)
+    except sqlite3.Error as e:
+        print(f"[fetch_latest_macrocycle] Error: {e}")
+        return (None, None)
     finally:
         if 'conn' in locals() and conn:
             conn.close()

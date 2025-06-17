@@ -20,6 +20,7 @@ export default function useRecommendation() {
       const j = await r.json();
       if (!r.ok) throw new Error(j.detail || r.statusText);
       setRec(j.text);
+      return j.text; // Retorna la recomanació obtinguda
     } catch (e) {
       setError(e.message);
     } finally {
