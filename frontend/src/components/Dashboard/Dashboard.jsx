@@ -117,9 +117,20 @@ export default function Dashboard() {
   };
 
   // Dades de tendència setmanal
+  // Obtenim minuts per tipus d'activitat i zones de FC
   const trendLabels = weeklyData?.map(d => d.date.slice(5)) || [];
-  const trendIntensity = weeklyData?.map(d => d.moderately_active_minutes + d.very_active_minutes) || [];
-  const trendHrZones = weeklyData?.map(d => d.minutes_in_default_zone_2 + d.minutes_in_default_zone_3) || [];
+  const trendIntensity = {
+    sedentary: weeklyData?.map(d => d.sedentary_minutes) || [],
+    light: weeklyData?.map(d => d.lightly_active_minutes) || [],
+    moderate: weeklyData?.map(d => d.moderately_active_minutes) || [],
+    intense: weeklyData?.map(d => d.very_active_minutes) || [],
+  };
+  const trendHrZones = {
+    below: weeklyData?.map(d => d.minutes_below_default_zone_1) || [],
+    zone1: weeklyData?.map(d => d.minutes_in_default_zone_1) || [],
+    zone2: weeklyData?.map(d => d.minutes_in_default_zone_2) || [],
+    zone3: weeklyData?.map(d => d.minutes_in_default_zone_3) || [],
+  };
   const trendSleep = weeklyData?.map(d => {
     const total = (d.minutesAsleep || 0) + (d.minutesAwake || 0);
     return {
