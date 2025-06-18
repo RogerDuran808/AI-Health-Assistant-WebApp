@@ -30,7 +30,14 @@ export default function Dashboard() {
   const [currentDate, setCurrentDate] = useState('');
   const { data: fitbitData, loading: isLoading, error } = useFitbitData();
   const { data: profileData, refetch: refetchProfile } = useUserProfile();
-  const { data: weeklyData } = useWeeklyData();
+  const { data: weeklyData, refetch: refetchWeekly } = useWeeklyData();
+
+  // Quan arriben les dades diàries, refresquem les setmanals per tenir les tendències actualitzades
+  useEffect(() => {
+    if (!isLoading) {
+      refetchWeekly();
+    }
+  }, [isLoading]);
 
   // Mostrem la data d'ahir amb la primera lletra en majúscula
   useEffect(() => {
