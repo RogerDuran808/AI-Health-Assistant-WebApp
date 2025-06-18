@@ -40,10 +40,19 @@ const formatMinutesToHoursAndMinutes = (totalMinutes) => {
 const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = [], trendIntensity = {}, trendHr = {} }) => {
     const { data: weeklyData, loading, error } = useWeeklyData();
     
+    // State for trend tabs
+    const [activeTrendTab, setActiveTrendTab] = useState('activity'); // 'activity' or 'hrZones'
+    
     // Process weekly data for trends
     const [trendLabelsState, setTrendLabels] = useState(trendLabels);
     const [trendIntensityState, setTrendIntensity] = useState(trendIntensity);
     const [trendHrState, setTrendHr] = useState(trendHr);
+    
+    // Debug: Log the HR data structure
+    useEffect(() => {
+        console.log('HR Zones data structure:', trendHr);
+        console.log('HR Zones data keys:', trendHr ? Object.keys(trendHr) : 'No data');
+    }, [trendHr]);
 
     useEffect(() => {
         if (weeklyData) {
@@ -299,237 +308,240 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                             <div className="error-message">Error en carregar les dades de tendències</div>
                         ) : trendLabels.length > 0 ? (
                             <>
-                            <div className="trend-chart-container">
-                                <h4>Activitat Diària</h4>
-                                <Line
-                                    options={{
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        interaction: {
-                                            mode: 'index',
-                                            intersect: false
-                                        },
-                                        scales: {
-                                            y: {
-                                                beginAtZero: true,
-                                                grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
-                                                ticks: {
-                                                    color: '#F5F5F5',
-                                                    stepSize: 60,
-                                                    callback: value => formatMinutesToHoursAndMinutes(value)
-                                                }
-                                            },
-                                            x: {
-                                                grid: { display: false },
-                                                ticks: { color: '#F5F5F5' }
-                                            }
-                                        },
-                                        plugins: { 
-                                            legend: { 
-                                                display: true,
-                                                position: 'top',
-                                                labels: {
-                                                    color: '#F5F5F5',
-                                                    usePointStyle: true,
-                                                    pointStyle: 'circle',
-                                                    boxWidth: 20,
-                                                    padding: 8
-                                                }
-                                            },
-                                            tooltip: {
-                                                backgroundColor: '#1A1A1A',
-                                                titleColor: '#D4FF58',
-                                                bodyColor: '#F5F5F5',
-                                                borderColor: '#333333',
-                                                borderWidth: 1,
-                                                padding: 10,
-                                                displayColors: false,
-                                                callbacks: {
-                                                    title: function(tooltipItems) {
-                                                        // Show the date as the title
-                                                        return tooltipItems[0].label;
-                                                    },
-                                                    label: function() {
-                                                        // We'll handle all labels in beforeBody
-                                                        return '';
-                                                    },
-                                                    beforeBody: function(context) {
-                                                        // Get the index of the hovered point
-                                                        const dataIndex = context[0].dataIndex;
-                                                        // Return all activity values for this day
-                                                        return [
-                                                            `Sedentari: ${formatMinutesToHoursAndMinutes(trendIntensity.sedentary[dataIndex])}`,
-                                                            `Lleu: ${formatMinutesToHoursAndMinutes(trendIntensity.light[dataIndex])}`,
-                                                            `Moderat: ${formatMinutesToHoursAndMinutes(trendIntensity.moderate[dataIndex])}`,
-                                                            `Intens: ${formatMinutesToHoursAndMinutes(trendIntensity.intense[dataIndex])}`
-                                                        ];
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }}
-                                    data={{
-                                        labels: trendLabels,
-                                        datasets: [
-                                            { 
-                                                label: 'Sedentari', 
-                                                data: trendIntensity.sedentary, 
-                                                borderColor: '#758680', 
-                                                backgroundColor: 'rgba(117,134,128,0.3)', 
-                                                borderWidth: 2,
-                                                tension: 0.3, 
-                                                pointRadius: 3,
-                                                pointHoverRadius: 5
-                                            },
-                                            { 
-                                                label: 'Lleu', 
-                                                data: trendIntensity.light, 
-                                                borderColor: '#A5A5A5', 
-                                                backgroundColor: 'rgba(165,165,165,0.3)', 
-                                                borderWidth: 2,
-                                                tension: 0.3, 
-                                                pointRadius: 3,
-                                                pointHoverRadius: 5
-                                            },
-                                            { 
-                                                label: 'Moderat', 
-                                                data: trendIntensity.moderate, 
-                                                borderColor: '#D4FF58', 
-                                                backgroundColor: 'rgba(212,255,88,0.3)', 
-                                                borderWidth: 2,
-                                                tension: 0.3, 
-                                                pointRadius: 3,
-                                                pointHoverRadius: 5
-                                            },
-                                            { 
-                                                label: 'Intens', 
-                                                data: trendIntensity.intense, 
-                                                borderColor: '#F5F5F5', 
-                                                backgroundColor: 'rgba(245,245,245,0.3)', 
-                                                borderWidth: 2,
-                                                tension: 0.3, 
-                                                pointRadius: 3,
-                                                pointHoverRadius: 5
-                                            }
-                                        ]
-                                    }}
-                                />
+                            <div className="trend-chart-tabs">
+                                <button 
+                                    className={`tab-button ${activeTrendTab === 'activity' ? 'active' : ''}`} 
+                                    onClick={() => setActiveTrendTab('activity')}>
+                                    Activitat
+                                </button>
+                                <button 
+                                    className={`tab-button ${activeTrendTab === 'hrZones' ? 'active' : ''}`} 
+                                    onClick={() => setActiveTrendTab('hrZones')}>
+                                    Zones FC
+                                </button>
                             </div>
                             <div className="trend-chart-container">
-                                <h4>Zones de FC</h4>
-                                <Line
-                                    options={{
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        interaction: {
-                                            mode: 'index',
-                                            intersect: false
-                                        },
-                                        scales: {
-                                            y: {
-                                                beginAtZero: true,
-                                                grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
-                                                ticks: {
-                                                    color: '#F5F5F5',
-                                                    stepSize: 60,
-                                                    callback: value => formatMinutesToHoursAndMinutes(value)
+                                {activeTrendTab === 'activity' ? (
+                                    <Line
+                                        options={{
+                                            responsive: true,
+                                            maintainAspectRatio: false,
+                                            interaction: {
+                                                mode: 'index',
+                                                intersect: false
+                                            },
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true,
+                                                    grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
+                                                    ticks: {
+                                                        color: '#F5F5F5',
+                                                        stepSize: 60,
+                                                        callback: value => formatMinutesToHoursAndMinutes(value)
+                                                    }
+                                                },
+                                                x: {
+                                                    grid: { display: false },
+                                                    ticks: { color: '#F5F5F5' }
                                                 }
                                             },
-                                            x: {
-                                                grid: { display: false },
-                                                ticks: { color: '#F5F5F5' }
-                                            }
-                                        },
-                                        plugins: { 
-                                            legend: { 
-                                                display: true,
-                                                position: 'top',
-                                                labels: {
-                                                    color: '#F5F5F5',
-                                                    usePointStyle: true,
-                                                    pointStyle: 'circle',
-                                                    boxWidth: 20,
-                                                    padding: 8
-                                                }
-                                            },
-                                            tooltip: {
-                                                backgroundColor: '#1A1A1A',
-                                                titleColor: '#D4FF58',
-                                                bodyColor: '#F5F5F5',
-                                                borderColor: '#333333',
-                                                borderWidth: 1,
-                                                padding: 10,
-                                                displayColors: false,
-                                                callbacks: {
-                                                    title: function(tooltipItems) {
-                                                        // Show the date as the title
-                                                        return tooltipItems[0].label;
-                                                    },
-                                                    label: function() {
-                                                        // We'll handle all labels in beforeBody
-                                                        return '';
-                                                    },
-                                                    beforeBody: function(context) {
-                                                        // Get the index of the hovered point
-                                                        const dataIndex = context[0].dataIndex;
-                                                        // Return all HR zone values for this day
-                                                        return [
-                                                            `Repòs: ${formatMinutesToHoursAndMinutes(trendHr.below[dataIndex])}`,
-                                                            `Suau: ${formatMinutesToHoursAndMinutes(trendHr.zone1[dataIndex])}`,
-                                                            `Moderat: ${formatMinutesToHoursAndMinutes(trendHr.zone2[dataIndex])}`,
-                                                            `Pic: ${formatMinutesToHoursAndMinutes(trendHr.zone3[dataIndex])}`
-                                                        ];
+                                            plugins: { 
+                                                legend: { 
+                                                    display: true,
+                                                    position: 'top',
+                                                    labels: {
+                                                        color: '#F5F5F5',
+                                                        usePointStyle: true,
+                                                        pointStyle: 'circle',
+                                                        boxWidth: 20,
+                                                        padding: 8
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    backgroundColor: '#1A1A1A',
+                                                    titleColor: '#D4FF58',
+                                                    bodyColor: '#F5F5F5',
+                                                    borderColor: '#333333',
+                                                    borderWidth: 1,
+                                                    padding: 10,
+                                                    displayColors: false,
+                                                    callbacks: {
+                                                        title: function(tooltipItems) {
+                                                            return tooltipItems[0].label;
+                                                        },
+                                                        label: function() {
+                                                            return '';
+                                                        },
+                                                        beforeBody: function(context) {
+                                                            const dataIndex = context[0].dataIndex;
+                                                            return [
+                                                                `Sedentari: ${formatMinutesToHoursAndMinutes(trendIntensity.sedentary[dataIndex])}`,
+                                                                `Lleu: ${formatMinutesToHoursAndMinutes(trendIntensity.light[dataIndex])}`,
+                                                                `Moderat: ${formatMinutesToHoursAndMinutes(trendIntensity.moderate[dataIndex])}`,
+                                                                `Intens: ${formatMinutesToHoursAndMinutes(trendIntensity.intense[dataIndex])}`
+                                                            ];
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
-                                    }}
-                                    data={{
-                                        labels: trendLabels,
-                                        datasets: [
-                                            { 
-                                                label: 'Repòs', 
-                                                data: trendHr.below, 
-                                                borderColor: '#758680', 
-                                                backgroundColor: 'rgba(117,134,128,0.3)', 
-                                                borderWidth: 2,
-                                                tension: 0.3, 
-                                                pointRadius: 3,
-                                                pointHoverRadius: 5
+                                        }}
+                                        data={{
+                                            labels: trendLabels,
+                                            datasets: [
+                                                { 
+                                                    label: 'Sedentari', 
+                                                    data: trendIntensity.sedentary, 
+                                                    borderColor: '#758680', // Texto secundario
+                                                    backgroundColor: 'rgba(117, 134, 128, 0.3)', 
+                                                    borderWidth: 2,
+                                                    tension: 0.3, 
+                                                    pointRadius: 3,
+                                                    pointHoverRadius: 5
+                                                },
+                                                { 
+                                                    label: 'Lleu', 
+                                                    data: trendIntensity.light, 
+                                                    borderColor: '#D4FF58', // Color de acento
+                                                    backgroundColor: 'rgba(212, 255, 88, 0.2)', 
+                                                    borderWidth: 2,
+                                                    tension: 0.3, 
+                                                    pointRadius: 3,
+                                                    pointHoverRadius: 5
+                                                },
+                                                { 
+                                                    label: 'Moderat', 
+                                                    data: trendIntensity.moderate, 
+                                                    borderColor: '#9B51E0', // Púrpura para moderado
+                                                    backgroundColor: 'rgba(155, 81, 224, 0.2)', 
+                                                    borderWidth: 2,
+                                                    tension: 0.3, 
+                                                    pointRadius: 3,
+                                                    pointHoverRadius: 5
+                                                },
+                                                { 
+                                                    label: 'Intens', 
+                                                    data: trendIntensity.intense, 
+                                                    borderColor: '#FF6B6B', // Rojo para intenso
+                                                    backgroundColor: 'rgba(255, 107, 107, 0.2)', 
+                                                    borderWidth: 2,
+                                                    tension: 0.3, 
+                                                    pointRadius: 3,
+                                                    pointHoverRadius: 5
+                                                }
+                                            ]
+                                        }}
+                                    />
+                                ) : (
+                                    <Line
+                                        options={{
+                                            responsive: true,
+                                            maintainAspectRatio: false,
+                                            interaction: {
+                                                mode: 'index',
+                                                intersect: false
                                             },
-                                            { 
-                                                label: 'Suau', 
-                                                data: trendHr.zone1, 
-                                                borderColor: '#A5A5A5', 
-                                                backgroundColor: 'rgba(165,165,165,0.3)', 
-                                                borderWidth: 2,
-                                                tension: 0.3, 
-                                                pointRadius: 3,
-                                                pointHoverRadius: 5
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true,
+                                                    grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
+                                                    ticks: {
+                                                        color: '#F5F5F5',
+                                                        stepSize: 30,
+                                                        callback: value => formatMinutesToHoursAndMinutes(value)
+                                                    }
+                                                },
+                                                x: {
+                                                    grid: { display: false },
+                                                    ticks: { color: '#F5F5F5' }
+                                                }
                                             },
-                                            { 
-                                                label: 'Moderat', 
-                                                data: trendHr.zone2, 
-                                                borderColor: '#D4FF58', 
-                                                backgroundColor: 'rgba(212,255,88,0.3)', 
-                                                borderWidth: 2,
-                                                tension: 0.3, 
-                                                pointRadius: 3,
-                                                pointHoverRadius: 5
-                                            },
-                                            { 
-                                                label: 'Pic', 
-                                                data: trendHr.zone3, 
-                                                borderColor: '#F5F5F5', 
-                                                backgroundColor: 'rgba(245,245,245,0.3)', 
-                                                borderWidth: 2,
-                                                tension: 0.3, 
-                                                pointRadius: 3,
-                                                pointHoverRadius: 5
+                                            plugins: { 
+                                                legend: { 
+                                                    display: true,
+                                                    position: 'top',
+                                                    labels: {
+                                                        color: '#F5F5F5',
+                                                        usePointStyle: true,
+                                                        pointStyle: 'circle',
+                                                        boxWidth: 20,
+                                                        padding: 8
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    backgroundColor: '#1A1A1A',
+                                                    titleColor: '#D4FF58',
+                                                    bodyColor: '#F5F5F5',
+                                                    borderColor: '#333333',
+                                                    borderWidth: 1,
+                                                    padding: 10,
+                                                    displayColors: false,
+                                                    callbacks: {
+                                                        title: function(tooltipItems) {
+                                                            return tooltipItems[0].label;
+                                                        },
+                                                        label: function() {
+                                                            return '';
+                                                        },
+                                                        beforeBody: function(context) {
+                                                            const dataIndex = context[0].dataIndex;
+                                                            return [
+                                                                `Sota Zona: ${formatMinutesToHoursAndMinutes(trendHr.below[dataIndex])}`,
+                                                                `Crema Greixos: ${formatMinutesToHoursAndMinutes(trendHr.zone1[dataIndex])}`,
+                                                                `Cardio: ${formatMinutesToHoursAndMinutes(trendHr.zone2[dataIndex])}`,
+                                                                `Pic: ${formatMinutesToHoursAndMinutes(trendHr.zone3[dataIndex])}`
+                                                            ];
+                                                        }
+                                                    }
+                                                }
                                             }
-                                        ]
-                                    }}
-                                />
+                                        }}
+                                        data={{
+                                            labels: trendLabels,
+                                            datasets: [
+                                                { 
+                                                    label: 'Sota Zona', 
+                                                    data: trendHr.below, 
+                                                    borderColor: '#758680', // Texto secundario
+                                                    backgroundColor: 'rgba(117, 134, 128, 0.2)', 
+                                                    borderWidth: 2,
+                                                    tension: 0.3, 
+                                                    pointRadius: 3,
+                                                    pointHoverRadius: 5
+                                                },
+                                                { 
+                                                    label: 'Crema Greixos', 
+                                                    data: trendHr.zone1, 
+                                                    borderColor: '#4E9DE5', // Azul para quema de grasas
+                                                    backgroundColor: 'rgba(78, 157, 229, 0.2)', 
+                                                    borderWidth: 2,
+                                                    tension: 0.3, 
+                                                    pointRadius: 3,
+                                                    pointHoverRadius: 5
+                                                },
+                                                { 
+                                                    label: 'Cardio', 
+                                                    data: trendHr.zone2, 
+                                                    borderColor: '#D4FF58', // Color de acento
+                                                    backgroundColor: 'rgba(212, 255, 88, 0.2)', 
+                                                    borderWidth: 2,
+                                                    tension: 0.3, 
+                                                    pointRadius: 3,
+                                                    pointHoverRadius: 5
+                                                },
+                                                { 
+                                                    label: 'Pic', 
+                                                    data: trendHr.zone3, 
+                                                    borderColor: '#FF6B6B', // Rojo para pico
+                                                    backgroundColor: 'rgba(255, 107, 107, 0.2)', 
+                                                    borderWidth: 2,
+                                                    tension: 0.3, 
+                                                    pointRadius: 3,
+                                                    pointHoverRadius: 5
+                                                }
+                                            ]
+                                        }}
+                                    />
+                                )}
                             </div>
                             </>
                         ) : (
