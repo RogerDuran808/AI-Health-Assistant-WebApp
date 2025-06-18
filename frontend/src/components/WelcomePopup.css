@@ -1,0 +1,176 @@
+:root {
+    /* Main application color palette */
+    --main-bg: #000000;
+    --card-bg: #1A1A1A;
+    --accent-color: #D4FF58;
+    --text-primary: #F5F5F5;
+    --text-secondary: #758680;
+    --border-color: #333333;
+
+    /* WelcomePopup specific variables using the main palette */
+    --popup-bg: rgba(0, 0, 0, 0.7); 
+    --popup-card-bg: var(--card-bg);
+    --popup-border: var(--border-color);
+    --popup-text-primary: var(--text-primary);
+    --popup-text-secondary: var(--text-secondary);
+    --popup-accent: var(--accent-color);
+    --popup-radius: 16px; /* Consistent with --card-border-radius from Dashboard.css */
+    --popup-accent-hover: #b8e040; /* Consistent with --accent-hover from Dashboard.css */
+}
+
+.welcome-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--popup-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* Ensura que quedi per sobre de la barra lateral */
+    backdrop-filter: blur(5px);
+}
+
+.welcome-popup-content {
+    background-color: var(--popup-card-bg);
+    padding: 2rem 2.5rem; /* Increased padding for better spacing */
+    border-radius: var(--popup-radius);
+    border: 1px solid var(--popup-border);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    width: 90%;
+    max-width: 900px;
+    color: var(--popup-text-primary);
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    animation: fadeInScale 0.3s ease-out;
+    margin: 2rem 0; /* Added vertical margin */
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.welcome-popup-content h2 {
+    font-size: 2rem; /* Increased font size for better hierarchy */
+    font-weight: 700;
+    color: var(--popup-accent);
+    text-align: center;
+    margin: 0 0 1rem 0; /* Increased bottom margin */
+    letter-spacing: -0.5px; /* Slightly tighter letter spacing */
+}
+
+.welcome-popup-content .intro-text {
+    font-size: 1.05rem; /* Slightly larger for better readability */
+    color: var(--popup-text-secondary);
+    text-align: center;
+    margin: 0 auto 2rem auto; /* Increased bottom margin */
+    line-height: 1.6; /* Better line height for readability */
+    max-width: 700px;
+    padding: 0 1rem; /* Added horizontal padding */
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; /* Increased gap between cards */
+    margin: 0 0 2.5rem 0; /* Improved vertical margins */
+    padding: 0 0.5rem; /* Added horizontal padding */
+}
+
+.feature-card {
+    background-color: var(--popup-card-bg);
+    padding: 2rem; /* Increased padding */
+    border-radius: var(--popup-radius);
+    border: 1px solid var(--popup-border);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: var(--popup-accent);
+    margin-bottom: 1rem;
+    text-align: center; /* Center icon within its div */
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--popup-text-primary);
+    margin-bottom: 0.75rem;
+    text-align: center;
+}
+
+.feature-card p {
+    font-size: 0.9rem;
+    color: var(--popup-text-secondary);
+    line-height: 1.6;
+}
+
+.close-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--popup-text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+}
+
+.close-button:hover {
+    color: var(--popup-text-primary);
+}
+
+.understand-button {
+    display: block;
+    margin: 1.5rem auto 0 auto;
+    padding: 0.9rem 2.5rem;
+    background-color: var(--popup-accent);
+    color: var(--main-bg);
+    border: none;
+    border-radius: var(--popup-radius);
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 255, 88, 0.2);
+}
+
+.understand-button:hover {
+    background-color: var(--popup-accent-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .welcome-popup-content {
+        padding: 2rem 1.5rem;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    .welcome-popup-content h2 {
+        font-size: 1.75rem;
+    }
+    .features-grid {
+        grid-template-columns: 1fr; /* Stack cards on smaller screens */
+    }
+}

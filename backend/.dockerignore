@@ -1,0 +1,12 @@
+# ¡Mantiene la imagen liviana y evita errores OneDrive!
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+# librerías pesadas, datos, credenciales
+*.csv
+*.tsv
+*.json
+# tests de pandas que te han dado problemas
+*/site-packages/pandas/tests/
+fitbit_data.db

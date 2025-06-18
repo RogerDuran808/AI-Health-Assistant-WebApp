@@ -1,0 +1,17 @@
+# Ignorar dependencias
+node_modules/
+
+# Build de frontend
+frontend/dist/
+
+
+# Entornos y datos privados
+.venv/
+.env
+
+# Config VS Code
+.vscode/
+
+# Python
+__pycache__/
+*.egg-info/

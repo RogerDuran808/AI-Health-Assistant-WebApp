@@ -1,0 +1,253 @@
+/* SleepStagesWidget.css */
+:root {
+    --primary-bg: #000000;
+    --secondary-bg: #1A1A1A;
+    --tertiary-bg: #2A2A2A;
+    --accent-color: #D4FF58; /* Main accent color from palette */
+    --text-primary: #F5F5F5;
+    --text-secondary: #758680; /* Muted text color from palette */
+    --border-color: #333333;
+    --card-border-radius: 16px; /* Consistent border radius */
+    --card-background-darker: #101010; /* Slightly darker than secondary-bg for metric cards */
+}
+
+/* Base widget styling */
+.widget.sleep-widget {
+    background-color: var(--secondary-bg);
+    border-radius: var(--card-border-radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    flex: 1;
+    min-height: 350px; /* Adjusted min-height for tabs and content */
+    box-sizing: border-box;
+}
+
+.sleep-widget .widget-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+.sleep-widget .widget-title svg {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+
+.sleep-widget .widget-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Allows content to shrink if needed */
+    overflow: hidden;
+}
+
+/* Chart Tabs Styling - Adapted from ActivityWidget.css for consistency */
+.sleep-widget .chart-tabs { /* Scoped to sleep-widget */
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+    /* border-bottom: 1px solid var(--border-color); */ /* Optional: cleaner without for this widget */
+    flex-shrink: 0;
+}
+
+.sleep-widget .tab-button { /* Scoped to sleep-widget */
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent; /* Active indicator */
+    cursor: pointer;
+    transition: color 0.3s ease, border-bottom-color 0.3s ease;
+    margin: 0 4px;
+    text-transform: uppercase;
+}
+
+.sleep-widget .tab-button:hover {
+    color: var(--text-primary);
+}
+
+.sleep-widget .tab-button.active {
+    color: var(--accent-color);
+    font-weight: 700;
+    border-bottom-color: var(--accent-color);
+}
+
+/* Tab Content Area */
+.sleep-tab-content {
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0; /* Allows content to shrink */
+    width: 100%;
+}
+
+.sleep-tab-content.active {
+    display: flex; /* Shown when active */
+}
+
+/* Phases Tab Content (Chart and Legend) */
+.sleep-phases-content {
+    display: flex;
+    flex-direction: row; /* Chart and legend side-by-side */
+    align-items: center;
+    justify-content: space-around; /* Or space-between */
+    gap: 20px; /* Space between chart and legend */
+    width: 100%;
+    flex-grow: 1;
+    padding: 0 10px; /* Padding for the content area */
+    box-sizing: border-box;
+}
+
+.sleep-chart-container {
+    position: relative;
+    width: 180px; /* Fixed size for doughnut */
+    height: 180px;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.sleep-legend {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center legend items vertically */
+    flex-grow: 1; /* Take remaining space */
+    max-width: calc(100% - 200px); /* Max width considering chart and gap */
+}
+
+.stage-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 0.85rem;
+    /* border-bottom: 1px solid var(--border-color); */ /* Optional: cleaner without individual borders */
+}
+/* .stage-item:last-child { border-bottom: none; } */
+
+.stage-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stage-color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px; /* Square-ish indicator */
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+}
+
+.stage-name {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.stage-details {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stage-time {
+    color: var(--text-secondary);
+    min-width: 50px;
+    text-align: right;
+}
+
+.stage-percentage {
+    color: var(--text-primary);
+    font-weight: 500;
+    min-width: 30px;
+    text-align: right;
+}
+
+/* Estils de la pestanya de mètriques */
+.sleep-metrics-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columnes fixes */
+    grid-template-rows: repeat(2, 1fr); /* 2 files per omplir tot l'espai */
+    gap: 10px; /* Reduïm l'espai entre targetes */
+    padding: 8px;
+    align-items: stretch;
+    justify-items: stretch;
+    height: 100%;
+    flex-grow: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Forcem la graella 2x2 quan la pestanya està activa */
+.sleep-tab-content.active.sleep-metrics-content {
+    display: grid;
+}
+
+.metric-card {
+    background-color: var(--card-background-darker);
+    border-radius: 10px; /* Radi més petit */
+    padding: 10px 5px; /* Meny padding */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow */
+    transition: transform 0.2s ease-in-out;
+    min-height: 75px; /* Alçada fixa per a totes les targetes */
+}
+
+.metric-card:hover {
+    transform: translateY(-3px); /* Subtle hover effect */
+}
+
+.metric-card .metric-icon {
+    font-size: 1.3em; /* Icona més petita */
+    color: var(--accent-color);
+    margin-bottom: 6px;
+}
+
+.metric-card .metric-value {
+    font-size: 1.1em; /* Text més petit */
+    font-weight: 600; /* Pes de lletra lleugerament més clar */
+    color: var(--text-primary);
+    margin-bottom: 3px;
+    line-height: 1.1;
+}
+
+.metric-card .metric-label {
+    font-size: 0.65em; /* Text més petit */
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.2;
+    opacity: 0.9;
+}
+
+/* Placeholder for Trends tab */
+.sleep-tab-content p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.sleep-trend-chart-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 250px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.sleep-trend-chart {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    flex-grow: 1;
+}

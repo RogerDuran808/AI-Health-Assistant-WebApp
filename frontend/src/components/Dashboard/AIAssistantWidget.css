@@ -1,0 +1,104 @@
+.ai-assistant-widget .ai-assistant-intro {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  text-align: center;
+  font-style: italic;
+}
+
+.ai-assistant-widget .recommendation-area {
+  background-color: #0d0d0d; /* Fons lleugerament més clar */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-top: 1rem;
+  color: var(--text-main);
+  animation: fadeIn 0.5s ease-in-out;
+  flex-grow: 1; /* Emplenem l'alçada disponible del widget */
+  overflow-y: auto;
+}
+
+/* Barra de desplaçament integrat al widget */
+.ai-assistant-widget .recommendation-area::-webkit-scrollbar {
+  width: 8px;
+}
+.ai-assistant-widget .recommendation-area::-webkit-scrollbar-track {
+  background: #0d0d0d;
+  border-radius: 4px;
+}
+.ai-assistant-widget .recommendation-area::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+.ai-assistant-widget .recommendation-area::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+.ai-assistant-widget .recommendation-area {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) #0d0d0d;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ai-assistant-widget .recommendation-area h1,
+.ai-assistant-widget .recommendation-area h2,
+.ai-assistant-widget .recommendation-area h3 {
+  color: var(--accent-color);
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3rem;
+}
+
+.ai-assistant-widget .recommendation-area p {
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.ai-assistant-widget .recommendation-area ul,
+.ai-assistant-widget .recommendation-area ol {
+  padding-left: 25px;
+  margin-bottom: 1rem;
+}
+
+.ai-assistant-widget .recommendation-area li {
+  margin-bottom: 0.6rem;
+}
+
+.ai-assistant-widget .recommendation-area strong {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.ai-assistant-widget .recommendation-area em {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.ai-assistant-widget .recommendation-area code {
+  background-color: var(--border-color);
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  border-radius: 6px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.plan-loading-spinner {
+  border: 2px solid var(--text-secondary);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+  display: inline-block;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

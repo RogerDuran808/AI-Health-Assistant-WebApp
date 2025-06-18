@@ -1,0 +1,546 @@
+/* Profile Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+/* Modal Container */
+.modal-container {
+  background: #1A1A1A;
+  border: 1px solid #333333;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #F5F5F5;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #333333;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #F5F5F5;
+}
+
+.close-button {
+  background: none;
+  border: 1px solid #333333;
+  font-size: 1.25rem;
+  color: #758680;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background-color: #333333;
+  color: #F5F5F5;
+  border-color: #D4FF58;
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 1.5rem;
+}
+
+/* Profile Section */
+.modal-body {
+  padding: 1.5rem;
+  background-color: #1A1A1A;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #333333;
+}
+
+.avatar {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background-color: #333333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #D4FF58;
+  font-size: 2rem;
+  flex-shrink: 0;
+  border: 2px solid #444;
+}
+
+.user-info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #F5F5F5;
+}
+
+.user-info p {
+  margin: 0;
+  color: #758680;
+  font-size: 0.95rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  margin-bottom: 1rem;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #758680;
+  margin-bottom: 0.35rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  background-color: #1A1A1A;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #F5F5F5;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.stat-value:focus {
+  border-color: #D4FF58;
+  box-shadow: 0 0 0 2px rgba(212, 255, 88, 0.2);
+}
+
+/* Basic Stats Display (Non-editable) */
+.basic-stats-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #222222; /* Slightly different from card for emphasis */
+  border-radius: 8px;
+  border: 1px solid #333333;
+}
+
+.stat-item-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.stat-label-inline {
+  color: #758680;
+  font-weight: 500;
+}
+
+.stat-value-inline {
+  color: #F5F5F5;
+  font-weight: 600;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+/* Custom Scrollbar for Time Dropdowns */
+.time-input select::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.time-input select::-webkit-scrollbar-track {
+  background: #1A1A1A;
+  border-radius: 5px;
+}
+
+.time-input select::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 5px;
+  border: 2px solid #1A1A1A;
+}
+
+.time-input select::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+.time-input select::-webkit-scrollbar-thumb:active {
+  background: #D4FF58;
+}
+
+/* Firefox scrollbar */
+.time-input select {
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #1A1A1A;
+}
+
+.time-input select:hover {
+  scrollbar-color: #444444 #1A1A1A;
+}
+
+.time-input select:active {
+  scrollbar-color: #D4FF58 #1A1A1A;
+}
+
+.form-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #D4FF58;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid #333333;
+  padding-bottom: 0.5rem;
+}
+
+.form-section-title .svg-inline--fa {
+  font-size: 1rem;
+}
+
+/* Form Groups and Labels */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group-inline {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end; /* Align items to bottom for better label-input sync */
+}
+
+.form-group-inline .form-group {
+  flex: 1;
+  margin-bottom: 0; /* Remove bottom margin when inline */
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #758680;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+
+/* General Input Styling (Selects, Text, Time) */
+.form-select,
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #F5F5F5;
+  background-color: #000000;
+  transition: all 0.2s;
+  outline: none;
+  box-sizing: border-box; /* Ensure padding doesn't increase size */
+}
+
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23758680' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem; /* Make space for arrow */
+  cursor: pointer;
+}
+
+.form-select:focus,
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #D4FF58;
+  box-shadow: 0 0 0 3px rgba(212, 255, 88, 0.25);
+}
+
+/* Checkbox Groups */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #F5F5F5;
+  transition: color 0.2s;
+}
+
+.checkbox-label input[type="checkbox"] {
+  display: none; /* Hide default checkbox */
+}
+
+.checkbox-icon {
+  margin-right: 0.6rem;
+  color: #758680; /* Default icon color */
+  font-size: 1.1em;
+  transition: color 0.2s;
+}
+
+.checkbox-label:hover .checkbox-icon {
+  color: #D4FF58;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-icon {
+  color: #D4FF58; /* Icon color when checked */
+}
+
+.checkbox-label:hover {
+  color: #D4FF58;
+}
+
+/* Schedule Grid */
+.schedule-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.schedule-day-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background-color: #000000;
+  border: 1px solid #333333;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.schedule-day-row.day-enabled {
+  background-color: #111111; /* Slightly lighter when enabled */
+  border-left: 3px solid #D4FF58;
+}
+
+.schedule-day-toggle {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: auto; /* Adjust width as needed, or set fixed */
+  min-width: 120px; /* Ensure day name is visible */
+}
+
+.schedule-day-toggle .day-name {
+  margin-left: 0.3rem;
+  font-weight: 500;
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.time-inputs span {
+  color: #758680;
+}
+
+.time-input {
+  background-color: #1A1A1A; /* Match card background for inputs within schedule */
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  max-width: 100px; /* Control width of time inputs */
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2.5rem; /* Increased margin top */
+  padding-top: 1.5rem;
+  border-top: 1px solid #333333;
+}
+
+.button {
+  padding: 0.6rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.button-primary {
+  background-color: #D4FF58;
+  color: #000000;
+  font-weight: 600;
+}
+
+.button-primary:hover {
+  background-color: #c2e64d;
+  transform: translateY(-1px);
+}
+
+.button-secondary {
+  background-color: transparent;
+  color: #758680;
+  border: 1px solid #333333;
+}
+
+.button-secondary:hover {
+  background-color: #222222;
+  color: #F5F5F5;
+  border-color: #444;
+}
+
+/* Condicions mèdiques */
+.condition-item-form {
+  margin-bottom: 1rem;
+}
+
+.add-condition-btn {
+  margin-top: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .modal-container {
+    max-width: 95%;
+  }
+
+  .form-group-inline {
+    flex-direction: column;
+    gap: 1rem; /* Keep gap for column layout */
+    align-items: stretch; /* Stretch items in column */
+  }
+
+  .schedule-day-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .time-inputs {
+    width: 100%; /* Make time inputs take full width in column */
+    margin-top: 0.5rem;
+  }
+
+  .time-input {
+    flex-grow: 1;
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-container {
+    width: 95%;
+    margin: 0.5rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .profile-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .avatar {
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.75rem;
+  }
+
+  .user-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .basic-stats-display {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-container {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Scrollbar Styling */
+.modal-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-container::-webkit-scrollbar-track {
+  background: #1A1A1A;
+  border-radius: 4px;
+}
+
+.modal-container::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+
+.modal-container::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}

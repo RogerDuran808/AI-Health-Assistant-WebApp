@@ -1,0 +1,98 @@
+:root {
+    --primary-bg: #000000;
+    --secondary-bg: #1A1A1A;
+    --tertiary-bg: #2A2A2A;
+    --accent-color: #D4FF58;
+    --accent-hover: #b8e040;
+    --text-primary: #F5F5F5;
+    --text-secondary: #758680;
+    --border-color: #333333;
+    --card-border-radius: 16px;
+}
+
+/* Styles adapted from docs/style.css for the biomarkers widget */
+.widget.biomarkers-widget {
+    background-color: var(--secondary-bg);
+    border-radius: var(--card-border-radius);
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    flex: 0 0 auto; /* Will not grow or shrink, size based on content */
+}
+
+.biomarkers-widget .widget-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+.biomarkers-widget .widget-title i {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+
+.biomarkers-widget .widget-content {
+    flex-grow: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.biomarkers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    align-content: flex-start;
+    width: 100%;
+}
+
+.biomarker-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--tertiary-bg);
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.biomarker-icon i {
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    width: 24px;
+    text-align: center;
+}
+
+.biomarker-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Align text vertically */
+}
+
+.biomarker-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.1;
+}
+
+.biomarker-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    line-height: 1.1;
+}
+
+.biomarker-sublabel {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+    line-height: 1.1;
+    margin-top: 1px;
+}

@@ -1,0 +1,804 @@
+/* frontend/src/components/Dashboard/Dashboard.css */
+
+:root {
+    --primary-bg: #000000;
+    --secondary-bg: #1A1A1A;
+    --tertiary-bg: #2A2A2A; /* For hover states or less prominent elements */
+    --accent-color: #D4FF58;
+    --accent-hover: #b8e040;
+    --text-primary: #F5F5F5;
+    --text-secondary: #758680;
+    --border-color: #333333;
+    --card-border-radius: 16px;
+    --sidebar-width-expanded: 260px;
+    --sidebar-width-collapsed: 70px; /* Adjusted for icon-only */
+    --header-height: 20px; /* Reduced from 70px */
+}
+
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--primary-bg);
+    color: var(--text-primary);
+}
+
+/* --- COLUMNA CENTRAL --- */
+.rmssd-widget {
+    flex: 0 0 auto;
+    min-height: 130px;
+}
+
+.rmssd-widget .widget-content {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 2px; /* Espai addicional si el títol és extern */
+}
+
+.rmssd-value-display {
+    font-size: 2rem; /* 32px */
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-primary);
+}
+
+.rmssd-status-display {
+    font-size: 1rem; /* 16px */
+    margin-top: 8px;
+    font-weight: 500;
+    /* El color es defineix inline en el JSX */
+}
+
+.rmssd-subtitle {
+    font-size: 0.8rem; /* 12.8px */
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* --- Sidebar --- */
+#sidebar {
+    background-color: var(--primary-bg);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    border-right: 1px solid var(--border-color);
+    transition: width 0.3s ease-in-out;
+    overflow-x: hidden;
+    flex-shrink: 0;
+    padding: 8px 0; /* Uniform padding */
+    box-sizing: border-box;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    width: var(--sidebar-width-expanded);
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) {
+    width: var(--sidebar-width-collapsed);
+    padding: 8px 0;
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:hover {
+    width: var(--sidebar-width-expanded);
+}
+
+.dashboard-container.sidebar-open #sidebar {
+    width: var(--sidebar-width-expanded);
+}
+
+.sidebar-header-toggle {
+    display: none; /* Hidden by default, shown in mobile */
+    padding: 0 15px 15px 15px;
+    text-align: right;
+}
+
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.greeting {
+    padding: 0;
+    margin: 0;
+    height: 64px; /* Altura fija que coincide con el espacio del icono */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.greeting-icon {
+    display: none; /* Oculto por defecto */
+    font-size: 1.8rem;
+    color: var(--accent-color);
+    width: 40px; /* Ancho fijo para el icono */
+    height: 40px; /* Altura fija para el icono */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+/* Estilos cuando la barra está contraída */
+.sidebar-collapsed-hoverable:not(:hover) .greeting {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    justify-content: center;
+}
+
+.sidebar-collapsed-hoverable:not(:hover) .greeting-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilos cuando la barra está expandida */
+.sidebar-open .greeting,
+.sidebar-collapsed-hoverable:hover .greeting {
+    justify-content: flex-start;
+    padding-left: 15px;
+}
+
+.greeting-text {
+    display: none;
+    padding: 10px 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Mostrar/ocultar según el estado de la barra */
+.sidebar-collapsed-hoverable:not(:hover) .greeting-icon {
+    display: flex;
+}
+
+.sidebar-open .greeting-text,
+.sidebar-collapsed-hoverable:hover .greeting-text {
+    display: block;
+}
+
+/* Asegurar que no haya espacio adicional */
+.sidebar-collapsed-hoverable .greeting {
+    padding: 0;
+    margin: 0;
+}
+
+/* Ajustes para el texto cuando está visible */
+.greeting-text h2 {
+    margin: 0 0 2px 0;
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+.greeting-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.greeting-text h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--text-primary);
+}
+
+.greeting-text p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.navigation {
+    flex-grow: 1;
+    overflow-y: auto; /* For scrollable nav items if they exceed height */
+    overflow-x: hidden;
+    padding-top: 5px; /* Add some top padding to the navigation area */
+}
+
+/* Scrollbar per a la navegació lateral */
+.navigation::-webkit-scrollbar {
+    width: 8px;
+}
+.navigation::-webkit-scrollbar-track {
+    background: var(--primary-bg);
+    border-radius: 4px;
+}
+.navigation::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+.navigation::-webkit-scrollbar-thumb:hover {
+    background: #444444;
+}
+
+.navigation {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--primary-bg);
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0 15px;
+    margin: 0;
+}
+
+.nav-item {
+    margin-bottom: 5px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+    white-space: nowrap;
+    height: 40px;
+    overflow: hidden;
+    box-sizing: border-box;
+    width: calc(100% - 8px);
+    margin: 2px 4px;
+    position: relative;
+}
+
+.nav-link .fa-icon,
+.nav-link svg {
+    width: 20px; /* Slightly reduced width */
+    min-width: 20px; /* Ensure it doesn't shrink */
+    max-width: 20px; /* Ensure consistent width */
+    height: 20px; /* Fixed height for consistency */
+    text-align: center;
+    font-size: 1.1em;
+    margin: 0 10px 0 0; /* Right margin only when expanded */
+    transition: all 0.3s ease-in-out;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-link .nav-link-text {
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out 0.1s; /* Delay text fade slightly */
+}
+
+.nav-link:hover {
+    background-color: var(--tertiary-bg);
+    color: var(--text-primary);
+}
+
+.nav-link.active {
+    background-color: var(--accent-color);
+    color: var(--primary-bg); /* Dark text on accent background */
+    font-weight: 600;
+}
+
+/* Sidebar collapsed state (hoverable) */
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link {
+    justify-content: center;
+    padding: 0;
+    width: 100%;
+    height: 40px;
+    margin: 2px 0;
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link .fa-icon,
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link svg {
+    margin: -2px auto 0;
+    transform: none;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .logo-text,
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .nav-link-text {
+    opacity: 0;
+    width: 0; /* Effectively hide and prevent layout shift */
+    visibility: hidden;
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .greeting-icon {
+    display: block; /* Show icon when text is hidden */
+    text-align: center;
+}
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) .greeting {
+    text-align: center;
+}
+
+
+.sidebar-settings {
+    padding: 10px 0;
+    margin-top: auto; /* Pushes to bottom if navigation doesn't fill space */
+    border-top: 1px solid var(--border-color);
+}
+
+.sidebar-footer {
+    padding: 15px 20px;
+    text-align: left;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.sidebar-footer p {
+    margin: 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.sidebar-footer .nav-version {
+    font-size: 0.75rem;
+}
+
+/* --- Main Content --- */
+.dashboard-main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 8px); /* L'alçada lleugerament reduïda evita la barra vertical */
+    margin-left: var(--sidebar-width-collapsed);
+    transition: margin-left 0.3s ease-in-out;
+    overflow: hidden;
+    width: calc(100% - var(--sidebar-width-collapsed));
+}
+
+/* Barra de desplaçament personalitzada per al contingut principal */
+.dashboard-main-content::-webkit-scrollbar {
+    width: 8px;
+}
+.dashboard-main-content::-webkit-scrollbar-track {
+    background: var(--primary-bg);
+    border-radius: 4px;
+}
+.dashboard-main-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+.dashboard-main-content::-webkit-scrollbar-thumb:hover {
+    background: #444444;
+}
+
+.dashboard-main-content {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--primary-bg);
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:not(:hover) + .dashboard-main-content {
+    margin-left: var(--sidebar-width-collapsed);
+}
+
+.dashboard-container.sidebar-collapsed-hoverable #sidebar:hover + .dashboard-main-content,
+.dashboard-container.sidebar-open .dashboard-main-content {
+    margin-left: var(--sidebar-width-expanded);
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0 20px; /* Reduced horizontal padding */
+    height: auto;
+    margin: 8px 0 4px; /* Reduced margins (top: 8px, bottom: 4px) */
+    background-color: transparent;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.header-title {
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove default margins */
+    line-height: 1.2;
+}
+
+.header-title h2 {
+    font-size: 1.4rem; /* Slightly smaller font */
+    font-weight: 600;
+    margin: 0 0 2px 0; /* Reduced bottom margin */
+    padding: 0;
+    line-height: 1.1; /* Tighter line height */
+    color: var(--text-primary);
+}
+
+#currentDateSubtitle {
+    font-size: 0.75rem; /* Slightly smaller date */
+    color: var(--text-secondary);
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.dashboard-grid {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+    gap: 20px; /* Horizontal gap between sections */
+    padding: 20px; /* Consistent padding on all sides */
+    overflow: auto;
+    height: 100%;
+    min-height: 0;
+}
+
+.dashboard-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Match horizontal gap */
+    min-height: 0;
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Desktop layout (3 columns) */
+@media (min-width: 1200px) {
+    .dashboard-section:first-child,
+    .dashboard-section:last-child {
+        flex: 1;
+        min-width: 0;
+        max-width: calc(50% - 190px); /* 380px center column + 20px gaps */
+    }
+
+    .dashboard-section:nth-child(2) {
+        flex: 0 0 360px; /* Increased from 300px */
+        min-height: 0;
+    }
+}
+
+/* Tablet layout (2 columns) */
+@media (max-width: 1199px) and (min-width: 768px) {
+    .dashboard-section {
+        flex: 0 0 calc(50% - 10px); /* 2 columns with gap */
+    }
+    
+    .dashboard-section:last-child {
+        flex: 1 0 100%; /* Full width for the last section */
+        max-width: 100%;
+    }
+}
+
+/* Mobile layout (1 column) */
+@media (max-width: 767px) {
+    .dashboard-section {
+        flex: 1 0 100%; /* Full width for all sections */
+        max-width: 100%;
+    }
+}
+
+/* RMSSD widget */
+.rmssd-widget {
+    flex: 0 0 auto;
+    min-height: 130px;
+}
+
+/* Activity charts widget */
+.activity-charts-widget {
+    flex: 1;
+    min-height: 300px; /* Minimum height for better visibility */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Biomarkers widget */
+.biomarkers-widget {
+    flex: 0 0 auto;
+}
+
+/* Widget content */
+.widget-content {
+    min-height: 0;
+    overflow: auto;
+}
+
+/* Adjust widget heights on mobile */
+@media (max-width: 767px) {
+    .rmssd-widget {
+        min-height: 100px;
+    }
+    
+    .activity-charts-widget {
+        min-height: 250px;
+    }
+}
+/* Misplaced comments and orphaned closing brace removed to fix syntax error */
+
+/* --- WIDGETS --- */
+
+/* Add margin to AI Assistant widget */
+.ai-assistant-widget {
+    margin-top: 24px;
+}
+
+/* Styles for FatigueWidget based on docs/style.css */
+.fatigue-widget {
+    background: transparent !important; /* Override general widget background */
+    box-shadow: none !important; /* Override general widget shadow */
+    padding: 5px !important; /* Reduced padding */
+    margin-bottom: 0 !important; /* Remove any bottom margin */
+    align-items: center;
+    justify-content: flex-start; /* Align to top */
+    flex: 0 0 auto; /* Don't grow or shrink */
+    min-height: auto; /* Remove fixed height */
+    border: none !important; /* Override general widget border */
+    height: auto; /* Auto height */
+    display: flex;
+    flex-direction: column;
+}
+
+.fatigue-indicator-container {
+    position: relative;
+    width: 100%;
+    max-width: 250px; /* Indicador més petit */
+    height: 250px; /* Alçada reduïda */
+    margin: 0 auto 5px; /* Mantenim un petit marge inferior */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fatigue-text-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+}
+
+#fatigueProbabilityText {
+    display: block;
+    font-size: 3rem; /* Slightly reduced font size */
+    font-weight: 800;
+    line-height: 1;
+    /* color is set dynamically via inline style */
+}
+
+#fatigueStatusText {
+    display: block;
+    font-size: 1.2rem; /* Slightly reduced font size */
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 8px; /* Reduced space between number and text */
+    letter-spacing: 0.5px; /* Slightly reduced letter spacing */
+    /* color is set dynamically via inline style */
+}
+
+/* Styles for ActivityWidget based on docs/style.css */
+.activity-widget {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border: none !important;
+    /* La altura puede ser gestionada por el grid row definition */
+    /* Si se desea una altura fija específica como en docs, descomentar y ajustar */
+    /* min-height: 80px; */ 
+    /* height: 80px; */
+}
+
+.activity-widget .widget-content {
+    padding: 0; /* Eliminar padding si el widget padre ya no lo tiene o es específico */
+    height: 100%;
+}
+
+.metrics-summary {
+    display: flex;
+    justify-content: space-around;
+    align-items: center; /* Centra verticalmente los items */
+    text-align: center;
+    height: 100%; /* Ocupa toda la altura del .activity-widget .widget-content */
+}
+
+.metrics-summary div span {
+    font-size: 1.8rem; /* Coincide con docs */
+    font-weight: 700;
+    display: block;
+    color: var(--text-primary);
+}
+
+.metrics-summary div p {
+    font-size: 0.8rem; /* Coincide con docs */
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-top: 4px; /* Pequeño ajuste para espaciado */
+}
+
+/* Estils per al widget d'assistent IA */
+.ai-assistant-widget {
+    flex-grow: 1; /* Ocupa l'espai restant de la columna */
+}
+.ai-assistant-widget .widget-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes actions to bottom */
+    height: 100%;
+}
+
+.ai-assistant-widget h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 15px; /* Space below title */
+    display: flex;
+    align-items: center;
+}
+
+.ai-assistant-widget h3 .fa-robot {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+
+.recommendation-area {
+    flex-grow: 1; /* Takes available space */
+    background-color: var(--primary-bg); /* Slightly darker than card bg */
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px; /* Space before action buttons */
+    overflow-y: auto; /* Scroll if content overflows */
+    min-height: 100px; /* Minimum height */
+    max-height: 230px; /* Max height before scroll, adjust as needed */
+    border: 1px solid var(--border-color);
+}
+
+.recommendation-area p {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    white-space: pre-wrap; /* Respect newlines from AI */
+}
+
+.widget-actions {
+    display: flex;
+    justify-content: space-between; /* Align buttons */
+    gap: 10px; /* Space between buttons */
+}
+
+/* General Button Styles (if not already globally defined) */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-align: center;
+    flex-grow: 1; /* Make buttons take equal width if needed */
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: var(--primary-bg);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: var(--accent-color);
+    color: var(--primary-bg);
+    border-color: var(--accent-color);
+}
+
+.btn-icon {
+    margin-right: 8px;
+    font-size: 0.9em;
+    transition: color 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) .btn-icon {
+    color: var(--primary-bg);
+}
+
+.widget {
+    background-color: var(--secondary-bg);
+    border-radius: var(--card-border-radius);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.widget h3 .fa-icon,
+.widget h3 svg {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+
+/* Specific widget styling can be added here or in their own CSS files */
+.fatigue-widget,
+.activity-widget,
+.ai-assistant-widget,
+.rmssd-widget,
+.activity-charts-widget,
+.biomarkers-widget,
+.sleep-analysis-widget {
+    /* Basic styling, can be expanded */
+    min-height: 150px; /* Example minimum height */
+}
+
+/* Responsive adjustments for sidebar toggle */
+@media (max-width: 1024px) {
+    .dashboard-container.sidebar-collapsed-hoverable #sidebar {
+        width: 0; /* Fully collapse on mobile if not explicitly opened */
+        padding-left: 0;
+        padding-right: 0;
+        border-right: none;
+    }
+    .dashboard-container.sidebar-collapsed-hoverable #sidebar:hover {
+        width: var(--sidebar-width-expanded); /* Hover still works if desired, or remove */
+    }
+
+    .dashboard-container.sidebar-open #sidebar {
+        width: var(--sidebar-width-expanded);
+        padding-left: 15px; /* Restore padding when open */
+        padding-right: 15px;
+        border-right: 1px solid var(--border-color);
+    }
+
+    .sidebar-header-toggle {
+        display: block; /* Show toggle button on smaller screens */
+    }
+
+    /* Adjust main content padding when sidebar is fully collapsed or open on mobile */
+
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Stack widgets on smaller screens */
+    }
+}
+
+/* Loading and Error Messages */
+.loading-message,
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Ocupa l'alçada de l'àrea de contingut principal */
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.loading-message p,
+.error-message p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.error-message p {
+  color: #ff6b6b; /* Un color vermellós per als errors */
+}

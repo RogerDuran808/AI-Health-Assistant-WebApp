@@ -1,0 +1,20 @@
+services:
+  api:
+    build: ./backend
+    command: /app/start.sh
+    ports: ["8000:8000"]
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - ACCESS_TOKEN=${ACCESS_TOKEN}
+    volumes:
+      - ./backend/db:/app/db
+  ui:
+    build: ./frontend
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    ports: ["5173:5173"]
+    depends_on: [api]
+
+
