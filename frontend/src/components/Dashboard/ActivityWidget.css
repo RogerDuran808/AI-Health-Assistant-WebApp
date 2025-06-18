@@ -130,7 +130,7 @@
 .trend-chart-container {
     position: relative;
     width: 100%;
-    height: 200px;
+    height: 70%;
     margin-bottom: 20px;
     background-color: var(--card-bg);
     border-radius: 8px;

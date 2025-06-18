@@ -333,16 +333,29 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                             scales: {
                                                 y: {
                                                     beginAtZero: true,
-                                                    grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
+                                                    grid: { 
+                                                        color: '#333333', // Bordes
+                                                        drawBorder: false 
+                                                    },
+                                                    border: {
+                                                        color: '#333333' // Bordes
+                                                    },
                                                     ticks: {
-                                                        color: '#F5F5F5',
+                                                        color: '#F5F5F5', // Texto principal
                                                         stepSize: 60,
                                                         callback: value => formatMinutesToHoursAndMinutes(value)
                                                     }
                                                 },
                                                 x: {
-                                                    grid: { display: false },
-                                                    ticks: { color: '#F5F5F5' }
+                                                    grid: { 
+                                                        display: false 
+                                                    },
+                                                    border: {
+                                                        color: '#333333' // Bordes
+                                                    },
+                                                    ticks: { 
+                                                        color: '#F5F5F5' // Texto principal
+                                                    }
                                                 }
                                             },
                                             plugins: { 
@@ -392,7 +405,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                     label: 'Sedentari', 
                                                     data: trendIntensity.sedentary, 
                                                     borderColor: '#758680', // Texto secundario
-                                                    backgroundColor: 'rgba(117, 134, 128, 0.3)', 
+                                                    backgroundColor: 'rgba(117, 134, 128, 0.2)', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -411,8 +424,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 { 
                                                     label: 'Moderat', 
                                                     data: trendIntensity.moderate, 
-                                                    borderColor: '#9B51E0', // Púrpura para moderado
-                                                    backgroundColor: 'rgba(155, 81, 224, 0.2)', 
+                                                    borderColor: '#758680', // Texto secundario
+                                                    backgroundColor: 'rgba(117, 134, 128, 0.2)', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -421,8 +434,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 { 
                                                     label: 'Intens', 
                                                     data: trendIntensity.intense, 
-                                                    borderColor: '#FF6B6B', // Rojo para intenso
-                                                    backgroundColor: 'rgba(255, 107, 107, 0.2)', 
+                                                    borderColor: '#D4FF58', // Color de acento
+                                                    backgroundColor: 'rgba(212, 255, 88, 0.2)', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -443,16 +456,29 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                             scales: {
                                                 y: {
                                                     beginAtZero: true,
-                                                    grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
+                                                    grid: { 
+                                                        color: '#333333', // Bordes
+                                                        drawBorder: false 
+                                                    },
+                                                    border: {
+                                                        color: '#333333' // Bordes
+                                                    },
                                                     ticks: {
-                                                        color: '#F5F5F5',
+                                                        color: '#F5F5F5', // Texto principal
                                                         stepSize: 30,
                                                         callback: value => formatMinutesToHoursAndMinutes(value)
                                                     }
                                                 },
                                                 x: {
-                                                    grid: { display: false },
-                                                    ticks: { color: '#F5F5F5' }
+                                                    grid: { 
+                                                        display: false 
+                                                    },
+                                                    border: {
+                                                        color: '#333333' // Bordes
+                                                    },
+                                                    ticks: { 
+                                                        color: '#F5F5F5' // Texto principal
+                                                    }
                                                 }
                                             },
                                             plugins: { 
@@ -485,9 +511,9 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                         beforeBody: function(context) {
                                                             const dataIndex = context[0].dataIndex;
                                                             return [
-                                                                `Sota Zona: ${formatMinutesToHoursAndMinutes(trendHr.below[dataIndex])}`,
-                                                                `Crema Greixos: ${formatMinutesToHoursAndMinutes(trendHr.zone1[dataIndex])}`,
-                                                                `Cardio: ${formatMinutesToHoursAndMinutes(trendHr.zone2[dataIndex])}`,
+                                                                `Repòs: ${formatMinutesToHoursAndMinutes(trendHr.below[dataIndex])}`,
+                                                                `Suau: ${formatMinutesToHoursAndMinutes(trendHr.zone1[dataIndex])}`,
+                                                                `Moderat: ${formatMinutesToHoursAndMinutes(trendHr.zone2[dataIndex])}`,
                                                                 `Pic: ${formatMinutesToHoursAndMinutes(trendHr.zone3[dataIndex])}`
                                                             ];
                                                         }
@@ -499,7 +525,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                             labels: trendLabels,
                                             datasets: [
                                                 { 
-                                                    label: 'Sota Zona', 
+                                                    label: 'Repòs', 
                                                     data: trendHr.below, 
                                                     borderColor: '#758680', // Texto secundario
                                                     backgroundColor: 'rgba(117, 134, 128, 0.2)', 
@@ -509,17 +535,17 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                     pointHoverRadius: 5
                                                 },
                                                 { 
-                                                    label: 'Crema Greixos', 
+                                                    label: 'Suau', 
                                                     data: trendHr.zone1, 
-                                                    borderColor: '#4E9DE5', // Azul para quema de grasas
-                                                    backgroundColor: 'rgba(78, 157, 229, 0.2)', 
+                                                    borderColor: '#758680', // Texto secundario
+                                                    backgroundColor: 'rgba(117, 134, 128, 0.2)', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
                                                     pointHoverRadius: 5
                                                 },
                                                 { 
-                                                    label: 'Cardio', 
+                                                    label: 'Moderat', 
                                                     data: trendHr.zone2, 
                                                     borderColor: '#D4FF58', // Color de acento
                                                     backgroundColor: 'rgba(212, 255, 88, 0.2)', 
@@ -531,8 +557,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 { 
                                                     label: 'Pic', 
                                                     data: trendHr.zone3, 
-                                                    borderColor: '#FF6B6B', // Rojo para pico
-                                                    backgroundColor: 'rgba(255, 107, 107, 0.2)', 
+                                                    borderColor: '#D4FF58', // Color de acento
+                                                    backgroundColor: 'rgba(212, 255, 88, 0.2)', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
