@@ -170,10 +170,29 @@ const SleepStagesWidget = ({ stagesData, metricsData, trendData = [], trendLabel
                                     responsive: true,
                                     maintainAspectRatio: false,
                                     scales: {
-                                        y: { beginAtZero: true, grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false } },
+                                        y: {
+                                            beginAtZero: true,
+                                            grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
+                                            ticks: {
+                                                color: '#F5F5F5',
+                                                stepSize: 60,
+                                                callback: value => formatMinutesToHoursAndMinutes(value)
+                                            }
+                                        },
                                         x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
                                     },
-                                    plugins: { legend: { display: false } }
+                                    plugins: {
+                                        legend: {
+                                            display: true,
+                                            position: 'top',
+                                            labels: { color: '#F5F5F5', usePointStyle: true, pointStyle: 'circle', padding: 20 }
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: ctx => `${ctx.dataset.label}: ${formatMinutesToHoursAndMinutes(ctx.raw)}`
+                                            }
+                                        }
+                                    }
                                 }}
                                 data={{
                                     labels: trendLabels,

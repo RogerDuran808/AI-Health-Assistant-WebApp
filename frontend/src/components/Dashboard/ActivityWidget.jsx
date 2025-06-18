@@ -300,20 +300,24 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                         ) : trendLabels.length > 0 ? (
                             <>
                             <div className="trend-chart-container">
-                                <h4>Activitat Diària (minuts)</h4>
+                                <h4>Activitat Diària (h:m)</h4>
                                 <Line
                                     options={{
                                         responsive: true,
                                         maintainAspectRatio: false,
                                         scales: {
-                                            y: { 
-                                                beginAtZero: true, 
+                                            y: {
+                                                beginAtZero: true,
                                                 grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
-                                                ticks: { color: '#F5F5F5' }
+                                                ticks: {
+                                                    color: '#F5F5F5',
+                                                    stepSize: 60,
+                                                    callback: value => formatMinutesToHoursAndMinutes(value)
+                                                }
                                             },
-                                            x: { 
-                                                grid: { display: false }, 
-                                                ticks: { color: '#F5F5F5' } 
+                                            x: {
+                                                grid: { display: false },
+                                                ticks: { color: '#F5F5F5' }
                                             }
                                         },
                                         plugins: { 
@@ -335,9 +339,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 borderWidth: 1,
                                                 padding: 10,
                                                 callbacks: {
-                                                    label: function(context) {
-                                                        return `${context.dataset.label}: ${context.raw} min`;
-                                                    }
+                                                    label: context => `${context.dataset.label}: ${formatMinutesToHoursAndMinutes(context.raw)}`
                                                 }
                                             }
                                         }
@@ -390,20 +392,24 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                 />
                             </div>
                             <div className="trend-chart-container">
-                                <h4>Zones de Freqüència Cardíaca (minuts)</h4>
+                                <h4>Zones de Freqüència Cardíaca (h:m)</h4>
                                 <Line
                                     options={{
                                         responsive: true,
                                         maintainAspectRatio: false,
                                         scales: {
-                                            y: { 
-                                                beginAtZero: true, 
+                                            y: {
+                                                beginAtZero: true,
                                                 grid: { color: 'rgba(117,134,128,0.2)', drawBorder: false },
-                                                ticks: { color: '#F5F5F5' }
+                                                ticks: {
+                                                    color: '#F5F5F5',
+                                                    stepSize: 60,
+                                                    callback: value => formatMinutesToHoursAndMinutes(value)
+                                                }
                                             },
-                                            x: { 
-                                                grid: { display: false }, 
-                                                ticks: { color: '#F5F5F5' } 
+                                            x: {
+                                                grid: { display: false },
+                                                ticks: { color: '#F5F5F5' }
                                             }
                                         },
                                         plugins: { 
@@ -425,9 +431,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 borderWidth: 1,
                                                 padding: 10,
                                                 callbacks: {
-                                                    label: function(context) {
-                                                        return `${context.dataset.label}: ${context.raw} min`;
-                                                    }
+                                                    label: context => `${context.dataset.label}: ${formatMinutesToHoursAndMinutes(context.raw)}`
                                                 }
                                             }
                                         }
