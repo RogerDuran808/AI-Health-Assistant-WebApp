@@ -405,7 +405,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                     label: 'Sedentari', 
                                                     data: trendIntensity.sedentary, 
                                                     borderColor: '#758680', // Texto secundario
-                                                    backgroundColor: 'rgba(117, 134, 128, 0.2)', 
+                                                    backgroundColor: '#758680', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -414,8 +414,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 { 
                                                     label: 'Lleu', 
                                                     data: trendIntensity.light, 
-                                                    borderColor: '#D4FF58', // Color de acento
-                                                    backgroundColor: 'rgba(212, 255, 88, 0.2)', 
+                                                    borderColor: '#F5F5F5', // Color de acento
+                                                    backgroundColor: '#F5F5F5', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -424,8 +424,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 { 
                                                     label: 'Moderat', 
                                                     data: trendIntensity.moderate, 
-                                                    borderColor: '#758680', // Texto secundario
-                                                    backgroundColor: 'rgba(117, 134, 128, 0.2)', 
+                                                    borderColor: '#D4FF58', // Texto secundario
+                                                    backgroundColor: '#D4FF58', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -434,8 +434,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 { 
                                                     label: 'Intens', 
                                                     data: trendIntensity.intense, 
-                                                    borderColor: '#D4FF58', // Color de acento
-                                                    backgroundColor: 'rgba(212, 255, 88, 0.2)', 
+                                                    borderColor: '#333333', // Color de acento
+                                                    backgroundColor: '#333333', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -528,7 +528,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                     label: 'Repòs', 
                                                     data: trendHr.below, 
                                                     borderColor: '#758680', // Texto secundario
-                                                    backgroundColor: 'rgba(117, 134, 128, 0.2)', 
+                                                    backgroundColor: '#758680', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -537,8 +537,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 { 
                                                     label: 'Suau', 
                                                     data: trendHr.zone1, 
-                                                    borderColor: '#758680', // Texto secundario
-                                                    backgroundColor: 'rgba(117, 134, 128, 0.2)', 
+                                                    borderColor: '#F5F5F5',
+                                                    backgroundColor: '#F5F5F5', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -548,7 +548,7 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                     label: 'Moderat', 
                                                     data: trendHr.zone2, 
                                                     borderColor: '#D4FF58', // Color de acento
-                                                    backgroundColor: 'rgba(212, 255, 88, 0.2)', 
+                                                    backgroundColor: '#d4ff58', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
@@ -557,8 +557,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 { 
                                                     label: 'Pic', 
                                                     data: trendHr.zone3, 
-                                                    borderColor: '#D4FF58', // Color de acento
-                                                    backgroundColor: 'rgba(212, 255, 88, 0.2)', 
+                                                    borderColor: '#333333', // Color de acento
+                                                    backgroundColor: '#333333', 
                                                     borderWidth: 2,
                                                     tension: 0.3, 
                                                     pointRadius: 3,
