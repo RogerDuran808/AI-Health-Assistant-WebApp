@@ -679,20 +679,47 @@ def save_macrocycle(macrocycle: str, user_id: str = "CJK8XS") -> None:
 
 
 def fetch_weekly_data() -> list[dict]:
-    """Retorna les dades guardades per als darrers 7 dies."""
+    """Retorna les dades guardades per als darrers 7 dies.
+    
+    Returns:
+        list[dict]: Llista de diccionaris amb les dades setmanals, amb valors NULL convertits a 0.
+    """
     _init_db()
+    conn = None
     try:
         conn = sqlite3.connect(DB_PATH)
+        # Obtenir les dades de la taula setmanal
         df = pd.read_sql_query(
             f"SELECT * FROM {WEEKLY_TABLE_NAME} ORDER BY date ASC",
             conn,
         )
+        
+        # Si no hi ha dades, retornar llista buida
+        if df.empty:
+            return []
+            
+        # Definir columnes numèriques i substituir NULL per 0
+        numeric_columns = [
+            'sedentary_minutes', 'lightly_active_minutes', 'moderately_active_minutes',
+            'very_active_minutes', 'minutes_below_default_zone_1', 'minutes_in_default_zone_1',
+            'minutes_in_default_zone_2', 'minutes_in_default_zone_3', 'minutesAwake',
+            'minutesAsleep', 'sleep_deep_ratio', 'sleep_light_ratio', 'sleep_rem_ratio'
+        ]
+        
+        # Filtrar només les columnes que existeixen al DataFrame
+        existing_numeric_cols = [col for col in numeric_columns if col in df.columns]
+        
+        # Omplir valors NULL amb 0 per a les columnes numèriques
+        df[existing_numeric_cols] = df[existing_numeric_cols].fillna(0)
+        
+        # Convertir a diccionari i retornar
         return df.to_dict(orient="records")
+        
     except sqlite3.Error as e:
         print(f"[fetch_weekly_data] Error: {e}")
         return []
     finally:
-        if 'conn' in locals() and conn:
+        if conn is not None:
             conn.close()
 
 
