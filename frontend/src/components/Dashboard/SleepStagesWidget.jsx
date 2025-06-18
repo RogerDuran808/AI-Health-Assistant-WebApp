@@ -234,10 +234,46 @@ const SleepStagesWidget = ({ stagesData, metricsData, trendData = [], trendLabel
                                 data={{
                                     labels: trendLabels,
                                     datasets: [
-                                        { label: 'Profund', data: trendData.map(d => d.deep), borderColor: 'var(--accent-color)', backgroundColor: 'rgba(212,255,88,0.3)', tension: 0.3 },
-                                        { label: 'Lleuger', data: trendData.map(d => d.light), borderColor: 'var(--text-secondary)', backgroundColor: 'rgba(117,134,128,0.3)', tension: 0.3 },
-                                        { label: 'REM', data: trendData.map(d => d.rem), borderColor: 'var(--text-primary)', backgroundColor: 'rgba(245,245,245,0.3)', tension: 0.3 },
-                                        { label: 'Despert', data: trendData.map(d => d.awake), borderColor: 'var(--border-color)', backgroundColor: 'rgba(51,51,51,0.3)', tension: 0.3 }
+                                        { 
+                                            label: 'Profund', 
+                                            data: trendData.map(d => d.deep), 
+                                            borderColor: '#D4FF58', // Lime green
+                                            backgroundColor: 'rgba(212, 255, 88, 0.3)',
+                                            borderWidth: 2,
+                                            tension: 0.3,
+                                            pointRadius: 3,
+                                            pointHoverRadius: 5
+                                        },
+                                        { 
+                                            label: 'Lleuger', 
+                                            data: trendData.map(d => d.light), 
+                                            borderColor: '#A5A5A5', // Light gray
+                                            backgroundColor: 'rgba(165, 165, 165, 0.3)',
+                                            borderWidth: 2,
+                                            tension: 0.3,
+                                            pointRadius: 3,
+                                            pointHoverRadius: 5
+                                        },
+                                        { 
+                                            label: 'REM', 
+                                            data: trendData.map(d => d.rem), 
+                                            borderColor: '#758680', // Dark gray
+                                            backgroundColor: 'rgba(117, 134, 128, 0.3)',
+                                            borderWidth: 2,
+                                            tension: 0.3,
+                                            pointRadius: 3,
+                                            pointHoverRadius: 5
+                                        },
+                                        { 
+                                            label: 'Despert', 
+                                            data: trendData.map(d => d.awake), 
+                                            borderColor: '#F5F5F5', // White
+                                            backgroundColor: 'rgba(245, 245, 245, 0.3)',
+                                            borderWidth: 2,
+                                            tension: 0.3,
+                                            pointRadius: 3,
+                                            pointHoverRadius: 5
+                                        }
                                     ]
                                 }}
                             />
