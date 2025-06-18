@@ -300,11 +300,15 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                         ) : trendLabels.length > 0 ? (
                             <>
                             <div className="trend-chart-container">
-                                <h4>Activitat Diària (h:m)</h4>
+                                <h4>Activitat Diària</h4>
                                 <Line
                                     options={{
                                         responsive: true,
                                         maintainAspectRatio: false,
+                                        interaction: {
+                                            mode: 'index',
+                                            intersect: false
+                                        },
                                         scales: {
                                             y: {
                                                 beginAtZero: true,
@@ -328,7 +332,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                     color: '#F5F5F5',
                                                     usePointStyle: true,
                                                     pointStyle: 'circle',
-                                                    padding: 20
+                                                    boxWidth: 20,
+                                                    padding: 8
                                                 }
                                             },
                                             tooltip: {
@@ -338,8 +343,27 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 borderColor: '#333333',
                                                 borderWidth: 1,
                                                 padding: 10,
+                                                displayColors: false,
                                                 callbacks: {
-                                                    label: context => `${context.dataset.label}: ${formatMinutesToHoursAndMinutes(context.raw)}`
+                                                    title: function(tooltipItems) {
+                                                        // Show the date as the title
+                                                        return tooltipItems[0].label;
+                                                    },
+                                                    label: function() {
+                                                        // We'll handle all labels in beforeBody
+                                                        return '';
+                                                    },
+                                                    beforeBody: function(context) {
+                                                        // Get the index of the hovered point
+                                                        const dataIndex = context[0].dataIndex;
+                                                        // Return all activity values for this day
+                                                        return [
+                                                            `Sedentari: ${formatMinutesToHoursAndMinutes(trendIntensity.sedentary[dataIndex])}`,
+                                                            `Lleu: ${formatMinutesToHoursAndMinutes(trendIntensity.light[dataIndex])}`,
+                                                            `Moderat: ${formatMinutesToHoursAndMinutes(trendIntensity.moderate[dataIndex])}`,
+                                                            `Intens: ${formatMinutesToHoursAndMinutes(trendIntensity.intense[dataIndex])}`
+                                                        ];
+                                                    }
                                                 }
                                             }
                                         }
@@ -392,11 +416,15 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                 />
                             </div>
                             <div className="trend-chart-container">
-                                <h4>Zones de Freqüència Cardíaca (h:m)</h4>
+                                <h4>Zones de FC</h4>
                                 <Line
                                     options={{
                                         responsive: true,
                                         maintainAspectRatio: false,
+                                        interaction: {
+                                            mode: 'index',
+                                            intersect: false
+                                        },
                                         scales: {
                                             y: {
                                                 beginAtZero: true,
@@ -420,7 +448,8 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                     color: '#F5F5F5',
                                                     usePointStyle: true,
                                                     pointStyle: 'circle',
-                                                    padding: 20
+                                                    boxWidth: 20,
+                                                    padding: 8
                                                 }
                                             },
                                             tooltip: {
@@ -430,8 +459,27 @@ const ActivityWidget = ({ data, type, intensityData, hrZonesData, trendLabels = 
                                                 borderColor: '#333333',
                                                 borderWidth: 1,
                                                 padding: 10,
+                                                displayColors: false,
                                                 callbacks: {
-                                                    label: context => `${context.dataset.label}: ${formatMinutesToHoursAndMinutes(context.raw)}`
+                                                    title: function(tooltipItems) {
+                                                        // Show the date as the title
+                                                        return tooltipItems[0].label;
+                                                    },
+                                                    label: function() {
+                                                        // We'll handle all labels in beforeBody
+                                                        return '';
+                                                    },
+                                                    beforeBody: function(context) {
+                                                        // Get the index of the hovered point
+                                                        const dataIndex = context[0].dataIndex;
+                                                        // Return all HR zone values for this day
+                                                        return [
+                                                            `Repòs: ${formatMinutesToHoursAndMinutes(trendHr.below[dataIndex])}`,
+                                                            `Suau: ${formatMinutesToHoursAndMinutes(trendHr.zone1[dataIndex])}`,
+                                                            `Moderat: ${formatMinutesToHoursAndMinutes(trendHr.zone2[dataIndex])}`,
+                                                            `Pic: ${formatMinutesToHoursAndMinutes(trendHr.zone3[dataIndex])}`
+                                                        ];
+                                                    }
                                                 }
                                             }
                                         }

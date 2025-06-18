@@ -169,6 +169,10 @@ const SleepStagesWidget = ({ stagesData, metricsData, trendData = [], trendLabel
                                 options={{
                                     responsive: true,
                                     maintainAspectRatio: false,
+                                    interaction: {
+                                        mode: 'index',
+                                        intersect: false
+                                    },
                                     scales: {
                                         y: {
                                             beginAtZero: true,
@@ -179,17 +183,50 @@ const SleepStagesWidget = ({ stagesData, metricsData, trendData = [], trendLabel
                                                 callback: value => formatMinutesToHoursAndMinutes(value)
                                             }
                                         },
-                                        x: { grid: { display: false }, ticks: { color: '#F5F5F5' } }
+                                        x: { 
+                                            grid: { display: false }, 
+                                            ticks: { color: '#F5F5F5' } 
+                                        }
                                     },
                                     plugins: {
                                         legend: {
                                             display: true,
                                             position: 'top',
-                                            labels: { color: '#F5F5F5', usePointStyle: true, pointStyle: 'circle', padding: 20 }
+                                            labels: { 
+                                                color: '#F5F5F5', 
+                                                usePointStyle: true, 
+                                                pointStyle: 'circle', 
+                                                padding: 20 
+                                            }
                                         },
                                         tooltip: {
+                                            backgroundColor: '#1A1A1A',
+                                            titleColor: '#D4FF58',
+                                            bodyColor: '#F5F5F5',
+                                            borderColor: '#333333',
+                                            borderWidth: 1,
+                                            padding: 10,
+                                            displayColors: false,
                                             callbacks: {
-                                                label: ctx => `${ctx.dataset.label}: ${formatMinutesToHoursAndMinutes(ctx.raw)}`
+                                                title: function(tooltipItems) {
+                                                    // Show the date as the title
+                                                    return tooltipItems[0].label;
+                                                },
+                                                label: function() {
+                                                    // We'll handle all labels in beforeBody
+                                                    return '';
+                                                },
+                                                beforeBody: function(context) {
+                                                    // Get the index of the hovered point
+                                                    const dataIndex = context[0].dataIndex;
+                                                    // Return all sleep stage values for this day
+                                                    return [
+                                                        `Profund: ${formatMinutesToHoursAndMinutes(trendData[dataIndex]?.deep || 0)}`,
+                                                        `Lleuger: ${formatMinutesToHoursAndMinutes(trendData[dataIndex]?.light || 0)}`,
+                                                        `REM: ${formatMinutesToHoursAndMinutes(trendData[dataIndex]?.rem || 0)}`,
+                                                        `Despert: ${formatMinutesToHoursAndMinutes(trendData[dataIndex]?.awake || 0)}`
+                                                    ];
+                                                }
                                             }
                                         }
                                     }
