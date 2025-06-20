@@ -15,24 +15,16 @@ ChartJS.register(
 
 const FatigueWidget = ({ probability }) => {
   let statusText = "N/A";
-  let color = '#758680'; // Color per defecte (gris / text secundari)
+  let color = '#D4FF58'; // Color per defecte (gris / text secundari)
   const numericProbability = parseFloat(probability);
 
   if (isNaN(numericProbability)) {
-    // Gestionar el cas que la probabilitat no sigui un número
-    // Es podria mostrar N/A o un estat per defecte
-  } else if (numericProbability >= 75) {
-    statusText = "MOLT CANSAT";
-    color = '#b8e040'; // Verd llima més fosc (consistent amb --accent-hover)
-  } else if (numericProbability >= 60) {
+  } else if (numericProbability >= 50) {
     statusText = "CANSAT";
     color = '#D4FF58'; // Accent principal
-  } else if (numericProbability >= 40) {
-    statusText = "NORMAL";
-    color = '#e5ff9e'; // Verd llima més clar
-  } else {
+  } else if (numericProbability < 50) {
     statusText = "DESCANSAT";
-    color = '#758680'; // Text secundari
+    color = '#D4FF58'; // Verd llima més clar
   }
 
   const chartData = {
