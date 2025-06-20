@@ -20,11 +20,13 @@ import joblib  # Importat aquí
 BASE_DIR = Path(__file__).resolve().parent
 RAW_PATH = BASE_DIR / "fitbit_raw.py"
 DB_PATH = BASE_DIR / "db" / "fitbit_data.db"
-MODEL_PATH = BASE_DIR / 'models' / 'BalancedRandomForest_TIRED.joblib'
+MODEL_PATH = BASE_DIR / 'models' / 'LGBM_model.joblib'
 TABLE_NAME = "fitbit_daily_data"
 PROFILE_TABLE_NAME = "user_profile"
 REPORTS_TABLE_NAME = "informes_ia"
 WEEKLY_TABLE_NAME = "fitbit_last_week"
+
+# ------------------------------------------------------------------------------------------------
 
 # --- Definició Completa de les Columnes de la Base de Dades ---
 # Inclou dades crues, de feature engineering i prediccions.
@@ -71,7 +73,7 @@ COLUMN_DEFINITIONS = {
 }
 RAW_COLUMN_NAMES = list(pd.read_csv(BASE_DIR / 'models' / 'raw_features.csv')['feature']) # Noms de les columnes originals
 
-# Columnes utilitzades per a la taula setmanal
+# Columnes utilitzades per a la taula setmanal per mostrar les tendencies
 WEEKLY_COLUMN_DEFINITIONS = {
     "date": "TEXT PRIMARY KEY",
     "sedentary_minutes": "INTEGER",
@@ -88,6 +90,10 @@ WEEKLY_COLUMN_DEFINITIONS = {
     "sleep_light_ratio": "REAL",
     "sleep_rem_ratio": "REAL"
 }
+
+
+# ------------------------------------------------------------------------------------------------
+
 
 # --- Funcions de Gestió de la Base de Dades ---
 
@@ -113,7 +119,7 @@ def _init_db():
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         
-        # Crea la taula informes_ia si no existeix
+        # Creem la taula informes_ia si no existeix
         cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS {REPORTS_TABLE_NAME} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -136,7 +142,7 @@ def _init_db():
         
         conn.commit()
         
-        # Crea la taula amb les columnes RAW inicials si no existeix, definint 'date' com PRIMARY KEY
+        # Creem la taula amb les columnes RAW inicials de FITBIT si no existeix, definint 'date' com PRIMARY KEY
         cols_for_create = []
         if 'date' in COLUMN_DEFINITIONS: # Utilitza la definició de COLUMN_DEFINITIONS per a 'date'
             date_type = COLUMN_DEFINITIONS['date']
@@ -155,7 +161,6 @@ def _init_db():
         final_cols_sql = ", ".join(cols_for_create)
         create_table_sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} ({final_cols_sql})"
         cursor.execute(create_table_sql)
-        # conn.commit() # Commit later after all table creations
 
         # Create user_profile table
         create_user_profile_table_sql = f"""
@@ -245,7 +250,7 @@ def _init_db():
                 tuple(default_profile.values()),
             )
 
-        conn.commit()  # Commit after all table creations i possibles insercions
+        conn.commit()  # Despres de totes les creacions i insercions
         
         # Assegura que totes les columnes (incloent les de features/prediccions) existeixen per a la taula TABLE_NAME
         _add_missing_columns(conn)
@@ -372,6 +377,7 @@ def _update_weekly_table(df: pd.DataFrame):
             conn.close()
 
 
+# ----------------------------------------------------------------------------------------
 # --- Funcions de Processament i Predicció ---
 
 def _process_data_and_predict(df: pd.DataFrame) -> pd.DataFrame:
@@ -379,12 +385,15 @@ def _process_data_and_predict(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty: return df
     print(f"[_process_data_and_predict] Processant {len(df)} registres...")
     
-    # FEATURE ENGINEERING
-    df['wake_after_sleep_pct'] = ((df['minutesAwake'] + df['minutesAfterWakeup']) / (df['minutesAsleep'] + df['minutesAwake'] + df['minutesAfterWakeup'])).fillna(0)
-    df['cat__age_<30'] = (df['age'] < 30).astype(int)
-    df['cat__age_>=30'] = (df['age'] >= 30).astype(int)
-    df['cat__gender_FEMALE'] = (df['gender'] == 'FEMALE').astype(int)
-    df['cat__gender_MALE'] = (df['gender'] == 'MALE').astype(int)
+    # FEATURE ENGINEERING especific del model
+    df["activity_intensity"] = df["very_active_minutes"] * 3 + df["moderately_active_minutes"] * 2 + df["lightly_active_minutes"]
+    df["recovery_factor"] = df["minutesAsleep"] / (df["activity_intensity"] + 1e-3)
+    df["wake_after_sleep_pct"] = df["minutesAwake"] / (df["minutesAwake"] + df["minutesAsleep"] + 1e-3)
+    df["active_to_rest_transition"] = df["activity_intensity"] / (df["minutesAsleep"] + df["minutesAwake"] + 1e-3)
+    df["sleep_activity_balance"] = df["minutesAsleep"] / (df["very_active_minutes"] + df["moderately_active_minutes"] + 1e-3)
+    df["deep_sleep_score"] = df["sleep_deep_ratio"] * df["sleep_efficiency"]
+    df["steps_norm_cal"] = df["steps"] / (df["calories"] + 1e-3)
+# seguir amb el preprocessat
 
     # PREPARACIÓ DE DADES PER AL MODEL
     model_features = pd.read_csv(BASE_DIR / 'models' / 'model_features.csv')['feature'].tolist()
@@ -398,7 +407,7 @@ def _process_data_and_predict(df: pd.DataFrame) -> pd.DataFrame:
 
     # CÀRREGA DEL MODEL I PREDICCIÓ
     try:
-        model = joblib.load(MODEL_PATH)
+        model = joblib.load(MODEL_PATH) # Aquest model ja te els passos del preprocessat que els aplica sobre les dades.
         df['tired_pred'] = model.predict(X)
         df['tired_prob'] = model.predict_proba(X)[:, 1]
         print("[_process_data_and_predict] Prediccions generades correctament.")
