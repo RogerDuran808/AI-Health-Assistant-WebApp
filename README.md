@@ -92,7 +92,7 @@ Panell interactiu que mostra les teves mètriques Fitbit (perfil, son, HRV, SpO�
 **Frontend** en React + Vite + Tailwind CSS que consumeix l’endpoint i pinta targetes i gràfics.
 
 <p align="center">
-  <img src="docs/dashboard.png" width="800" alt="captura del dashboard" />
+  <img src="docs/Dashboard-visualitzacio.png" width="800" alt="captura del dashboard" />
 </p>
 
 <p align="center">
