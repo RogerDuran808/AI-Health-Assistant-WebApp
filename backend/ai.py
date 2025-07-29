@@ -12,7 +12,7 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY") # Per possibles proves
 
 openai.api_key = OPENAI_API_KEY
 MODEL_FINE_TUNING = "ft:gpt-4.1-2025-04-14:roger-duran:ai-health-assistant:Br1HRbij"
-MODEL_PLAN = "gpt-4.1-mini"
+MODEL_PLAN = "gpt-4.1"
 
 
 def _key(data: dict) -> str:
@@ -95,7 +95,9 @@ Crear la programació *òptima* per a la **setmana {week}** del macrocicle,
 respectant condicions mèdiques i disponibilitat.
 
 ## Context del macrocicle
+```
 {macrocycle}
+```
 
 ---
 
@@ -161,8 +163,10 @@ respectant condicions mèdiques i disponibilitat.
 ## Context d'Usuari
 Disposes de la informació següent de l'usuari:
  
-**Recomanacions i propostes a aplicar**  
+**Recomanacions d'avui feta per l'Assistent** 
+```
 {recomanacions}
+```
 
 **Perfil complet de l'usuari**  
 {profile}
@@ -183,10 +187,10 @@ Disposes de la informació següent de l'usuari:
         model=MODEL_PLAN,
         messages=[
             {"role": "system",
-             "content": """Ets un/una **entrenador/a personal certificat/ada** especialitzat/ada en periodització i salut."""},
+             "content": """Ets un **entrenador personal certificat** especialitzat en periodització i salut."""},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=1200,
+        max_tokens=2800,
     )
     return resposta.choices[0].message.content.strip()
 
@@ -346,7 +350,7 @@ def generate_macros(profile: dict) -> str:
     resposta = openai.chat.completions.create(
         model=MODEL_PLAN,
         messages=[
-            {"role": "system", "content": "Ets un/una entrenador/a expert/a en planificació esportiva. Has de tenir en compte la data actual per adaptar el macrocicle."},
+            {"role": "system", "content": "Ets un entrenador expert en planificació esportiva. Has de tenir en compte la data actual per adaptar el macrocicle."},
             {"role": "user", "content": f"Data actual: {formatted_date}\n\n{prompt}"},
         ],
         max_tokens=800,
