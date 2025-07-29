@@ -235,18 +235,6 @@ El `docker-compose.yml` llegeix `.env` automàticament.
 
 ---
 
-## 🧪 Test ràpid de l’API
-
-```
-# Fitbit Data
-curl http://localhost:8000/fitbit-data | jq
-
-# Recommendations
-curl http://localhost:8000/recommend | jq
-```
-
----
-
 ## 🔒 Notes de seguretat
 
 * El token Fitbit expira ~8 h si es fa amb oauth, s'hauria d'implementar un token de Refresh.
