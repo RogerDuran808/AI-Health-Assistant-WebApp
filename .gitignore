@@ -15,3 +15,4 @@ frontend/dist/
 # Python
 __pycache__/
 *.egg-info/
+fitboard_assistant.db

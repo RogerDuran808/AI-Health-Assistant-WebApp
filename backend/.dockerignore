@@ -9,4 +9,4 @@ __pycache__/
 *.json
 # tests de pandas que te han dado problemas
 */site-packages/pandas/tests/
-fitbit_data.db
+fitboard_assistant.db

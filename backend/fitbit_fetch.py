@@ -14,13 +14,11 @@ from pathlib import Path
 import sqlite3
 import datetime as dt
 import sys
-import joblib  # Importat aquí
 
 # --- Configuració ---
 BASE_DIR = Path(__file__).resolve().parent
 RAW_PATH = BASE_DIR / "fitbit_raw.py"
-DB_PATH = BASE_DIR / "db" / "fitbit_data.db"
-MODEL_PATH = BASE_DIR / 'models' / 'LGBM_model.joblib'
+DB_PATH = BASE_DIR / "db" / "fitboard_assistant.db"
 TABLE_NAME = "fitbit_daily_data"
 PROFILE_TABLE_NAME = "user_profile"
 REPORTS_TABLE_NAME = "informes_ia"
@@ -65,11 +63,7 @@ COLUMN_DEFINITIONS = {
     "daily_temperature_variation": "REAL", 
     "rmssd": "REAL", 
     "spo2": "REAL",
-    "full_sleep_breathing_rate": "REAL",
-    
-    # Columnes de Predicció
-    "tired_pred": "REAL", 
-    "tired_prob": "REAL"
+    "full_sleep_breathing_rate": "REAL"
 }
 RAW_COLUMN_NAMES = list(pd.read_csv(BASE_DIR / 'models' / 'raw_features.csv')['feature']) # Noms de les columnes originals
 
@@ -395,30 +389,7 @@ def _process_data_and_predict(df: pd.DataFrame) -> pd.DataFrame:
     df["steps_norm_cal"] = df["steps"] / (df["calories"] + 1e-3)
 # seguir amb el preprocessat
 
-    # PREPARACIÓ DE DADES PER AL MODEL
-    model_features = pd.read_csv(BASE_DIR / 'models' / 'model_features.csv')['feature'].tolist()
-    
-    X = df.copy()
-    # Assegurem que totes les columnes del model existeixen, omplint amb 0 si falten
-    for col in model_features:
-        if col not in X.columns:
-            X[col] = 0
-    X = X[model_features]
-
-    # CÀRREGA DEL MODEL I PREDICCIÓ
-    try:
-        model = joblib.load(MODEL_PATH) # Aquest model ja te els passos del preprocessat que els aplica sobre les dades.
-        df['tired_pred'] = model.predict(X)
-        df['tired_prob'] = model.predict_proba(X)[:, 1]
-        print("[_process_data_and_predict] Prediccions generades correctament.")
-    except FileNotFoundError:
-        print(f"Error: No es troba el fitxer del model a {MODEL_PATH}")
-        df['tired_pred'] = None
-        df['tired_prob'] = None
-    except Exception as e:
-        print(f"Error durant la predicció: {e}")
-        df['tired_pred'] = None
-        df['tired_prob'] = None
+    # Eliminades les prediccions de fatiga
         
     return df
 

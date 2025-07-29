@@ -100,7 +100,7 @@ AI-Health-Assistant-WebApp
 │   ├── models/
 │   │   └── BalancedRandomForest_TIRED.joblib
 │   ├── db/
-│   │   └── fitbit_data.db
+│   │   └── fitboard_assistant.db
 │   ├── requirements.txt
 │   ├── Dockerfile
 |   ├── .dockerignore
