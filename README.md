@@ -1,5 +1,7 @@
 # AI Health Assistant WebApp
 
+FitBoard version: 0.7.0
+
 ### Objectiu del Projecte
 
 Aquest projecte té com a finalitat desenvolupar una **web app intel·ligent** capaç d'oferir **recomanacions personalitzades per a l'optimització del rendiment físic**, la recuperació i el benestar de l'usuari mitjançant dades obtingudes a partir d’un dispositiu wearable. La base del sistema se sustenta en un model de llenguatge (LLM) personalitzat a través de *fine-tuning* i una arquitectura modular basada en dos models diferenciats.
