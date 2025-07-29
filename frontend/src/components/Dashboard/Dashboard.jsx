@@ -8,7 +8,6 @@ import {
   faTachometerAlt, faRobot, faFileAlt, faUser, faCog, faSignOutAlt, faBars, faTimes, faHand, faChartLine, faNotesMedical, faWaveSquare, faLungs, faWind, faHeartbeat, faThermometerHalf, faDumbbell
 } from '@fortawesome/free-solid-svg-icons';
 import ProfileModal from '../ProfileModal';
-import FatigueWidget from './FatigueWidget';
 import ActivityWidget from './ActivityWidget';
 import BiomarkersWidget from './BiomarkersWidget';
 import SleepStagesWidget from './SleepStagesWidget';
@@ -54,7 +53,6 @@ export default function Dashboard() {
 
   // Data from backend, with fallbacks
   const userName = fitbitData?.name || "Usuari";
-  const fatigueProbability = fitbitData?.tired_prob !== undefined ? (fitbitData.tired_prob * 100) : NaN;
   const activityData = {
     steps: fitbitData?.steps || 0,
     calories: fitbitData?.calories || 0
@@ -238,7 +236,6 @@ export default function Dashboard() {
           <main className="dashboard-grid">
             {/* Column 1: Fatiga, Activitat, Assistent */}
             <div className="dashboard-section">
-              <FatigueWidget probability={fatigueProbability} />
               <ActivityWidget data={activityData} />
               <AIAssistantWidget
                 fitbitData={fitbitData}

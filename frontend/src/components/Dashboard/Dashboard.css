@@ -521,59 +521,6 @@
     margin-top: 24px;
 }
 
-/* Styles for FatigueWidget based on docs/style.css */
-.fatigue-widget {
-    background: transparent !important; /* Override general widget background */
-    box-shadow: none !important; /* Override general widget shadow */
-    padding: 5px !important; /* Reduced padding */
-    margin-bottom: 0 !important; /* Remove any bottom margin */
-    align-items: center;
-    justify-content: flex-start; /* Align to top */
-    flex: 0 0 auto; /* Don't grow or shrink */
-    min-height: auto; /* Remove fixed height */
-    border: none !important; /* Override general widget border */
-    height: auto; /* Auto height */
-    display: flex;
-    flex-direction: column;
-}
-
-.fatigue-indicator-container {
-    position: relative;
-    width: 100%;
-    max-width: 250px; /* Indicador més petit */
-    height: 250px; /* Alçada reduïda */
-    margin: 0 auto 5px; /* Mantenim un petit marge inferior */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.fatigue-text-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    width: 100%;
-}
-
-#fatigueProbabilityText {
-    display: block;
-    font-size: 3rem; /* Slightly reduced font size */
-    font-weight: 800;
-    line-height: 1;
-    /* color is set dynamically via inline style */
-}
-
-#fatigueStatusText {
-    display: block;
-    font-size: 1.2rem; /* Slightly reduced font size */
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-top: 8px; /* Reduced space between number and text */
-    letter-spacing: 0.5px; /* Slightly reduced letter spacing */
-    /* color is set dynamically via inline style */
-}
 
 /* Styles for ActivityWidget based on docs/style.css */
 .activity-widget {
@@ -739,7 +686,6 @@
 }
 
 /* Specific widget styling can be added here or in their own CSS files */
-.fatigue-widget,
 .activity-widget,
 .ai-assistant-widget,
 .rmssd-widget,
