@@ -11,8 +11,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY") # Per possibles proves
 
 openai.api_key = OPENAI_API_KEY
-MODEL = "gpt-4o-mini"
-MODEL_PLAN = "gpt-4.1-mini"
+MODEL_FINE_TUNING = "ft:gpt-4.1-2025-04-14:roger-duran:ai-health-assistant:Br1HRbij"
+MODEL_PLAN = "gpt-4.1"
 
 
 def _key(data: dict) -> str:
@@ -21,35 +21,24 @@ def _key(data: dict) -> str:
 
 def _build_prompt(fitbit_dict: dict) -> str:
     """Construeix el prompt per a OpenAI."""
-    return f"""
-Has rebut aquestes dades registrades ahir per un usuari de Fitbit:
-{fitbit_dict}
-
-1) Fes un anàlisi breu (1-2 frases) de cadascun dels tres gran blocs:
-   • Activitat (passos, calories actives, minuts d'intensitat)
-   • Son (durada, eficiència, temps en fases)
-   • Recuperació (freqüència cardíaca en repós, variabilitat (rmssd))
-
-2) Proporciona COM A MÍNIM DUES recomanacions accionables (pel dia) i personalitzades per:
-   a) Millorar el rendiment físic
-   b) Millorar la recuperació
-
-3) Descriu en una frase el fonament científic de cada recomanació.
-
-Format de resposta esperat:
-
-**Anàlisi de paràmetres**
-- Activitat: …
-- Son: …
-- Recuperació: …
-
-**Recomanacions**
-1. …
-   _Raonament científic:_ …
-2. …
-   _Raonament científic:_ …
-
+    prompt_template = """
+Hola, aquí tens les meves mètriques d'avui per a la teva avaluació:\n
+- Freqüència cardíaca en repòs: {resting_hr} bpm
+- RMSSD: {rmssd} ms
+- SpO2: {spo2} %
+- Variació de temperatura diària: {temperature_variation} °C
+- Freqüència respiratòria en son: {breathing_rate} resp/min
 """
+
+    fitbit_vars = {
+        'rmssd': fitbit_dict.get('rmssd', '(No registrat)'),
+        'spo2': fitbit_dict.get('spo2', '(No registrat)'),
+        'resting_hr': fitbit_dict.get('resting_hr', '(No registrat)'),
+        'temperature_variation': fitbit_dict.get('daily_temperature_variation', '(No registrat)'),
+        'breathing_rate': fitbit_dict.get('full_sleep_breathing_rate', '(No registrat)'),
+    }
+    
+    return prompt_template.format(**fitbit_vars)
 
 @lru_cache(maxsize=32)
 def _cached_recommendation(payload_key: str) -> str:
@@ -57,17 +46,17 @@ def _cached_recommendation(payload_key: str) -> str:
     fitbit_dict = json.loads(payload_key)
     prompt = _build_prompt(fitbit_dict)
     resposta = openai.chat.completions.create(
-        model=MODEL,
+        model=MODEL_FINE_TUNING,
         messages=[
          {"role": "system",
-          "content": """You are a professional health coach and fitness expert specializing
-         in optimizing physical performance using wearable data and personal context.
-         Provide precise, personalized training and recovery recommendations
-         based on the user's metrics (fatigue, heart rate, sleep quality, activity)."""},
+          "content": """Ets un coach expert en salut i rendiment físic, especialitzat en interpretar dades de wearables 
+          per oferir recomanacions d'entrenament i recuperació. El teu to és formal, empàtic, educatiu i motivador. 
+          Expliques el 'perquè' darrere de cada consell, connectant-lo directament amb les dades de l'usuari. 
+          No ofereixes consell mèdic, sinó pautes de benestar."""},
 
          {"role": "user", "content": prompt}
         ],
-        max_tokens=100,
+        max_tokens=1000,
     )
     return resposta.choices[0].message.content.strip()
 
@@ -106,7 +95,9 @@ Crear la programació *òptima* per a la **setmana {week}** del macrocicle,
 respectant condicions mèdiques i disponibilitat.
 
 ## Context del macrocicle
+```
 {macrocycle}
+```
 
 ---
 
@@ -172,8 +163,10 @@ respectant condicions mèdiques i disponibilitat.
 ## Context d'Usuari
 Disposes de la informació següent de l'usuari:
  
-**Recomanacions i propostes a aplicar**  
+**Recomanacions d'avui feta per l'Assistent** 
+```
 {recomanacions}
+```
 
 **Perfil complet de l'usuari**  
 {profile}
@@ -194,10 +187,10 @@ Disposes de la informació següent de l'usuari:
         model=MODEL_PLAN,
         messages=[
             {"role": "system",
-             "content": """Ets un/una **entrenador/a personal certificat/ada** especialitzat/ada en periodització i salut."""},
+             "content": """Ets un **entrenador personal certificat** especialitzat en periodització i salut."""},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=1200,
+        max_tokens=2800,
     )
     return resposta.choices[0].message.content.strip()
 
@@ -338,6 +331,7 @@ Respon amb:
         'profile': profile_json,
     }
 
+    
     return prompt_template.format(**template_vars)
 
 
@@ -356,7 +350,7 @@ def generate_macros(profile: dict) -> str:
     resposta = openai.chat.completions.create(
         model=MODEL_PLAN,
         messages=[
-            {"role": "system", "content": "Ets un/una entrenador/a expert/a en planificació esportiva. Has de tenir en compte la data actual per adaptar el macrocicle."},
+            {"role": "system", "content": "Ets un entrenador expert en planificació esportiva. Has de tenir en compte la data actual per adaptar el macrocicle."},
             {"role": "user", "content": f"Data actual: {formatted_date}\n\n{prompt}"},
         ],
         max_tokens=800,
