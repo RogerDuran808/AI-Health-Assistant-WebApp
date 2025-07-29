@@ -98,6 +98,7 @@ Panell interactiu que mostra les teves m√®triques Fitbit (perfil, son, HRV, SpO‚
 <p align="center">
   <img src="docs/pla i historic.png" width="800" alt="pla i historic d'entrenament" />
 </p>
+
 ---
 
 ## Estructura
